@@ -1,10 +1,17 @@
 package pro.sky.AnimalShelter.enums;
 
 public enum BotCommand {
-    START("/start"),
-    STOP("/stop"),
+    CAT("/cat"),
     DOG("/dog"),
-    CAT("/cat");
+    HELP("/help"),
+    PASS("/pass"),
+    STOP("/stop"),
+    START("/start"),
+    SAFETY("/safety"),
+    CONTACT("/contact"),
+    SCHEDULE("/schedule"),
+    DESCRIPTION("/description");
+
 
     private final String commandText;
 
