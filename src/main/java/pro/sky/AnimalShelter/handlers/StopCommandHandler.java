@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.enums.BotState;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 @Slf4j
@@ -22,7 +21,7 @@ public class StopCommandHandler implements CommandHandler {
         log.info("Bot received /stop command. Shutting down...");
         Long chatId = update.message().chat().id();
         telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
-        chatStateHolder.setState(chatId, BotState.STOP);
+        chatStateHolder.setState(chatId, BotCommand.STOP);
     }
 
     @Override
