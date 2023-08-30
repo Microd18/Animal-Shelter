@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.enums.BotState;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 @Slf4j
@@ -22,7 +21,7 @@ public class StartCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
         Long chatId = update.message().chat().id();
-        if (update.message().text().equals(chatStateHolder.getState(chatId).getStatedText())) {
+        if (update.message().text().equals(chatStateHolder.getState(chatId).getCommandText())) {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
         }
@@ -36,11 +35,13 @@ public class StartCommandHandler implements CommandHandler {
                 "Если у вас есть желание подарить теплый дом и заботу коту, этот приют идеально подойдет. Для выбора введи команду /cat\n" +
                 "\n" +
                 "    Приют для собак \uD83D\uDC36: Если вы думаете о взятии пушистого друга на прогулки и веселые игры, здесь живут забавные и преданные собачки. " +
-                "От маленьких щенков до зрелых спутников жизни - выбор за вами. Для выбора введи команду /dog";
+                "От маленьких щенков до зрелых спутников жизни - выбор за вами. Для выбора введи команду /dog\n" +
+                "\n" +
+                "Остановить бота (/stop)";
 
 
         telegramBot.execute(new SendMessage(chatId.toString(), response));
-        chatStateHolder.setState(chatId, BotState.START);
+        chatStateHolder.setState(chatId, BotCommand.START);
     }
 
     @Override
