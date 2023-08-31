@@ -21,7 +21,8 @@ public class StopCommandHandler implements CommandHandler {
         log.info("Bot received /stop command. Shutting down...");
         Long chatId = update.message().chat().id();
         telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
-        chatStateHolder.setState(chatId, BotCommand.STOP);
+        chatStateHolder.addState(chatId, BotCommand.STOP);
+        chatStateHolder.setBotStarted(chatId, false);
     }
 
     @Override

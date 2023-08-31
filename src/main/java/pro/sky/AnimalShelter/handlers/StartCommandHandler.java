@@ -21,7 +21,7 @@ public class StartCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
         Long chatId = update.message().chat().id();
-        if (update.message().text().equals(chatStateHolder.getState(chatId).getCommandText())) {
+        if (chatStateHolder.isBotStarted(chatId)) {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
         }
@@ -41,7 +41,8 @@ public class StartCommandHandler implements CommandHandler {
 
 
         telegramBot.execute(new SendMessage(chatId.toString(), response));
-        chatStateHolder.setState(chatId, BotCommand.START);
+        chatStateHolder.addState(chatId, BotCommand.START);
+        chatStateHolder.setBotStarted(chatId, true);
     }
 
     @Override
