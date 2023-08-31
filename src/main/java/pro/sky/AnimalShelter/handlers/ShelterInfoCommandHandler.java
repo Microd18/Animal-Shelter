@@ -20,10 +20,9 @@ public class ShelterInfoCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getState(chatId);
+        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
         if (currentState == DOG || currentState == CAT) {
-            chatStateHolder.pushState(chatId, currentState);
             String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
             String responseText = "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
                     "1. Описание приюта (/description)\n" +
@@ -37,7 +36,7 @@ public class ShelterInfoCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
 
-            chatStateHolder.setState(chatId, BotCommand.SHELTER_INFO);
+            chatStateHolder.addState(chatId, BotCommand.SHELTER_INFO);
         } else if (currentState == STOP) {
             String responseText = "Для использования бота введите команду /start";
             SendMessage message = new SendMessage(chatId.toString(), responseText);

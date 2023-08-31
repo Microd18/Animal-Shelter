@@ -22,7 +22,7 @@ public abstract class ShelterCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getState(chatId);
+        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
         if (currentState == BotCommand.START) {
             String responseText = "Вы выбрали " + shelterType + ". Чем я могу помочь?\n" +
@@ -34,7 +34,7 @@ public abstract class ShelterCommandHandler implements CommandHandler {
                     "6. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            chatStateHolder.setState(chatId, selectedCommand);
+            chatStateHolder.addState(chatId, selectedCommand);
         } else if (currentState == CAT || currentState == DOG) {
             var shelter = currentState == CAT ? "приют для кошек" : "приют для собак";
             String responseText = "Вы уже выбрали " + shelter + ".\n" +

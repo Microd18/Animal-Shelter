@@ -20,11 +20,10 @@ public class BackCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getState(chatId);
+        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
         if (currentState == BotCommand.SHELTER_INFO) {
-            BotCommand previousState = chatStateHolder.popState(chatId);
-            chatStateHolder.setState(chatId, previousState);
+            BotCommand previousState = chatStateHolder.getPreviousState(chatId);
             var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
             String responseText = "Вы вернулись назад. У вас выбран " + shelterType + ". Чем я могу помочь?\n" +
                     "1. Узнать информацию о приюте (/shelter_info)\n" +
@@ -35,8 +34,9 @@ public class BackCommandHandler implements CommandHandler {
                     "6. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
+            chatStateHolder.addState(chatId, previousState);
         } else if (currentState == DOG || currentState == CAT) {
-            chatStateHolder.setState(chatId, START);
+            chatStateHolder.addState(chatId, START);
             String responseText = "Вы вернулись в главное меню." +
                     "Чтобы начать приключение и найти своего нового друга, просто выбери один из вариантов ниже:\n" +
                     "    Приют для кошек \uD83D\uDC31: Здесь мы заботимся о пушистых котиках всех возрастов и размеров, каждый из которых ищет свой дом и своего человека. " +
