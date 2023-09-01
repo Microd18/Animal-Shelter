@@ -20,7 +20,8 @@ public class CatCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
 
         if (chatStateHolder.getState(chatId) == BotState.START) {
-            String responseText = "Вы выбрали приют для кошек.";
+            String responseText = "Вы выбрали приют для кошек. \n"
+            + "Для уточнения информации по режиму работы приюта. Введите команду /schedule";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         } else {
