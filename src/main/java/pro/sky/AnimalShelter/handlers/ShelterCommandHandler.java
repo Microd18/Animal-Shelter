@@ -24,7 +24,7 @@ public abstract class ShelterCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
-        if (currentState == BotCommand.START) {
+        if (currentState == START) {
             String responseText = "Вы выбрали " + shelterType + ". Чем я могу помочь?\n" +
                     "1. Узнать информацию о приюте (/shelter_info)\n" +
                     "2. Как взять животное из приюта (/adopt)\n" +
