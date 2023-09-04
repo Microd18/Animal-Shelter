@@ -22,7 +22,7 @@ public class BackCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
-        if (currentState == BotCommand.SHELTER_INFO) {
+        if (currentState == SHELTER_INFO) {
             BotCommand previousState = chatStateHolder.getPreviousState(chatId);
             var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
             String responseText = "Вы вернулись назад. У вас выбран " + shelterType + ". Чем я могу помочь?\n" +

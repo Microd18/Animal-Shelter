@@ -34,7 +34,7 @@ public class ScheduleCommandHandler implements CommandHandler{
                     "Суббота 09:00–16:00 \n" +
                     "Воскресенье 09:00–16:00\n" +
                     "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";;
+                    "Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         } else {
@@ -47,6 +47,6 @@ public class ScheduleCommandHandler implements CommandHandler{
 
     @Override
     public BotCommand getCommand() {
-        return BotCommand.SCHEDULE;
+        return SCHEDULE;
     }
 }

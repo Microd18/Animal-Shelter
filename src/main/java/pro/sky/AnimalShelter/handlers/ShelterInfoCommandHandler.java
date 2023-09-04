@@ -22,9 +22,12 @@ public class ShelterInfoCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
-        if (currentState == DOG || currentState == CAT) {
-            String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
-            String responseText = "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
+        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
+            BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+            String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
+            String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
+                    ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
+            String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
                     "1. Описание приюта (/description)\n" +
                     "2. Расписание работы и контакты (/schedule)\n" +
                     "3. Контактные данные охраны для пропуска (/pass)\n" +
@@ -36,7 +39,9 @@ public class ShelterInfoCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
 
-            chatStateHolder.addState(chatId, BotCommand.SHELTER_INFO);
+            if (!(currentState == SHELTER_INFO)) {
+                chatStateHolder.addState(chatId, SHELTER_INFO);
+            }
         } else if (currentState == STOP) {
             String responseText = "Для использования бота введите команду /start";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
@@ -46,6 +51,6 @@ public class ShelterInfoCommandHandler implements CommandHandler {
 
     @Override
     public BotCommand getCommand() {
-        return BotCommand.SHELTER_INFO;
+        return SHELTER_INFO;
     }
 }
