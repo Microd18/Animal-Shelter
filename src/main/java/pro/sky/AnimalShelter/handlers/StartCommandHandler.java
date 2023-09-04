@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
+import static pro.sky.AnimalShelter.enums.BotCommand.START;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,12 +43,12 @@ public class StartCommandHandler implements CommandHandler {
 
 
         telegramBot.execute(new SendMessage(chatId.toString(), response));
-        chatStateHolder.addState(chatId, BotCommand.START);
+        chatStateHolder.addState(chatId, START);
         chatStateHolder.setBotStarted(chatId, true);
     }
 
     @Override
     public BotCommand getCommand() {
-        return BotCommand.START;
+        return START;
     }
 }

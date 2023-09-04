@@ -11,7 +11,7 @@ import static pro.sky.AnimalShelter.enums.BotCommand.DOG;
 public class DogCommandHandler extends ShelterCommandHandler {
 
     public DogCommandHandler(ChatStateHolder chatStateHolder, TelegramBot telegramBot) {
-        super(chatStateHolder, telegramBot, BotCommand.DOG, "приют для собак");
+        super(chatStateHolder, telegramBot, DOG, "приют для собак");
     }
 
     @Override

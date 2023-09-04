@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
+import static pro.sky.AnimalShelter.enums.BotCommand.PASS;
 import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
 
 @Service
@@ -42,6 +43,6 @@ public class PassCommandHandler implements CommandHandler {
 
     @Override
     public BotCommand getCommand() {
-        return BotCommand.PASS;
+        return PASS;
     }
 }

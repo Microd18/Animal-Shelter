@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
+import static pro.sky.AnimalShelter.enums.BotCommand.STOP;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,12 +23,12 @@ public class StopCommandHandler implements CommandHandler {
         log.info("Bot received /stop command. Shutting down...");
         Long chatId = update.message().chat().id();
         telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
-        chatStateHolder.addState(chatId, BotCommand.STOP);
+        chatStateHolder.addState(chatId, STOP);
         chatStateHolder.setBotStarted(chatId, false);
     }
 
     @Override
     public BotCommand getCommand() {
-        return BotCommand.STOP;
+        return STOP;
     }
 }
