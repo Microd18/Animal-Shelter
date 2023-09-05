@@ -11,13 +11,29 @@ import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.STOP;
 
+/**
+ * Обработчик команды /stop.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StopCommandHandler implements CommandHandler {
 
-    private final TelegramBot telegramBot;
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
+    private final TelegramBot telegramBot;
+
+    /**
+     * Обрабатывает команду /stop и выключает бота.
+     *
+     * @param update Объект, представляющий обновление от пользователя.
+     */
     @Override
     public void handle(Update update) {
         log.info("Bot received /stop command. Shutting down...");
@@ -27,6 +43,11 @@ public class StopCommandHandler implements CommandHandler {
         chatStateHolder.setBotStarted(chatId, false);
     }
 
+    /**
+     * Возвращает команду, которую обрабатывает данный обработчик (/stop).
+     *
+     * @return Команда /stop.
+     */
     @Override
     public BotCommand getCommand() {
         return STOP;
