@@ -11,12 +11,28 @@ import pro.sky.AnimalShelter.state.ChatStateHolder;
 import static pro.sky.AnimalShelter.enums.BotCommand.PASS;
 import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
 
+/**
+ * Обработчик команды "/pass".
+ */
 @Service
 @RequiredArgsConstructor
 public class PassCommandHandler implements CommandHandler {
+
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
 
+    /**
+     * Обрабатывает команду "/pass" в зависимости от текущего состояния чата.
+     *
+     * @param update Объект, представляющий обновление от пользователя.
+     */
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
@@ -41,6 +57,11 @@ public class PassCommandHandler implements CommandHandler {
 
     }
 
+    /**
+     * Возвращает команду, связанную с этим обработчиком ("/pass").
+     *
+     * @return Команда, связанная с обработчиком.
+     */
     @Override
     public BotCommand getCommand() {
         return PASS;

@@ -9,12 +9,29 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+
+/**
+ * Обработчик команды "/help".
+ */
 @Service
 @RequiredArgsConstructor
 public class HelpCommandHandler implements CommandHandler {
+
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
 
+    /**
+     * Обрабатывает команду "/help" в зависимости от текущего состояния чата.
+     *
+     * @param update Объект, представляющий обновление от пользователя.
+     */
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
@@ -22,9 +39,9 @@ public class HelpCommandHandler implements CommandHandler {
         if (currentState == DOG || currentState == CAT) {
             String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
             String responseText = "Для связи с волонтером пройдите по ссылке: \n" +
-                    "\n"+
+                    "\n" +
                     "По четным дням месяца Вам поможет Дмитрий, ссылка на Телеграмм - https://t.me/DmitriyVolkov \n" +
-                    "\n"+
+                    "\n" +
                     "По нечетным дням месяца Вам поможет Елена, ссылка на Телеграмм - https://t.me/koroliana \n" +
                     "Возврат в предыдущее меню (/back)\n" +
                     "Выключить бота (/stop)";
@@ -38,6 +55,11 @@ public class HelpCommandHandler implements CommandHandler {
         }
     }
 
+    /**
+     * Возвращает команду, связанную с этим обработчиком ("/help").
+     *
+     * @return Команда, связанная с обработчиком.
+     */
     @Override
     public BotCommand getCommand() {
         return HELP;

@@ -11,14 +11,29 @@ import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
 
+/**
+ * Обработчик команды "/start".
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StartCommandHandler implements CommandHandler {
 
-    private final TelegramBot telegramBot;
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
 
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
+    private final TelegramBot telegramBot;
+
+    /**
+     * Обрабатывает команду "/start" и инициализирует бота.
+     *
+     * @param update Объект, представляющий обновление от пользователя.
+     */
     @Override
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
@@ -47,6 +62,11 @@ public class StartCommandHandler implements CommandHandler {
         chatStateHolder.setBotStarted(chatId, true);
     }
 
+    /**
+     * Возвращает команду, связанную с этим обработчиком ("/start").
+     *
+     * @return Команда, связанная с обработчиком.
+     */
     @Override
     public BotCommand getCommand() {
         return START;

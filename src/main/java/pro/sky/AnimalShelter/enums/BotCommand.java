@@ -1,5 +1,8 @@
 package pro.sky.AnimalShelter.enums;
 
+/**
+ * Перечисление, представляющее команды бота.
+ */
 public enum BotCommand {
     CAT("/cat"),                    //приют для кошек
     DOG("/dog"),                    //приют для собак
@@ -14,13 +17,25 @@ public enum BotCommand {
     DESCRIPTION("/description"),    //Бот может рассказать о приюте
     SHELTER_INFO("/shelter_info");  //Узнать информацию о приюте
 
-
+    /**
+     * Текстовое представление команды.
+     */
     private final String commandText;
 
+    /**
+     * Конструктор, устанавливающий текстовое представление команды.
+     *
+     * @param commandText Текстовое представление команды.
+     */
     BotCommand(String commandText) {
         this.commandText = commandText;
     }
 
+    /**
+     * Возвращает текстовое представление команды.
+     *
+     * @return Текстовое представление команды.
+     */
     public String getCommandText() {
         return commandText;
     }

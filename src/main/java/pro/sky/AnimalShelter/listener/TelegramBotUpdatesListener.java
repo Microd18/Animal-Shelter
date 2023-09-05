@@ -12,20 +12,38 @@ import pro.sky.AnimalShelter.service.CommandHandlerService;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+/**
+ * Слушатель обновлений Telegram бота.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
+    /**
+     * Сервис для обработки команд.
+     */
     private final CommandHandlerService commandHandlerService;
 
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
 
+    /**
+     * Инициализация слушателя обновлений после создания.
+     */
     @PostConstruct
     public void init() {
         telegramBot.setUpdatesListener(this);
     }
 
+    /**
+     * Обработка входящих обновлений.
+     *
+     * @param updates Список обновлений.
+     * @return Код подтверждения для обновлений.
+     */
     @Override
     @Transactional
     public int process(final List<Update> updates) {
