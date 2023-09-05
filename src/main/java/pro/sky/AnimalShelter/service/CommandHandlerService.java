@@ -11,14 +11,28 @@ import pro.sky.AnimalShelter.handlers.CommandHandler;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для обработки команд.
+ */
 @Service
 @RequiredArgsConstructor
 public class CommandHandlerService {
 
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
+
+    /**
+     * Список обработчиков команд.
+     */
     private final List<CommandHandler> commandHandlers;
 
-
+    /**
+     * Обработка входящего обновления.
+     *
+     * @param update Обновление от Telegram.
+     */
     public void process(Update update) {
         Message message = update.message();
         if (message != null && message.text() != null) {
@@ -36,6 +50,11 @@ public class CommandHandlerService {
         handleUnknownCommand(update);
     }
 
+    /**
+     * Обработка неизвестной команды.
+     *
+     * @param update Обновление от Telegram.
+     */
     private void handleUnknownCommand(Update update) {
         Message message = update.message();
         telegramBot.execute(new SendMessage(message.chat().id(), "Неизвестная команда"));

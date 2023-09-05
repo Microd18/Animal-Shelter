@@ -10,13 +10,28 @@ import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
+/**
+ * Обработчик команды "/back". Позволяет вернуться в предыдущее меню.
+ */
 @Service
 @RequiredArgsConstructor
 public class BackCommandHandler implements CommandHandler {
 
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
 
+    /**
+     * Обрабатывает команду "/back" и возвращает пользователя в предыдущее меню.
+     *
+     * @param update Объект, содержащий информацию о сообщении пользователя.
+     */
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
@@ -47,13 +62,18 @@ public class BackCommandHandler implements CommandHandler {
                     "Остановить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-        } else if(currentState == STOP){
+        } else if (currentState == STOP) {
             String responseText = "Для использования бота введите команду /start";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         }
     }
 
+    /**
+     * Получает команду, обрабатываемую этим обработчиком.
+     *
+     * @return Команда обработчика.
+     */
     @Override
     public BotCommand getCommand() {
         return BACK;
