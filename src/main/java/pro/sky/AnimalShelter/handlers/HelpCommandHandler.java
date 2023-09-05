@@ -30,7 +30,6 @@ public class HelpCommandHandler implements CommandHandler {
                     "Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            // chatStateHolder.addState(chatId, SHELTER_INFO);
         } else if (currentState == STOP) {
             String responseText = "Для использования бота введите команду /start";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
