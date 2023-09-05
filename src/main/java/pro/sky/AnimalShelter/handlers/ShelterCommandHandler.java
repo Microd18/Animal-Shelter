@@ -10,15 +10,38 @@ import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
+/**
+ * Абстрактный класс для обработки команд в контексте приютов.
+ */
 @Service
 @RequiredArgsConstructor
 public abstract class ShelterCommandHandler implements CommandHandler {
 
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
+
+    /**
+     * Команда, связанная с текущим обработчиком.
+     */
     private final BotCommand selectedCommand;
+
+    /**
+     * Тип приюта, связанный с текущим обработчиком (например, "приют для кошек").
+     */
     private final String shelterType;
 
+    /**
+     * Обрабатывает команду, основываясь на текущем состоянии чата и выбранной команде.
+     *
+     * @param update Объект, представляющий обновление от пользователя.
+     */
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();

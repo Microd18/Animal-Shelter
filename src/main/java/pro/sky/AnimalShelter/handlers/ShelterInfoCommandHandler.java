@@ -10,13 +10,28 @@ import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
+/**
+ * Обработчик команды "/shelter_info".
+ */
 @Service
 @RequiredArgsConstructor
 public class ShelterInfoCommandHandler implements CommandHandler {
 
+    /**
+     * Хранилище состояний чатов.
+     */
     private final ChatStateHolder chatStateHolder;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
 
+    /**
+     * Обрабатывает команду "/shelter_info" в зависимости от текущего состояния чата.
+     *
+     * @param update Объект, представляющий обновление от пользователя.
+     */
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
@@ -49,6 +64,11 @@ public class ShelterInfoCommandHandler implements CommandHandler {
         }
     }
 
+    /**
+     * Возвращает команду, связанную с этим обработчиком ("/shelter_info").
+     *
+     * @return Команда, связанная с обработчиком.
+     */
     @Override
     public BotCommand getCommand() {
         return SHELTER_INFO;
