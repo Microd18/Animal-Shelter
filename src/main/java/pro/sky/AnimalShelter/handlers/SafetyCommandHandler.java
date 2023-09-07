@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.SAFETY;
@@ -22,7 +23,8 @@ public class SafetyCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    //   private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -37,7 +39,8 @@ public class SafetyCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == SHELTER_INFO) {
             String responseText = "Находясь на территории приюта, пожалуйста, соблюдайте наши правила и технику безопасности!\n" +

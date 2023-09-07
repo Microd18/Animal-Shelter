@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.STOP;
@@ -22,7 +23,8 @@ public class StopCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+ //   private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -39,8 +41,10 @@ public class StopCommandHandler implements CommandHandler {
         log.info("Bot received /stop command. Shutting down...");
         Long chatId = update.message().chat().id();
         telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
-        chatStateHolder.addState(chatId, STOP);
-        chatStateHolder.setBotStarted(chatId, false);
+    //    chatStateHolder.addState(chatId, STOP);
+    //    chatStateHolder.setBotStarted(chatId, false);
+        chatStateService.clearChatState(chatId);
+
     }
 
     /**

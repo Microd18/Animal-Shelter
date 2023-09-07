@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.SCHEDULE;
@@ -21,7 +22,8 @@ public class ScheduleCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+//    private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -36,7 +38,8 @@ public class ScheduleCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == SHELTER_INFO) {
             String responseText = "Мы находимя по адресу:\n" +
