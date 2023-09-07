@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers.generalHandlers;
+package pro.sky.AnimalShelter.handlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -6,9 +6,8 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -22,17 +21,13 @@ public class BackCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+   // private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
-
-    /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
 
     /**
      * Обрабатывает команду "/back" и возвращает пользователя в предыдущее меню.
@@ -42,11 +37,14 @@ public class BackCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
-        if (currentState == SHELTER_INFO || currentState == ADOPT) {
-            BotCommand previousState = chatStateHolder.getPreviousState(chatId);
-            var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
+        if (currentState == SHELTER_INFO) {
+    //        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+
+                    var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
             String responseText = "Вы вернулись назад. У вас выбран " + shelterType + ". Чем я могу помочь?\n" +
                     "1. Узнать информацию о приюте (/shelter_info)\n" +
                     "2. Как взять животное из приюта (/adopt)\n" +
@@ -56,9 +54,12 @@ public class BackCommandHandler implements CommandHandler {
                     "6. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            chatStateHolder.addState(chatId, previousState);
+    //        chatStateHolder.addState(chatId, previousState);
+            chatStateService.updateChatState(chatId, previousState);
+    //todo тут будет не до конца корректно, так как шаг назад станет текущим, а два шага назад там и останется
         } else if (currentState == DOG || currentState == CAT) {
-            chatStateHolder.addState(chatId, START);
+    //        chatStateHolder.addState(chatId, START);
+            chatStateService.updateChatState(chatId, START);
             String responseText = "Вы вернулись в главное меню." +
                     "Чтобы начать приключение и найти своего нового друга, просто выбери один из вариантов ниже:\n" +
                     "    Приют для кошек \uD83D\uDC31: Здесь мы заботимся о пушистых котиках всех возрастов и размеров, каждый из которых ищет свой дом и своего человека. " +
@@ -70,7 +71,9 @@ public class BackCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
-            commonUtils.offerToStart(chatId);
+            String responseText = "Для использования бота введите команду /start";
+            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            telegramBot.execute(message);
         }
     }
 

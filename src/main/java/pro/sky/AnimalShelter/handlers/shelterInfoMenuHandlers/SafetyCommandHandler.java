@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
+package pro.sky.AnimalShelter.handlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -6,9 +6,8 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.SAFETY;
 import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
@@ -18,22 +17,19 @@ import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
  */
 @Service
 @RequiredArgsConstructor
+
 public class SafetyCommandHandler implements CommandHandler {
 
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    //   private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
-
-    /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
 
     /**
      * Обрабатывает команду "/safety" в зависимости от текущего состояния чата.
@@ -43,7 +39,8 @@ public class SafetyCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == SHELTER_INFO) {
             String responseText = "Находясь на территории приюта, пожалуйста, соблюдайте наши правила и технику безопасности!\n" +
@@ -71,7 +68,9 @@ public class SafetyCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         } else {
-            commonUtils.offerToStart(chatId);
+            String responseText = "Для использования бота введите команду /start";
+            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            telegramBot.execute(message);
         }
 
     }

@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
+package pro.sky.AnimalShelter.handlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -6,9 +6,8 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -22,17 +21,13 @@ public class ShelterInfoCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+ //   private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
-
-    /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
 
     /**
      * Обрабатывает команду "/shelter_info" в зависимости от текущего состояния чата.
@@ -42,14 +37,16 @@ public class ShelterInfoCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
-            BotCommand previousState = chatStateHolder.getPreviousState(chatId);
-            String menuMessage = currentState == SHELTER_INFO ? "Вы уже в этом меню. " : "";
+    //        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+                    String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
             String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
                     ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
-            String responseText = menuMessage + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
+            String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
                     "1. Описание приюта (/description)\n" +
                     "2. Расписание работы и контакты (/schedule)\n" +
                     "3. Контактные данные охраны для пропуска (/pass)\n" +
@@ -62,12 +59,13 @@ public class ShelterInfoCommandHandler implements CommandHandler {
             telegramBot.execute(message);
 
             if (!(currentState == SHELTER_INFO)) {
-                chatStateHolder.addState(chatId, SHELTER_INFO);
+            //    chatStateHolder.addState(chatId, SHELTER_INFO);
+                chatStateService.updateChatState(chatId, SHELTER_INFO);
             }
         } else if (currentState == STOP) {
-            commonUtils.offerToStart(chatId);
-        } else {
-            commonUtils.sendInvalidCommandResponse(chatId);
+            String responseText = "Для использования бота введите команду /start";
+            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            telegramBot.execute(message);
         }
     }
 
