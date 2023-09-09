@@ -82,6 +82,12 @@ public class ChatState {
         this.user = user;
     }
 
+    public void clearStates() {
+        this.currentState = null;
+        this.stepBackState = null;
+        this.twoStepBackState = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
