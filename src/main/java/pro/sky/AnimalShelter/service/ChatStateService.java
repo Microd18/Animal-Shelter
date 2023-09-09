@@ -79,7 +79,8 @@ public class ChatStateService {
                     logger.error("There is no chatState with chatId = " + chatId);
                     return new ChatStateNotFoundException(chatId);
                 });
-        chatStateRepository.delete(foundChatState);
+        foundChatState.clearStates();
+        chatStateRepository.save(foundChatState);
         return foundChatState;
     }
 }
