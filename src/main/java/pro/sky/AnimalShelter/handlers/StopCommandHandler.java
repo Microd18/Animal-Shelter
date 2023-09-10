@@ -5,8 +5,11 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.exception.ChatStateNotFoundException;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
@@ -31,6 +34,8 @@ public class StopCommandHandler implements CommandHandler {
      */
     private final TelegramBot telegramBot;
 
+    Logger logger = LoggerFactory.getLogger(StopCommandHandler.class);
+
     /**
      * Обрабатывает команду /stop и выключает бота.
      *
@@ -43,7 +48,11 @@ public class StopCommandHandler implements CommandHandler {
         telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
         //    chatStateHolder.addState(chatId, STOP);
         //    chatStateHolder.setBotStarted(chatId, false);
-        chatStateService.clearChatState(chatId);
+        try {
+            chatStateService.clearChatState(chatId);
+        } catch (ChatStateNotFoundException e) {
+            logger.warn("Caught exception in StopCommandHandler" + e.getMessage());
+        }
 
     }
 

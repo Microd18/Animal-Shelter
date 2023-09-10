@@ -13,15 +13,20 @@ public class ChatState {
     private Long id;
 
     private Long chatId;
-    private BotCommand twoStepBackState;
 
+    @Enumerated(EnumType.STRING)
+    private BotCommand twoStepBackState;
+    @Enumerated(EnumType.STRING)
     private BotCommand stepBackState;
+    @Enumerated(EnumType.STRING)
     private BotCommand currentState;
 
-
+/*
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+ */
 
     public ChatState() {
 
@@ -73,7 +78,7 @@ public class ChatState {
     public void setCurrentState(BotCommand currentState) {
         this.currentState = currentState;
     }
-
+/*
     public User getUser() {
         return user;
     }
@@ -81,6 +86,8 @@ public class ChatState {
     public void setUser(User user) {
         this.user = user;
     }
+
+ */
 
     public void clearStates() {
         this.currentState = null;
@@ -93,12 +100,12 @@ public class ChatState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatState chatState = (ChatState) o;
-        return chatId.equals(chatState.chatId) && Objects.equals(twoStepBackState, chatState.twoStepBackState) && Objects.equals(stepBackState, chatState.stepBackState) && currentState.equals(chatState.currentState) && Objects.equals(user, chatState.user);
+        return chatId.equals(chatState.chatId) && Objects.equals(twoStepBackState, chatState.twoStepBackState) && Objects.equals(stepBackState, chatState.stepBackState) && currentState.equals(chatState.currentState);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chatId, twoStepBackState, stepBackState, currentState, user);
+        return Objects.hash(chatId, twoStepBackState, stepBackState, currentState);
     }
 
     @Override

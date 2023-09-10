@@ -17,13 +17,16 @@ public class User {
 
     private Long chatId;
 
-    private String fullName;
+    private String fullname;
     private String phone;
     private String email;
 
+    /*
     @OneToOne
     @JoinColumn(name = "chat_state_id")
     private ChatState chatState;
+
+     */
 
     public User() {
 
@@ -58,12 +61,12 @@ public class User {
         this.chatId = chatId;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFullname(String fullName) {
+        this.fullname = fullname;
     }
 
     public String getPhone() {
@@ -82,6 +85,7 @@ public class User {
         this.email = email;
     }
 
+/*
     public ChatState getChatState() {
         return chatState;
     }
@@ -90,12 +94,14 @@ public class User {
         this.chatState = chatState;
     }
 
+ */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(username, user.username) && chatId.equals(user.chatId) && Objects.equals(fullName, user.fullName) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email);
+        return Objects.equals(username, user.username) && chatId.equals(user.chatId) && Objects.equals(fullname, user.fullname) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email);
     }
     //todo что делать, если в процессе пользования ботом пользователь изменит username?
 
@@ -109,7 +115,7 @@ public class User {
         return "User{id:" + id + " - " + '\'' +
                 "username='" + username + '\'' +
                 ", chatId='" + chatId + '\'' +
-                ", chatState='" + chatState + '\'' +
+         //       ", chatState='" + chatState + '\'' +
                 '}';
     }
 
