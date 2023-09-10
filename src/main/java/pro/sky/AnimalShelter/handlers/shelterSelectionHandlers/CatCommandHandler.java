@@ -18,9 +18,9 @@ public class CatCommandHandler extends ShelterCommandHandler {
     /**
      * Создает экземпляр обработчика команды "/cat".
      *
-     * @param chatStateHolder Хранилище состояний чатов.
+     * @param chatStateHolder  Хранилище состояний чатов.
      * @param chatStateService Сервис для управления очередью состояний чатов.
-     * @param telegramBot     Telegram бот.
+     * @param telegramBot      Telegram бот.
      */
     public CatCommandHandler(ChatStateHolder chatStateHolder, ChatStateService chatStateService, TelegramBot telegramBot) {
         super(chatStateHolder, chatStateService, telegramBot, CAT, "приют для кошек");

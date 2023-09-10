@@ -21,7 +21,7 @@ public class ShelterInfoCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
- //   private final ChatStateHolder chatStateHolder;
+    //   private final ChatStateHolder chatStateHolder;
     private final ChatStateService chatStateService;
 
     /**
@@ -37,13 +37,13 @@ public class ShelterInfoCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
-    //        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+            //        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
             BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
-                    String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
+            String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
             String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
                     ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
             String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
@@ -59,7 +59,7 @@ public class ShelterInfoCommandHandler implements CommandHandler {
             telegramBot.execute(message);
 
             if (!(currentState == SHELTER_INFO)) {
-            //    chatStateHolder.addState(chatId, SHELTER_INFO);
+                //    chatStateHolder.addState(chatId, SHELTER_INFO);
                 chatStateService.updateChatState(chatId, SHELTER_INFO);
             }
         } else if (currentState == STOP) {

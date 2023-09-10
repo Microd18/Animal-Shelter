@@ -23,7 +23,7 @@ public class StopCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
- //   private final ChatStateHolder chatStateHolder;
+    //   private final ChatStateHolder chatStateHolder;
     private final ChatStateService chatStateService;
 
     /**
@@ -41,8 +41,8 @@ public class StopCommandHandler implements CommandHandler {
         log.info("Bot received /stop command. Shutting down...");
         Long chatId = update.message().chat().id();
         telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
-    //    chatStateHolder.addState(chatId, STOP);
-    //    chatStateHolder.setBotStarted(chatId, false);
+        //    chatStateHolder.addState(chatId, STOP);
+        //    chatStateHolder.setBotStarted(chatId, false);
         chatStateService.clearChatState(chatId);
 
     }

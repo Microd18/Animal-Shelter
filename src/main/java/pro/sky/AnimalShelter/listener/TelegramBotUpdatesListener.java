@@ -16,7 +16,7 @@ import java.util.List;
  * Слушатель обновлений Telegram бота.
  */
 @Slf4j
-    @Service
+@Service
 @RequiredArgsConstructor
 public class TelegramBotUpdatesListener implements UpdatesListener {
 

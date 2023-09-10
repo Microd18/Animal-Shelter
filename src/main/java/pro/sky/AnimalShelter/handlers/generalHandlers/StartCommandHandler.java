@@ -24,7 +24,7 @@ public class StartCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-  //  private final ChatStateHolder chatStateHolder;
+    //  private final ChatStateHolder chatStateHolder;
     private final ChatStateService chatStateService;
 
     /**
@@ -43,7 +43,7 @@ public class StartCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
         Long chatId = update.message().chat().id();
-    //    if (chatStateHolder.isBotStarted(chatId)) {
+        //    if (chatStateHolder.isBotStarted(chatId)) {
         if (chatStateService.isBotStarted(chatId)) {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
@@ -64,12 +64,12 @@ public class StartCommandHandler implements CommandHandler {
 
 
         telegramBot.execute(new SendMessage(chatId.toString(), response));
-    //    chatStateHolder.addState(chatId, START);
-    //    chatStateHolder.setBotStarted(chatId, true);
+        //    chatStateHolder.addState(chatId, START);
+        //    chatStateHolder.setBotStarted(chatId, true);
         chatStateService.updateChatState(chatId, START);
 
         String userName = update.message().chat().username();
-        userService.saveUser(userName,chatId);
+        userService.saveUser(userName, chatId);
 
     }
 

@@ -67,7 +67,7 @@ public class ChatStateService {
             foundChatState.setStepBackState(stepBack);
             foundChatState.setCurrentState(state);
             updatedChatState = foundChatState;
-            }
+        }
         chatStateRepository.save(updatedChatState);
         return updatedChatState;
     }

@@ -18,9 +18,9 @@ public class DogCommandHandler extends ShelterCommandHandler {
     /**
      * Создает экземпляр обработчика команды "/dog".
      *
-     * @param chatStateHolder Хранилище состояний чатов.
+     * @param chatStateHolder  Хранилище состояний чатов.
      * @param chatStateService Сервис для управления очередью состояний чатов.
-     * @param telegramBot     Telegram бот.
+     * @param telegramBot      Telegram бот.
      */
     public DogCommandHandler(ChatStateHolder chatStateHolder, ChatStateService chatStateService, TelegramBot telegramBot) {
         super(chatStateHolder, chatStateService, telegramBot, DOG, "приют для собак");

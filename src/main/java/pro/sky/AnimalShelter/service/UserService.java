@@ -18,7 +18,7 @@ public class UserService {
     }
 
     public User saveUser(String userName, Long chatId) {
-        if (userRepository.findByChatId(chatId).isPresent()){
+        if (userRepository.findByChatId(chatId).isPresent()) {
             logger.info("User has been already saved");
             return userRepository.findByChatId(chatId).get();
         } else {
