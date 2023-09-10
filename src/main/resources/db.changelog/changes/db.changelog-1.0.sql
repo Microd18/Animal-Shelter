@@ -41,7 +41,7 @@ CREATE TABLE chat_state (
 
 --changeset koroleva:3_create_table_users
 --precondition onFail:MARK_RAN
---rollback DROP TABLE chat_state
+--rollback DROP TABLE users
 CREATE TABLE users (
     id BIGINT PRIMARY KEY,
     chat_id BIGINT REFERENCES chat_state(chat_id) ON DELETE RESTRICT,
