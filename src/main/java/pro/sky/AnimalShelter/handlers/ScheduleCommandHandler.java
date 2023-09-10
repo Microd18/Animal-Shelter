@@ -38,7 +38,7 @@ public class ScheduleCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == SHELTER_INFO) {

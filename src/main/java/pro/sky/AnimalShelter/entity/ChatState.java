@@ -103,9 +103,9 @@ public class ChatState {
 
     @Override
     public String toString() {
-        return "Состояние чата " + id +":" + '\'' +
-                "2 шага назад - " + twoStepBackState + ", "+
-                "шаг назад - " + stepBackState + ", "+
+        return "Состояние чата " + id + ":" + '\'' +
+                "2 шага назад - " + twoStepBackState + ", " +
+                "шаг назад - " + stepBackState + ", " +
                 "текущее - " + currentState;
     }
 

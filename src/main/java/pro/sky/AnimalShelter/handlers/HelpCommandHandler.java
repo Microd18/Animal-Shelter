@@ -21,7 +21,7 @@ public class HelpCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-  //  private final ChatStateHolder chatStateHolder;
+    //  private final ChatStateHolder chatStateHolder;
     private final ChatStateService chatStateService;
 
     /**
@@ -37,7 +37,7 @@ public class HelpCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
             String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
@@ -50,7 +50,7 @@ public class HelpCommandHandler implements CommandHandler {
                     "Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-        //    chatStateHolder.addState(chatId, SHELTER_INFO);
+            //    chatStateHolder.addState(chatId, SHELTER_INFO);
             chatStateService.updateChatState(chatId, SHELTER_INFO);
         } else if (currentState == STOP) {
             String responseText = "Для использования бота введите команду /start";

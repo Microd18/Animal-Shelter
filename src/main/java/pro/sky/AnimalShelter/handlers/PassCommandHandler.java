@@ -22,7 +22,7 @@ public class PassCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
- //   private final ChatStateHolder chatStateHolder;
+    //   private final ChatStateHolder chatStateHolder;
     private final ChatStateService chatStateService;
 
     /**
@@ -38,7 +38,7 @@ public class PassCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == SHELTER_INFO) {

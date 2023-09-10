@@ -47,7 +47,7 @@ public abstract class ShelterCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-    //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        //    BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == START) {
@@ -60,7 +60,7 @@ public abstract class ShelterCommandHandler implements CommandHandler {
                     "6. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-        //    chatStateHolder.addState(chatId, selectedCommand);
+            //    chatStateHolder.addState(chatId, selectedCommand);
             chatStateService.updateChatState(chatId, selectedCommand);
         } else if (currentState == CAT || currentState == DOG) {
             var shelter = currentState == CAT ? "приют для кошек" : "приют для собак";
