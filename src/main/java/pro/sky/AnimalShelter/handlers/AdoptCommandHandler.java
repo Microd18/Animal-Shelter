@@ -39,9 +39,11 @@ public class AdoptCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
+        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
 
-        if (currentState == DOG) {
-            String responseText = "В этом меню я расскажу вам как взять животное из приюта для собак. Какую информацию вы бы хотели получить?\n" +
+        if (currentState == DOG || (currentState == ADOPT && previousState == DOG)) {
+            String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
+            String responseText = menuMessage + "В этом меню я расскажу вам как взять животное из приюта для собак. Какую информацию вы бы хотели получить?\n" +
                     "1. Правила знакомства с животным (/dating_rules)\n" +
                     "2. Список необходимых документов (/documents)\n" +
                     "3. Рекомендации по транспортировке животного (/transportation_recommendation)\n" +
@@ -57,9 +59,12 @@ public class AdoptCommandHandler implements CommandHandler {
                     "13. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            chatStateHolder.addState(chatId, ADOPT);
-        } else if (currentState == CAT) {
-            String responseText = "В этом меню я расскажу вам как взять животное из приюта для кошек. Какую информацию вы бы хотели получить?\n" +
+            if (!(currentState == ADOPT)) {
+                chatStateHolder.addState(chatId, ADOPT);
+            }
+        } else if (currentState == CAT || (currentState == ADOPT && previousState == CAT)) {
+            String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
+            String responseText = menuMessage + "В этом меню я расскажу вам как взять животное из приюта для кошек. Какую информацию вы бы хотели получить?\n" +
                     "1. Правила знакомства с животным (/dating_rules)\n" +
                     "2. Список необходимых документов (/documents)\n" +
                     "3. Рекомендации по транспортировке животного (/transportation_recommendation)\n" +
@@ -72,7 +77,9 @@ public class AdoptCommandHandler implements CommandHandler {
                     "10. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            chatStateHolder.addState(chatId, ADOPT);
+            if (!(currentState == ADOPT)) {
+                chatStateHolder.addState(chatId, ADOPT);
+            }
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
         } else {

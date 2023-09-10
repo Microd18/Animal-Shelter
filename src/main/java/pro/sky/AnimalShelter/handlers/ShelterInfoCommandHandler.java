@@ -45,10 +45,10 @@ public class ShelterInfoCommandHandler implements CommandHandler {
 
         if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
             BotCommand previousState = chatStateHolder.getPreviousState(chatId);
-            String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
+            String menuMessage = currentState == SHELTER_INFO ? "Вы уже в этом меню. " : "";
             String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
                     ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
-            String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
+            String responseText = menuMessage + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
                     "1. Описание приюта (/description)\n" +
                     "2. Расписание работы и контакты (/schedule)\n" +
                     "3. Контактные данные охраны для пропуска (/pass)\n" +
@@ -65,6 +65,8 @@ public class ShelterInfoCommandHandler implements CommandHandler {
             }
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
+        } else {
+            commonUtils.sendInvalidCommandResponse(chatId);
         }
     }
 
