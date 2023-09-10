@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.PASS;
-import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
 /**
  * Обработчик команды "/pass".
@@ -39,16 +38,32 @@ public class PassCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
         if (currentState == SHELTER_INFO) {
-            String responseText = "Пункт охраны находится по адресу:\n" +
-                    "ул. Аккорган, 5/3, микрорайон Коктал, Астана\n" +
-                    "телефон для связи: +7(999)4567890\n\n" +
-                    "Для получения пропуска при себе иметь: \n" +
-                    "-Удостоверение личности \n" +
-                    "-Документы на автомобиль \n\n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+            if (previousState == DOG) {
+                String responseText = "Пункт охраны приюта для собак находится по адресу:\n" +
+                        "ул. Аккорган, 5/1, микрорайон Коктал, Астана\n" +
+                        "телефон для связи: +7(999)4567890\n\n" +
+                        "Для получения пропуска при себе иметь: \n" +
+                        "-Удостоверение личности \n" +
+                        "-Документы на автомобиль \n\n" +
+                        "Возврат в предыдущее меню (/back)\n" +
+                        "Выключить бота (/stop)";
+                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                telegramBot.execute(message);
+            }
+            if (previousState == CAT) {
+                String responseText = "Пункт охраны приюта для кошек находится по адресу:\n" +
+                        "ул. Кенесары, 52, Астана\n" +
+                        "телефон для связи: +7(888)0987654\n\n" +
+                        "Для получения пропуска при себе иметь: \n" +
+                        "-Удостоверение личности \n" +
+                        "-Документы на автомобиль \n\n" +
+                        "Возврат в предыдущее меню (/back)\n" +
+                        "Выключить бота (/stop)";
+                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                telegramBot.execute(message);
+            }
+
         } else {
             String responseText = "Для использования бота введите команду /start";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
