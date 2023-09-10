@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.CAT;
 
@@ -20,8 +21,8 @@ public class CatCommandHandler extends ShelterCommandHandler {
      * @param chatStateHolder Хранилище состояний чатов.
      * @param telegramBot     Telegram бот.
      */
-    public CatCommandHandler(ChatStateHolder chatStateHolder, TelegramBot telegramBot) {
-        super(chatStateHolder, telegramBot, CAT, "приют для кошек");
+    public CatCommandHandler(ChatStateHolder chatStateHolder, TelegramBot telegramBot, CommonUtils commonUtils) {
+        super(chatStateHolder, telegramBot, commonUtils, CAT, "приют для собак");
     }
 
     /**

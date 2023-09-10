@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -28,6 +29,11 @@ public class HelpCommandHandler implements CommandHandler {
     private final TelegramBot telegramBot;
 
     /**
+     * Экземпляр утилитарного класс для общих методов.
+     */
+    private final CommonUtils commonUtils;
+
+    /**
      * Обрабатывает команду "/help" в зависимости от текущего состояния чата.
      *
      * @param update Объект, представляющий обновление от пользователя.
@@ -36,7 +42,7 @@ public class HelpCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
-        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
+        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO || currentState == ADOPT) {
             String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
             String responseText = "Для связи с волонтером пройдите по ссылке: \n" +
                     "\n" +
@@ -49,9 +55,7 @@ public class HelpCommandHandler implements CommandHandler {
             telegramBot.execute(message);
             chatStateHolder.addState(chatId, SHELTER_INFO);
         } else if (currentState == STOP) {
-            String responseText = "Для использования бота введите команду /start";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            commonUtils.offerToStart(chatId);
         }
     }
 
