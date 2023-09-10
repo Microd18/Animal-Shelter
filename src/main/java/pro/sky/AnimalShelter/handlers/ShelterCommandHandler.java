@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -26,6 +27,11 @@ public abstract class ShelterCommandHandler implements CommandHandler {
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
+
+    /**
+     * Экземпляр утилитарного класс для общих методов.
+     */
+    private final CommonUtils commonUtils;
 
     /**
      * Команда, связанная с текущим обработчиком.
@@ -66,15 +72,9 @@ public abstract class ShelterCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
-            String responseText = "Для использования бота введите команду /start";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            commonUtils.offerToStart(chatId);
         } else {
-            String responseText = "Данная команда не допустима вэтом меню.\n" +
-                    " Для возврата в предыдущее меню введите команду назад /back,\n" +
-                    " Чтобы выключить бота введите команду /stop";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            commonUtils.sendInvalidCommandResponse(chatId);
         }
     }
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -26,6 +27,11 @@ public class PassCommandHandler implements CommandHandler {
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
+
+    /**
+     * Экземпляр утилитарного класс для общих методов.
+     */
+    private final CommonUtils commonUtils;
 
     /**
      * Обрабатывает команду "/pass" в зависимости от текущего состояния чата.
@@ -65,9 +71,7 @@ public class PassCommandHandler implements CommandHandler {
             }
 
         } else {
-            String responseText = "Для использования бота введите команду /start";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            commonUtils.offerToStart(chatId);
         }
 
     }

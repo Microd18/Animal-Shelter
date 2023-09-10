@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -28,6 +29,11 @@ public class BackCommandHandler implements CommandHandler {
     private final TelegramBot telegramBot;
 
     /**
+     * Экземпляр утилитарного класс для общих методов.
+     */
+    private final CommonUtils commonUtils;
+
+    /**
      * Обрабатывает команду "/back" и возвращает пользователя в предыдущее меню.
      *
      * @param update Объект, содержащий информацию о сообщении пользователя.
@@ -37,7 +43,7 @@ public class BackCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
 
-        if (currentState == SHELTER_INFO) {
+        if (currentState == SHELTER_INFO || currentState == ADOPT) {
             BotCommand previousState = chatStateHolder.getPreviousState(chatId);
             var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
             String responseText = "Вы вернулись назад. У вас выбран " + shelterType + ". Чем я могу помочь?\n" +
@@ -63,9 +69,7 @@ public class BackCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
-            String responseText = "Для использования бота введите команду /start";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            commonUtils.offerToStart(chatId);
         }
     }
 
