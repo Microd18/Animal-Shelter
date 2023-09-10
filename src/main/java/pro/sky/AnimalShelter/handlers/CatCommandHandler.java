@@ -22,7 +22,7 @@ public class CatCommandHandler extends ShelterCommandHandler {
      * @param telegramBot     Telegram бот.
      */
     public CatCommandHandler(ChatStateHolder chatStateHolder, TelegramBot telegramBot, CommonUtils commonUtils) {
-        super(chatStateHolder, telegramBot, commonUtils, CAT, "приют для собак");
+        super(chatStateHolder, telegramBot, commonUtils, CAT, "приют для кошек");
     }
 
     /**
