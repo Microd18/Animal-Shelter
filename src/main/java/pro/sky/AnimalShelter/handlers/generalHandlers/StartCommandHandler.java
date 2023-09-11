@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers;
+package pro.sky.AnimalShelter.handlers.generalHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
