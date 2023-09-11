@@ -13,7 +13,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
   liquibase:
     change-log: "db.changelog/db.changelog.yml"
