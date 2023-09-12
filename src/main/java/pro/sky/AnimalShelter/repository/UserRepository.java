@@ -7,5 +7,5 @@ import pro.sky.AnimalShelter.entity.User;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByChatId(Long chatId);
+    Optional<User> findByChatStateId(Long chatStateId);
 }

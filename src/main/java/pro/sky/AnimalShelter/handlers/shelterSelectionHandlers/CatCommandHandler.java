@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers;
+package pro.sky.AnimalShelter.handlers.shelterSelectionHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import org.springframework.stereotype.Service;

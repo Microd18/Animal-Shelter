@@ -5,7 +5,7 @@
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'chat_state';
 
-CREATE TABLE IF NOT EXISTS chat_state (
+create TABLE IF NOT EXISTS chat_state (
     id                      BIGSERIAL      PRIMARY KEY,
     chat_id                 BIGINT,
     current_state           VARCHAR(255),
@@ -19,10 +19,17 @@ CREATE TABLE IF NOT EXISTS chat_state (
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'users';
 
-CREATE TABLE IF NOT EXISTS users (
+create TABLE IF NOT EXISTS users (
     id                      BIGSERIAL      PRIMARY KEY,
     email                   VARCHAR(255),
     phone                   VARCHAR(255),
     username                VARCHAR(255),
     chat_state_id           BIGINT
 );
+
+--changeset koroleva:20230912-1 failOnError:true
+--comment: RENAME is_bot_started in chat_state TABLE
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:t select exists (select column_name from information_schema.columns where table_name = 'chat_state' and column_name = 'is_bot_started');
+alter table chat_state
+rename COLUMN is_bot_started TO bot_started;

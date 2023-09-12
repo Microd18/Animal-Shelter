@@ -10,14 +10,9 @@ spring:
     password: ${DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-
   liquibase:
     change-log: "db.changelog/db.changelog.yml"
 
 telegram:
   bot:
-    token: telegram.bot.token
+    token: 6697356066:AAHvg7o-LKAYj8aU7qnmmC-En0QLp4QA5S8

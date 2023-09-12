@@ -1,5 +1,7 @@
 package pro.sky.AnimalShelter.service;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,19 +13,20 @@ import pro.sky.AnimalShelter.repository.ChatStateRepository;
 /**
  * Сервис для управления очередью состояний чата.
  */
+@RequiredArgsConstructor
 @Service
 public class ChatStateService {
     private final ChatStateRepository chatStateRepository;
     Logger logger = LoggerFactory.getLogger(ChatStateService.class);
 
-    public ChatStateService(ChatStateRepository chatStateRepository) {
-        this.chatStateRepository = chatStateRepository;
-    }
-
     public Boolean isBotStarted(Long chatId) {
         logger.info("isBotStarted method was invoked");
-        Boolean result;
-        return chatStateRepository.findByChatId(chatId).isPresent();
+        ChatState foundChatState = chatStateRepository.findByChatId(chatId)
+                .orElseThrow(() -> {
+                    logger.error("There is no chatState with chatId = " + chatId);
+                    return new ChatStateNotFoundException(chatId);
+                });
+        return foundChatState.isBotStarted();
     }
 
     public BotCommand getCurrentStateByChatId(Long chatId) {
@@ -72,14 +75,14 @@ public class ChatStateService {
         return updatedChatState;
     }
 
-    public ChatState clearChatState(Long chatId) {
-        logger.info("clearChatState method was invoked");
+    public ChatState stopBot(Long chatId) {
+        logger.info("stopBot method was invoked");
         ChatState foundChatState = chatStateRepository.findByChatId(chatId)
                 .orElseThrow(() -> {
                     logger.error("There is no chatState with chatId = " + chatId);
                     return new ChatStateNotFoundException(chatId);
                 });
-        foundChatState.clearStates();
+        foundChatState.setBotStarted(false);
         chatStateRepository.save(foundChatState);
         return foundChatState;
     }

@@ -35,6 +35,6 @@ public class ChatState extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "is_bot_started")
-    private boolean isBotStarted;
+    @Column(name = "bot_started")
+    private boolean botStarted;
 }
