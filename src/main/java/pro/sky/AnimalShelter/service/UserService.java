@@ -1,14 +1,11 @@
 package pro.sky.AnimalShelter.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.AnimalShelter.entity.ChatState;
 import pro.sky.AnimalShelter.entity.User;
 import pro.sky.AnimalShelter.exception.ChatStateNotFoundException;
-import pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers.SafetyCommandHandler;
 import pro.sky.AnimalShelter.repository.ChatStateRepository;
 import pro.sky.AnimalShelter.repository.UserRepository;
 

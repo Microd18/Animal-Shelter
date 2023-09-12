@@ -11,7 +11,6 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.exception.ChatStateNotFoundException;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.SAFETY;
 import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
