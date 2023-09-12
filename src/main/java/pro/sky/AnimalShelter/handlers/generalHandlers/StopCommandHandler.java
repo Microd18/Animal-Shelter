@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers.generalHandlers;
+package pro.sky.AnimalShelter.handlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
