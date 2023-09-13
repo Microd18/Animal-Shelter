@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
@@ -15,10 +15,11 @@ import static pro.sky.AnimalShelter.enums.BotCommand.*;
 @Service
 @RequiredArgsConstructor
 public class DatingRulesHandler implements CommandHandler {
+
     /**
-     * Хранилище состояний чатов.
+     * Сервис для управления очередью состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -38,8 +39,8 @@ public class DatingRulesHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
-        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 
         if (currentState == DOG || (currentState == ADOPT && previousState == DOG) || currentState == DATING_RULES  ) {
             String menuMessage = currentState == DATING_RULES ? "               Вы уже в этом меню. \n" : "";
@@ -58,7 +59,7 @@ public class DatingRulesHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == DATING_RULES)) {
-                chatStateHolder.addState(chatId, DATING_RULES);
+                chatStateService.updateChatState(chatId, DATING_RULES);
             }
         } else if (currentState == CAT ||(currentState == ADOPT && previousState == CAT) || currentState == DATING_RULES  ) {
             String menuMessage = currentState == DATING_RULES ? "Вы уже в этом меню. " : "";
@@ -76,7 +77,7 @@ public class DatingRulesHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == DATING_RULES)) {
-                chatStateHolder.addState(chatId, DATING_RULES);
+                chatStateService.updateChatState(chatId, DATING_RULES);
             }
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);

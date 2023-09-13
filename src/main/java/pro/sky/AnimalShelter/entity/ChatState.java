@@ -31,8 +31,7 @@ public class ChatState extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BotCommand currentState;
 
-    @OneToOne(mappedBy = "chatState")
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "chatState", cascade = CascadeType.ALL)
     private User user;
 
     @Column(name = "bot_started")
