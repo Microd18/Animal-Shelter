@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
@@ -17,9 +17,9 @@ import static pro.sky.AnimalShelter.enums.BotCommand.*;
 public class AdoptCommandHandler implements CommandHandler {
 
     /**
-     * Хранилище состояний чатов.
+     * Сервис для управления очередью состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -39,8 +39,8 @@ public class AdoptCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
-        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 
         if (currentState == DOG || (currentState == ADOPT && previousState == DOG)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
@@ -61,7 +61,7 @@ public class AdoptCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == ADOPT)) {
-                chatStateHolder.addState(chatId, ADOPT);
+                chatStateService.updateChatState(chatId, ADOPT);
             }
         } else if (currentState == CAT || (currentState == ADOPT && previousState == CAT)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
@@ -79,7 +79,7 @@ public class AdoptCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == ADOPT)) {
-                chatStateHolder.addState(chatId, ADOPT);
+                chatStateService.updateChatState(chatId, ADOPT);
             }
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);

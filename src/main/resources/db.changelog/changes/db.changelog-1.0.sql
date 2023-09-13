@@ -7,11 +7,11 @@
 
 create TABLE IF NOT EXISTS chat_state (
     id                      BIGSERIAL      PRIMARY KEY,
-    chat_id                 BIGINT,
+    chat_id                 BIGINT         UNIQUE,
     current_state           VARCHAR(255),
     step_back_state         VARCHAR(255),
     two_step_back_state     VARCHAR(255),
-    is_bot_started          BOOLEAN
+    bot_started          BOOLEAN
 );
 
 --changeset pruglo-ve:20230911-2 failOnError:true
@@ -25,11 +25,5 @@ create TABLE IF NOT EXISTS users (
     phone                   VARCHAR(255),
     username                VARCHAR(255),
     chat_state_id           BIGINT
+        CONSTRAINT fk_users_chat_state REFERENCES chat_state (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
---changeset koroleva:20230912-1 failOnError:true
---comment: RENAME is_bot_started in chat_state TABLE
---preconditions onFail:MARK_RAN onError:HALT
---precondition-sql-check expectedResult:t select exists (select column_name from information_schema.columns where table_name = 'chat_state' and column_name = 'is_bot_started');
-alter table chat_state
-rename COLUMN is_bot_started TO bot_started;
