@@ -42,7 +42,7 @@ public class DatingRulesHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 
-        if (currentState == DOG || (currentState == ADOPT && previousState == DOG) || currentState == DATING_RULES  ) {
+        if ((currentState == DOG || currentState ==ADOPT) ||(currentState == DATING_RULES && previousState == ADOPT)) {
             String menuMessage = currentState == DATING_RULES ? "               Вы уже в этом меню. \n" : "";
             String responseText = menuMessage + "      В этом меню я расскажу Вам правила знакомства с собакой. \n" +
                     "             \n" +
@@ -61,7 +61,7 @@ public class DatingRulesHandler implements CommandHandler {
             if (!(currentState == DATING_RULES)) {
                 chatStateService.updateChatState(chatId, DATING_RULES);
             }
-        } else if (currentState == CAT ||(currentState == ADOPT && previousState == CAT) || currentState == DATING_RULES  ) {
+        } else if (currentState == CAT || currentState ==ADOPT || (currentState == DATING_RULES && previousState == ADOPT)) {
             String menuMessage = currentState == DATING_RULES ? "Вы уже в этом меню. " : "";
             String responseText = menuMessage + "В этом меню я расскажу Вам правила знакомства с кошкой. \n" +
                     "  Как бы удивительно это ни звучало, но многие допускают массу ошибок, когда начинают гладить кошек. Правильно это делать надо так:\n" +
