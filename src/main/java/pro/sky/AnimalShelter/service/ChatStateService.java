@@ -20,12 +20,14 @@ public class ChatStateService {
 
     public Boolean isBotStarted(Long chatId) {
         logger.info("isBotStarted method was invoked");
-        ChatState foundChatState = chatStateRepository.findByChatId(chatId)
-                .orElseThrow(() -> {
-                    logger.error("There is no chatState with chatId = " + chatId);
-                    return new ChatStateNotFoundException(chatId);
-                });
-        return foundChatState.isBotStarted();
+        if (chatStateRepository.findByChatId(chatId).isEmpty()) {
+            return false;
+        } else {
+            ChatState foundChatState = chatStateRepository.findByChatId(chatId).get();
+            return foundChatState.isBotStarted();
+        }
+
+
     }
 
     public BotCommand getCurrentStateByChatId(Long chatId) {
@@ -61,6 +63,7 @@ public class ChatStateService {
         if (chatStateRepository.findByChatId(chatId).isEmpty()) {
             updatedChatState.setChatId(chatId);
             updatedChatState.setCurrentState(state);
+            updatedChatState.setBotStarted(true);
         } else {
             ChatState foundChatState = chatStateRepository.findByChatId(chatId).get();
             BotCommand stepBack = foundChatState.getCurrentState();
@@ -82,7 +85,11 @@ public class ChatStateService {
                     return new ChatStateNotFoundException(chatId);
                 });
         foundChatState.setBotStarted(false);
+        foundChatState.setCurrentState(null);
+        foundChatState.setStepBackState(null);
+        foundChatState.setTwoStepBackState(null);
         chatStateRepository.save(foundChatState);
         return foundChatState;
     }
+
 }
