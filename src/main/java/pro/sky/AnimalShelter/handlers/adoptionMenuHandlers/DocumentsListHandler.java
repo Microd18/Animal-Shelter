@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
@@ -16,9 +16,9 @@ import static pro.sky.AnimalShelter.enums.BotCommand.*;
 @RequiredArgsConstructor
 public class DocumentsListHandler implements CommandHandler {
     /**
-     * Хранилище состояний чатов.
+     * Сервис для управления очередью состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -38,10 +38,10 @@ public class DocumentsListHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
-        BotCommand previousState = chatStateHolder.getPreviousState(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 
-        if (currentState == DOG || currentState == CAT || currentState == ADOPT || (currentState == DOCUMENTS && previousState==ADOPT)) {
+        if (currentState == DOG || currentState == CAT || currentState == ADOPT || (currentState == DOCUMENTS && previousState == ADOPT)) {
             String menuMessage = currentState == DOCUMENTS ? "Вы уже в этом меню. \n" : "";
             String responseText = menuMessage + "     В этом меню я расскажу какие документы нужны, чтобы взять животное из приюта.\n" +
                     "             \n" +
@@ -55,7 +55,7 @@ public class DocumentsListHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == DOCUMENTS)) {
-                chatStateHolder.addState(chatId, DOCUMENTS);
+                chatStateService.updateChatState(chatId, DOCUMENTS);
             }
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
