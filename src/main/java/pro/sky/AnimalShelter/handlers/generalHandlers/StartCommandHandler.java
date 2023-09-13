@@ -5,10 +5,14 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.exception.ChatStateNotFoundException;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.service.ChatStateService;
+import pro.sky.AnimalShelter.service.UserService;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
 
@@ -23,12 +27,17 @@ public class StartCommandHandler implements CommandHandler {
     /**
      * Хранилище состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    //  private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
+
+    private final UserService userService;
+
+    Logger logger = LoggerFactory.getLogger(StartCommandHandler.class);
 
     /**
      * Обрабатывает команду "/start" и инициализирует бота.
@@ -39,7 +48,8 @@ public class StartCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
         Long chatId = update.message().chat().id();
-        if (chatStateHolder.isBotStarted(chatId)) {
+        //    if (chatStateHolder.isBotStarted(chatId)) {
+        if (chatStateService.isBotStarted(chatId)) {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
         }
@@ -59,8 +69,18 @@ public class StartCommandHandler implements CommandHandler {
 
 
         telegramBot.execute(new SendMessage(chatId.toString(), response));
-        chatStateHolder.addState(chatId, START);
-        chatStateHolder.setBotStarted(chatId, true);
+        //    chatStateHolder.addState(chatId, START);
+        //    chatStateHolder.setBotStarted(chatId, true);
+        chatStateService.updateChatState(chatId, START);
+
+        String userName = update.message().chat().username();
+        try {
+            userService.saveUser(userName, chatId);
+        } catch (ChatStateNotFoundException e) {
+            logger.error("User is not saved. Caught exception in StartCommandHandler" + e.getMessage());
+        }
+
+
     }
 
     /**
