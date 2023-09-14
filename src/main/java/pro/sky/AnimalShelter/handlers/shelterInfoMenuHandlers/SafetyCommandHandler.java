@@ -11,8 +11,7 @@ import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.SAFETY;
-import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
 /**
  * Обработчик команды "/safety".
@@ -71,8 +70,10 @@ public class SafetyCommandHandler implements CommandHandler {
 
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-        } else {
+        } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
+        } else {
+            commonUtils.sendInvalidCommandResponse(chatId);
         }
     }
 

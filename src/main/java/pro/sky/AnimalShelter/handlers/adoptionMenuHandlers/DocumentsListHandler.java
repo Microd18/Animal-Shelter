@@ -31,7 +31,7 @@ public class DocumentsListHandler implements CommandHandler {
     private final CommonUtils commonUtils;
 
     /**
-     * Обрабатывает команду "/adopt" в зависимости от текущего состояния чата.
+     * Обрабатывает команду "/documents" в зависимости от текущего состояния чата.
      *
      * @param update Объект, представляющий обновление от пользователя.
      */
@@ -67,6 +67,6 @@ public class DocumentsListHandler implements CommandHandler {
 
     @Override
     public BotCommand getCommand() {
-        return BotCommand.DOCUMENTS;
+        return DOCUMENTS;
     }
 }
