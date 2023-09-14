@@ -1,12 +1,9 @@
-package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
+package pro.sky.AnimalShelter.handlers.adoptionMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
@@ -15,18 +12,18 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
-/**
- * Обработчик команды "/schedule".
- */
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class ScheduleCommandHandler implements CommandHandler {
-
+public class RefusalReasonHandler implements CommandHandler {
     /**
      * Сервис для управления очередью состояний чатов.
      */
     private final ChatStateService chatStateService;
+
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
+    private final TelegramBot telegramBot;
 
     /**
      * Экземпляр утилитарного класс для общих методов.
@@ -34,14 +31,7 @@ public class ScheduleCommandHandler implements CommandHandler {
     private final CommonUtils commonUtils;
 
     /**
-     * Экземпляр Telegram-бота для отправки сообщений.
-     */
-    private final TelegramBot telegramBot;
-
-    Logger logger = LoggerFactory.getLogger(ScheduleCommandHandler.class);
-
-    /**
-     * Обрабатывает команду "/schedule" в зависимости от текущего состояния чата.
+     * Обрабатывает команду "/refusal_reason" в зависимости от текущего состояния чата.
      *
      * @param update Объект, представляющий обновление от пользователя.
      */
@@ -49,22 +39,19 @@ public class ScheduleCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        if (currentState == SHELTER_INFO) {
-            String responseText = "Мы находимя по адресу:\n" +
-                    "ул. Аккорган, 5В, микрорайон Коктал, Астана\n" +
-                    "телефон для связи: +7(123)4567890\n" +
-                    "Расписание работы приюта: \n" +
-                    "Понедельник 09:00–16:00 \n" +
-                    "Вторник 09:00–16:00 \n" +
-                    "Среда 09:00–16:00 \n" +
-                    "Четверг 09:00–16:00 \n" +
-                    "Пятница 09:00–16:00 \n" +
-                    "Суббота 09:00–16:00 \n" +
-                    "Воскресенье 09:00–16:00\n" +
+        if (currentState == ADOPT) {
+            String responseText = "    5 причин отказа забрать питомца из приюта:\n" +
+                    "1.Большое количество животных дома.\n" +
+                    "2.Нестабильные отношения в семье\n" +
+                    "3.Наличие маленьких детей\n" +
+                    "4.Съемное жилье\n" +
+                    "5.Животное в подарок или для работы\n" +
+                    "             \n" +
                     "Возврат в предыдущее меню (/back)\n" +
                     "Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
+
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
         } else {
@@ -73,12 +60,13 @@ public class ScheduleCommandHandler implements CommandHandler {
     }
 
     /**
-     * Возвращает команду, связанную с этим обработчиком ("/schedule").
+     * Возвращает команду, связанную с этим обработчиком ("/refusal_reason").
      *
      * @return Команда, связанная с обработчиком.
      */
+
     @Override
     public BotCommand getCommand() {
-        return SCHEDULE;
+        return REFUSAL_REASON;
     }
 }
