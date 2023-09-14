@@ -39,11 +39,8 @@ public class DocumentsListHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
-
-        if (currentState == DOG || currentState == CAT || currentState == ADOPT || (currentState == DOCUMENTS && previousState == ADOPT)) {
-            String menuMessage = currentState == DOCUMENTS ? "Вы уже в этом меню. \n" : "";
-            String responseText = menuMessage + "     В этом меню я расскажу какие документы нужны, чтобы взять животное из приюта.\n" +
+        if (currentState == ADOPT) {
+            String responseText = "     В этом меню я расскажу какие документы нужны, чтобы взять животное из приюта.\n" +
                     "             \n" +
                     "  Чтобы забрать животное из приюта, необходимо при себе необходимо иметь копию паспорта и справку с места жительства.\n " +
                     "Приют пристраивает только обработанных от паразитов, вакцинированных и стерилизованных животных.\n" +
@@ -54,9 +51,7 @@ public class DocumentsListHandler implements CommandHandler {
                     "Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            if (!(currentState == DOCUMENTS)) {
-                chatStateService.updateChatState(chatId, DOCUMENTS);
-            }
+
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
         } else {
