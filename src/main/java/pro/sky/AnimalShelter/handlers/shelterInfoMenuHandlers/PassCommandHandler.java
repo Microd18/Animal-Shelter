@@ -73,9 +73,10 @@ public class PassCommandHandler implements CommandHandler {
                 telegramBot.execute(message);
             }
 
-        } else {
+        } else if (currentState == STOP){
             commonUtils.offerToStart(chatId);
-
+        } else {
+            commonUtils.sendInvalidCommandResponse(chatId);
         }
     }
 
