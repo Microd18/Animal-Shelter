@@ -8,6 +8,9 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 
 import javax.persistence.*;
 
+/**
+ * Сущность, представляющая состояние чата.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,24 +19,31 @@ import javax.persistence.*;
 @Table(name = "chat_state")
 public class ChatState extends BaseEntity {
 
-    @Column(name = "chat_id")
-    private Long chatId;
-
+    /**
+     * Состояние два шага назад.
+     */
     @Column
     @Enumerated(EnumType.STRING)
     private BotCommand twoStepBackState;
 
+    /**
+     * Состояние шага назад.
+     */
     @Column
     @Enumerated(EnumType.STRING)
     private BotCommand stepBackState;
 
+    /**
+     * Текущее состояние.
+     */
     @Column
     @Enumerated(EnumType.STRING)
     private BotCommand currentState;
 
-    @OneToOne(mappedBy = "chatState", cascade = CascadeType.ALL)
-    private User user;
-
-    @Column(name = "bot_started")
-    private boolean botStarted;
+    /**
+     * Чат, связанный с этим состоянием.
+     */
+    @OneToOne()
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 }
