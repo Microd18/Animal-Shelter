@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Сущность, представляющая пользователя.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -15,17 +18,28 @@ import javax.persistence.*;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-
+    /**
+     * Имя пользователя.
+     */
     @Column(name = "username")
     private String username;
 
+    /**
+     * Номер телефона пользователя.
+     */
     @Column(name = "phone")
     private String phone;
 
+    /**
+     * Адрес электронной почты пользователя.
+     */
     @Column(name = "email")
     private String email;
 
+    /**
+     * Чат, связанный с пользователем.
+     */
     @OneToOne()
-    @JoinColumn(name = "chat_state_id")
-    private ChatState chatState;
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 }

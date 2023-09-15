@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.service.ChatService;
 import pro.sky.AnimalShelter.service.ChatStateService;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
@@ -25,6 +26,8 @@ public class StartCommandHandler implements CommandHandler {
      */
     private final ChatStateService chatStateService;
 
+    private final ChatService chatService;
+
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
@@ -39,7 +42,7 @@ public class StartCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
         Long chatId = update.message().chat().id();
-        if (chatStateService.isBotStarted(chatId)) {
+        if (chatService.isBotStarted(chatId)) {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
         }

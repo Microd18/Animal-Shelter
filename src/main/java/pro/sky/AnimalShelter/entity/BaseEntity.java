@@ -6,12 +6,18 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Базовый класс для сущностей, содержащих идентификатор.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
 public class BaseEntity {
 
+    /**
+     * Уникальный идентификатор сущности.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", updatable = false, nullable = false)
