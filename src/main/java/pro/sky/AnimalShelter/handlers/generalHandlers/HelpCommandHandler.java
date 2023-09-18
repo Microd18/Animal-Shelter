@@ -47,7 +47,7 @@ public class HelpCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
+        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO || currentState == ADOPT ) {
             String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
             String responseText = "Для связи с волонтером пройдите по ссылке: \n" +
                     "\n" +
