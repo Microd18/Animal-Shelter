@@ -81,7 +81,6 @@ public class ChatStateServiceTest {
     public void updateChatStateTest() {
         Chat chat1 = new Chat(1L, false, null, null);
         Chat chat2 = new Chat(2L, true, null, null);
-        Chat chat3 = new Chat(3L, false, null, null);
 
         ChatState chatState1 = new ChatState(DOG, SHELTER_INFO, HELP, chat1);
         ChatState chatState2 = new ChatState(CAT, CAT, CAT, chat1);
