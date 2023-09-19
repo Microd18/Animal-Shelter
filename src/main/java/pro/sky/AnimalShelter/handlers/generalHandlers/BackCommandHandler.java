@@ -45,6 +45,25 @@ public class BackCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+        BotCommand lastState = chatStateService.getLastStateByChatId(chatId);
+        if (currentState == CONTACT) {
+            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            String shelterType = lastState == DOG ? "приюте для собак" : "приюте для кошек";
+            String responseText = "Вы вернулись назад. Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
+                    "1. Описание приюта (/description)\n" +
+                    "2. Расписание работы и контакты (/schedule)\n" +
+                    "3. Контактные данные охраны для пропуска (/pass)\n" +
+                    "4. Техника безопасности на территории приюта (/safety)\n" +
+                    "5. Оставить контактные данные (/contact)\n" +
+                    "6. Позвать волонтера (/help)\n" +
+                    "7. Назад (/back)\n" +
+                    "8. Выключить бота (/stop)";
+            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            telegramBot.execute(message);
+            chatStateService.updateChatState(chatId, START);
+            chatStateService.updateChatState(chatId, lastState);
+            chatStateService.updateChatState(chatId, previousState);
+        }
         if (currentState == SHELTER_INFO || currentState == ADOPT) {
             BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 

@@ -9,10 +9,7 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.repository.ChatStateRepository;
 
-import java.util.Optional;
-
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
-import static pro.sky.AnimalShelter.enums.BotCommand.STOP;
 
 /**
  * Сервис для управления очередью состояний чата.
@@ -39,14 +36,11 @@ public class ChatStateService {
      * @return Текущее состояние чата или {@code STOP}, если чат не существует или бот не запущен.
      */
     public BotCommand getCurrentStateByChatId(Long chatId) {
-        log.info("getCurrentStateByChatId method was invoked");
-        var foundChat = chatRepository.findByChatId(chatId);
-        if (foundChat.isEmpty()) {
-            return STOP;
-        } else if (!foundChat.get().isBotStarted()) {
-            return STOP;
-        }
-        return chatStateRepository.findByChatId(foundChat.get().getId()).get().getCurrentState();
+        return chatRepository.findByChatId(chatId)
+                .filter(Chat::isBotStarted)
+                .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
+                .map(ChatState::getCurrentState)
+                .orElse(BotCommand.STOP);
     }
 
     /**
@@ -56,18 +50,27 @@ public class ChatStateService {
      * @return Предыдущее состояние чата или {@code STOP}, если чат не существует или бот не запущен.
      */
     public BotCommand getPreviousStateByChatId(Long chatId) {
-        log.info("getCurrentStateByChatId method was invoked");
-        Optional<Chat> foundChat = chatRepository.findByChatId(chatId);
-        if (foundChat.isPresent()) {
-            ChatState foundChatState = chatStateRepository.findByChatId(foundChat.get().getId()).orElse(null);
-            if (foundChatState == null) {
-                return STOP;
-            } else {
-                return foundChatState.getStepBackState();
-            }
-        } else {
-            return STOP;
-        }
+        log.info("getPreviousStateByChatId method was invoked");
+        return chatRepository.findByChatId(chatId)
+                .map(foundChat -> chatStateRepository.findByChatId(foundChat.getId())
+                        .map(ChatState::getStepBackState)
+                        .orElse(BotCommand.STOP))
+                .orElse(BotCommand.STOP);
+    }
+
+    /**
+     * Получает последнее состояние чата по его идентификатору.
+     *
+     * @param chatId Идентификатор чата.
+     * @return Предыдущее состояние чата или {@code STOP}, если чат не существует или бот не запущен.
+     */
+    public BotCommand getLastStateByChatId(Long chatId) {
+        log.info("getLastStateByChatId method was invoked");
+        return chatRepository.findByChatId(chatId)
+                .map(foundChat -> chatStateRepository.findByChatId(foundChat.getId())
+                        .map(ChatState::getTwoStepBackState)
+                        .orElse(BotCommand.STOP))
+                .orElse(BotCommand.STOP);
     }
 
     /**
@@ -86,23 +89,23 @@ public class ChatStateService {
             Chat savedChat = chatRepository.save(updatedChat);
             updatedChatState.setCurrentState(state);
             updatedChatState.setChat(savedChat);
+            chatStateRepository.save(updatedChatState);
         } else {
-            ChatState foundChatState = chatStateRepository.findByChatId(chatRepository.findByChatId(chatId).get().getId()).get();
-            Chat foundChat = chatRepository.findByChatId(chatId).get();
-            BotCommand stepBack = foundChatState.getCurrentState();
-            BotCommand twoStepBack = foundChatState.getStepBackState();
-            foundChatState.setTwoStepBackState(twoStepBack);
-            foundChatState.setStepBackState(stepBack);
-            foundChatState.setCurrentState(state);
-            if (state == START) {
-                foundChat.setBotStarted(true);
-                chatRepository.save(foundChat);
-            }
-            updatedChatState = foundChatState;
+            chatRepository.findByChatId(chatId).ifPresent(foundChat ->
+                    chatStateRepository.findByChatId(foundChat.getId()).ifPresent(foundChatState -> {
+                        BotCommand stepBack = foundChatState.getCurrentState();
+                        BotCommand twoStepBack = foundChatState.getStepBackState();
+                        foundChatState.setTwoStepBackState(twoStepBack);
+                        foundChatState.setStepBackState(stepBack);
+                        foundChatState.setCurrentState(state);
+                        if (state == START) {
+                            foundChat.setBotStarted(true);
+                            chatRepository.save(foundChat);
+                        }
+                        chatStateRepository.save(foundChatState);
+                    }));
         }
-        chatStateRepository.save(updatedChatState);
     }
-
 
     /**
      * Останавливает бота в указанном чате.
@@ -111,15 +114,14 @@ public class ChatStateService {
      */
     public void stopBot(Long chatId) {
         log.info("stopBot method was invoked");
-        Chat foundChat = chatRepository.findByChatId(chatId).orElse(null);
-        if (foundChat != null) {
-            ChatState foundChatState = chatStateRepository.findByChatId(foundChat.getId()).get();
-            foundChat.setBotStarted(false);
-            foundChatState.setCurrentState(null);
-            foundChatState.setStepBackState(null);
-            foundChatState.setTwoStepBackState(null);
-            chatRepository.save(foundChat);
-            chatStateRepository.save(foundChatState);
-        }
+        chatRepository.findByChatId(chatId).ifPresent(foundChat ->
+                chatStateRepository.findByChatId(foundChat.getId()).ifPresent(foundChatState -> {
+                    foundChat.setBotStarted(false);
+                    foundChatState.setCurrentState(null);
+                    foundChatState.setStepBackState(null);
+                    foundChatState.setTwoStepBackState(null);
+                    chatRepository.save(foundChat);
+                    chatStateRepository.save(foundChatState);
+                }));
     }
 }
