@@ -4,8 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
@@ -35,8 +33,6 @@ public class HelpCommandHandler implements CommandHandler {
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
-
-    Logger logger = LoggerFactory.getLogger(HelpCommandHandler.class);
 
     /**
      * Обрабатывает команду "/help" в зависимости от текущего состояния чата.
