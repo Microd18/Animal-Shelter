@@ -1,28 +1,35 @@
-package pro.sky.AnimalShelter.handlers;
+package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.service.ChatStateService;
+import pro.sky.AnimalShelter.utils.CommonUtils;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.SAFETY;
-import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
 /**
  * Обработчик команды "/safety".
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-
 public class SafetyCommandHandler implements CommandHandler {
 
     /**
-     * Хранилище состояний чатов.
+     * Сервис для управления очередью состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
+
+    /**
+     * Экземпляр утилитарного класс для общих методов.
+     */
+    private final CommonUtils commonUtils;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -37,8 +44,7 @@ public class SafetyCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
-        BotCommand currentState = chatStateHolder.getCurrentStateById(chatId);
-
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == SHELTER_INFO) {
             String responseText = "Находясь на территории приюта, пожалуйста, соблюдайте наши правила и технику безопасности!\n" +
                     "\n" +
@@ -64,12 +70,11 @@ public class SafetyCommandHandler implements CommandHandler {
 
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
+        } else if (currentState == STOP) {
+            commonUtils.offerToStart(chatId);
         } else {
-            String responseText = "Для использования бота введите команду /start";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+            commonUtils.sendInvalidCommandResponse(chatId);
         }
-
     }
 
     /**

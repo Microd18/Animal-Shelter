@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.handlers;
+package pro.sky.AnimalShelter.handlers.generalHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.state.ChatStateHolder;
+import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.service.ChatService;
+import pro.sky.AnimalShelter.service.ChatStateService;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
 
@@ -20,9 +22,11 @@ import static pro.sky.AnimalShelter.enums.BotCommand.START;
 public class StartCommandHandler implements CommandHandler {
 
     /**
-     * Хранилище состояний чатов.
+     * Сервис для управления очередью состояний чатов.
      */
-    private final ChatStateHolder chatStateHolder;
+    private final ChatStateService chatStateService;
+
+    private final ChatService chatService;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -38,7 +42,7 @@ public class StartCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received the /start command. Inclusion...");
         Long chatId = update.message().chat().id();
-        if (chatStateHolder.isBotStarted(chatId)) {
+        if (chatService.isBotStarted(chatId)) {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
         }
@@ -58,8 +62,7 @@ public class StartCommandHandler implements CommandHandler {
 
 
         telegramBot.execute(new SendMessage(chatId.toString(), response));
-        chatStateHolder.addState(chatId, START);
-        chatStateHolder.setBotStarted(chatId, true);
+        chatStateService.updateChatState(chatId, START);
     }
 
     /**
