@@ -34,8 +34,8 @@ public class CommonUtils {
      * @param chatId ID чата для отправки сообщения.
      */
     public void sendInvalidCommandResponse(final Long chatId) {
-        String responseText = "Данная команда не допустима вэтом меню.\n" +
-                " Для возврата в предыдущее меню введите команду назад /back,\n" +
+        String responseText = "Данная команда не допустима в этом меню.\n" +
+                " Для возврата в предыдущее меню введите команду назад /back\n" +
                 " Чтобы выключить бота введите команду /stop";
         SendMessage message = new SendMessage(chatId.toString(), responseText);
         telegramBot.execute(message);
