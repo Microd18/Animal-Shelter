@@ -45,9 +45,8 @@ public class BackCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand lastState = chatStateService.getLastStateByChatId(chatId);
+        BotCommand lastState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         if (currentState == CONTACT) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
             String shelterType = lastState == DOG ? "приюте для собак" : "приюте для кошек";
             String responseText = "Вы вернулись назад. Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
                     "1. Описание приюта (/description)\n" +
@@ -60,9 +59,7 @@ public class BackCommandHandler implements CommandHandler {
                     "8. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            chatStateService.updateChatState(chatId, START);
-            chatStateService.updateChatState(chatId, lastState);
-            chatStateService.updateChatState(chatId, previousState);
+            chatStateService.goToPreviousState(chatId);
         }
         if (currentState == SHELTER_INFO || currentState == ADOPT) {
             BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
@@ -77,10 +74,8 @@ public class BackCommandHandler implements CommandHandler {
                     "6. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
-            chatStateService.updateChatState(chatId, previousState);
-            //todo тут будет не до конца корректно, так как шаг назад станет текущим, а два шага назад там и останется
-        } else if (currentState == DOG || currentState == CAT) {
-            chatStateService.updateChatState(chatId, START);
+            chatStateService.goToPreviousState(chatId);
+        } else if (currentState == DOG || currentState == CAT || currentState == START) {
             String responseText = "Вы вернулись в главное меню." +
                     "Чтобы начать приключение и найти своего нового друга, просто выбери один из вариантов ниже:\n" +
                     "    Приют для кошек \uD83D\uDC31: Здесь мы заботимся о пушистых котиках всех возрастов и размеров, каждый из которых ищет свой дом и своего человека. " +
@@ -91,6 +86,9 @@ public class BackCommandHandler implements CommandHandler {
                     "Остановить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
+            if (currentState != START) {
+                chatStateService.goToPreviousState(chatId);
+            }
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);
         }

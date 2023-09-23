@@ -1,10 +1,12 @@
 package pro.sky.AnimalShelter.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pro.sky.AnimalShelter.enums.BotCommand;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 
@@ -16,29 +18,16 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_state")
+@TypeDef(name = "json", typeClass = JsonType.class)
+@Table(name = "chat_states")
 public class ChatState extends BaseEntity {
 
     /**
-     * Состояние два шага назад.
+     * Все состояния для каждого чата.
      */
-    @Column
-    @Enumerated(EnumType.STRING)
-    private BotCommand twoStepBackState;
-
-    /**
-     * Состояние шага назад.
-     */
-    @Column
-    @Enumerated(EnumType.STRING)
-    private BotCommand stepBackState;
-
-    /**
-     * Текущее состояние.
-     */
-    @Column
-    @Enumerated(EnumType.STRING)
-    private BotCommand currentState;
+    @Type(type = "json")
+    @Column(name = "state_data", columnDefinition = "jsonb")
+    private String stateData;
 
     /**
      * Чат, связанный с этим состоянием.
