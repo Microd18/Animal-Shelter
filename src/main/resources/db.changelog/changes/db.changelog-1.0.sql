@@ -17,14 +17,12 @@ CREATE TABLE IF NOT EXISTS chat
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'chat_state';
 
-create TABLE IF NOT EXISTS chat_state
+create TABLE IF NOT EXISTS chat_states
 (
-    id                  BIGSERIAL PRIMARY KEY,
-    current_state       VARCHAR(255),
-    step_back_state     VARCHAR(255),
-    two_step_back_state VARCHAR(255),
-    chat_id             BIGINT UNIQUE
-        CONSTRAINT fk_chat_state_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
+    id              BIGSERIAL PRIMARY KEY,
+    state_data      JSONB,
+    chat_id         BIGINT UNIQUE
+        CONSTRAINT fk_chat_states_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 --changeset pruglo-ve:20230911-3 failOnError:true

@@ -3,6 +3,7 @@ package pro.sky.AnimalShelter.service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
@@ -74,6 +75,6 @@ public class CommandHandlerService {
      */
     private void handleUnknownCommand(Update update) {
         Message message = update.message();
-//        telegramBot.execute(new SendMessage(message.chat().id(), "Неизвестная команда"));
+        telegramBot.execute(new SendMessage(message.chat().id(), "Неизвестная команда"));
     }
 }
