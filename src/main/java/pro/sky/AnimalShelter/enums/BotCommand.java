@@ -26,8 +26,13 @@ public enum BotCommand {
     SPECIAL_NEED_RECOMMENDATION("/special_need_recommendation"),        //Бот может  выдать список рекомендаций по обустройству дома для животного с ограниченными возможностями (зрение, передвижение)
     TRANSPORTATION_RECOMMENDATION("/transportation_recommendation"),    //Бот может  выдать список рекомендаций по транспортировке животного
     PUPPY_HOME_SETUP_RECOMMENDATION("/puppy_home_setup_recommendation"),//Бот может  выдать список рекомендаций по обустройству дома для щенка
-    KITTY_HOME_SETUP_RECOMMENDATION("/kitty_home_setup_recommendation");//Бот может  выдать список рекомендаций по обустройству дома для котёнка
-
+    KITTY_HOME_SETUP_RECOMMENDATION("/kitty_home_setup_recommendation"),//Бот может  выдать список рекомендаций по обустройству дома для котёнка
+    ADMIN("/admin"),                                                    //Меню взаимодействия с волонтером
+    MAKE_ADOPTER("/make_adopter"),                                      //Перевести юзера в усыновителя кошки или собаки
+    ALL_ADOPTERS("/all_adopters"),                                      //Получить список усыновителей
+    CHECK_REPORT("/check_report"),                                      //Проверить отчет по усыновителю
+    COMPLETED_PROBATION_ADOPTERS("/completed_probation_adopters"),      //Получить список усыновителей, у которых испытательный срок подошел к концу
+    WITHOUT_REPORT_ADOPTERS("/without_report_adopters");                //Получить список усыновителей, которые не высылали отчет более 2 дней
     /**
      * Текстовое представление команды.
      */
@@ -50,4 +55,4 @@ public enum BotCommand {
     public String getCommandText() {
         return commandText;
     }
-}
+    }
