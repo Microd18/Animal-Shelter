@@ -9,13 +9,13 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static pro.sky.AnimalShelter.messages.MessagesBot.adoptCommandCat;
-import static pro.sky.AnimalShelter.messages.MessagesBot.adoptCommandDog;
+import static pro.sky.AnimalShelter.messages.MessagesBot.datingRulesHandlerCat;
+import static pro.sky.AnimalShelter.messages.MessagesBot.datingRulesHandlerDog;
 
-public class AdoptCommandHandlerTest {
-
+public class DatingRulesHandlerTest {
     @Mock
     private ChatStateService chatStateService;
 
@@ -30,27 +30,24 @@ public class AdoptCommandHandlerTest {
         initMocks(this);
         AdoptCommandHandler adoptCommandHandler = new AdoptCommandHandler(chatStateService, telegramBot, commonUtils);
     }
-
     @Test
-    public void testAdoptCommandHandlerDog() {
+    public void testDatingRulesHandlerDog() {
         Long chatId = 123L;
-        BotCommand currentState = BotCommand.ADOPT;
+        BotCommand currentState = BotCommand.DATING_RULES;
 
         when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(currentState);
-        SendMessage message = new SendMessage(chatId.toString(), adoptCommandDog);
+        SendMessage message = new SendMessage(chatId.toString(), datingRulesHandlerDog);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
     }
-
     @Test
-    public void testAdoptCommandHandlerCat() {
+    public void testDatingRulesHandlerCat() {
         Long chatId = 123L;
-        BotCommand currentState = BotCommand.ADOPT;
+        BotCommand currentState = BotCommand.DATING_RULES;
 
         when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(currentState);
-        SendMessage message = new SendMessage(chatId.toString(), adoptCommandCat);
+        SendMessage message = new SendMessage(chatId.toString(), datingRulesHandlerCat);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
-
     }
 }
