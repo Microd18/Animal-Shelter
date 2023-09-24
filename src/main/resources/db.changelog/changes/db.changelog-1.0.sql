@@ -69,10 +69,10 @@ CREATE TABLE IF NOT EXISTS dogs
 );
 
 --changeset pruglo-ve:20230923-6 failOnError:true
---comment: Create photos table.
+--comment: Create cat_photos table.
 --preconditions onFail:MARK_RAN onError:HALT
---precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'photos';
-CREATE TABLE IF NOT EXISTS photos
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'cat_photos';
+CREATE TABLE IF NOT EXISTS cat_photos
 (
     id              BIGSERIAL PRIMARY KEY,
     file_size       BIGINT,
@@ -81,15 +81,27 @@ CREATE TABLE IF NOT EXISTS photos
 );
 
 --changeset pruglo-ve:20230923-7 failOnError:true
---comment: Create reports table.
+--comment: Create dog_photos table.
 --preconditions onFail:MARK_RAN onError:HALT
---precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'reports';
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'dog_photos';
+CREATE TABLE IF NOT EXISTS dog_photos
+(
+    id              BIGSERIAL PRIMARY KEY,
+    file_size       BIGINT,
+    media_type      VARCHAR(255),
+    data            OID
+);
 
-CREATE TABLE IF NOT EXISTS reports
+--changeset pruglo-ve:20230923-8 failOnError:true
+--comment: Create cat_reports table.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'cat_reports';
+
+CREATE TABLE IF NOT EXISTS cat_reports
 (
     id                  BIGSERIAL PRIMARY KEY,
     photo_id            BIGINT
-        CONSTRAINT fk_reports_photos REFERENCES photos (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT fk_reports_cat_photos REFERENCES cat_photos (id) ON DELETE CASCADE ON UPDATE CASCADE,
     ration              OID,
     well_being          OID,
     behavior            OID,
@@ -98,12 +110,31 @@ CREATE TABLE IF NOT EXISTS reports
     user_id             BIGINT
         CONSTRAINT fk_reports_users REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
     cat_id              BIGINT
-        CONSTRAINT fk_reports_cats REFERENCES cats (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT fk_reports_cats REFERENCES cats (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+--changeset pruglo-ve:20230923-9 failOnError:true
+--comment: Create dog_reports table.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'dog_reports';
+
+CREATE TABLE IF NOT EXISTS dog_reports
+(
+    id                  BIGSERIAL PRIMARY KEY,
+    photo_id            BIGINT
+        CONSTRAINT fk_reports_dog_photos REFERENCES dog_photos (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    ration              OID,
+    well_being          OID,
+    behavior            OID,
+    updated             TIMESTAMP,
+    created             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id             BIGINT
+        CONSTRAINT fk_reports_users REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
     dog_id              BIGINT
         CONSTRAINT fk_reports_dogs REFERENCES dogs (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
---changeset pruglo-ve:20230923-8 failOnError:true
+--changeset pruglo-ve:20230923-10 failOnError:true
 --comment: Enter data into a table cats.
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:1 select count(*) from information_schema.tables where table_name = 'cats';
@@ -120,7 +151,7 @@ INSERT INTO cats (nickname, age) VALUES
                                      ('Геркулес', 2),
                                      ('Шерлок', 4);
 
---changeset pruglo-ve:20230923-9 failOnError:true
+--changeset pruglo-ve:20230923-11 failOnError:true
 --comment: Enter data into a table dogs.
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:1 select count(*) from information_schema.tables where table_name = 'dogs';

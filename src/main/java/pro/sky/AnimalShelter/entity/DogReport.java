@@ -10,14 +10,14 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "reports")
+@Table(name = "dog_reports")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Report extends BaseEntity {
+public class DogReport extends BaseEntity {
 
     @OneToOne()
     @JoinColumn(name = "photo_id")
-    private Photo photo;
+    private DogPhoto dogPhoto;
 
     @Lob
     @Column(name = "ration")
@@ -34,10 +34,6 @@ public class Report extends BaseEntity {
     @OneToOne()
     @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToOne()
-    @JoinColumn(name = "cat_id")
-    private Cat cat;
 
     @OneToOne()
     @JoinColumn(name = "dog_id")

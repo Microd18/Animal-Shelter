@@ -7,10 +7,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "photos")
+@Table(name = "cat_photos")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Photo extends BaseEntity {
+public class CatPhoto extends BaseEntity {
 
     @Column(name = "file_size")
     private Long fileSize;
@@ -22,6 +22,6 @@ public class Photo extends BaseEntity {
     @Column(name = "data")
     private byte[] data;
 
-    @OneToOne(mappedBy = "photo", cascade = CascadeType.ALL)
-    private Report report;
+    @OneToOne(mappedBy = "catPhoto", cascade = CascadeType.ALL)
+    private CatReport catReport;
 }

@@ -50,5 +50,5 @@ public class User extends BaseEntity {
     private Dog dog;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Report report;
+    private CatReport report;
 }
