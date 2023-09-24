@@ -101,7 +101,7 @@ public class ChatStateServiceTest {
     @Test
     @DisplayName("Проверка на получение предыдущего состояния по ИД чата при включенном боте и наличии состояния чата")
     void testGetPreviousStateByChatId_BotStarted_ChatStateExists() {
-        chat.setBotStarted(true);
+           chat.setBotStarted(true);
         when(chatStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(chatState));
         BotCommand result = chatStateService.getPreviousStateByChatId(chatId);
         assertEquals(START, result);
