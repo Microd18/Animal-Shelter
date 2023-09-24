@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mock;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.messages.MessagesBot;
@@ -50,6 +51,9 @@ public class DocumentsListHandlerTest {
     }
 
     @Test
+    @DisplayName("Проверяет, что при вызове метода handle класса DocumentsListHandler " +
+            "в состоянии \"Список документов\" отправляется сообщение с текстом \"Список документов\" " +
+            "в чат с заданным chatId.")
     public void testDocumentsListHandler() {
         Long chatId = 123L;
         BotCommand currentState = BotCommand.DOCUMENTS;
@@ -61,6 +65,9 @@ public class DocumentsListHandlerTest {
     }
 
     @Test
+    @DisplayName("Проверяет, что при вызове метода handle " +
+            "класса DocumentsListHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
+            "класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsStop() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.STOP);
 
@@ -69,6 +76,8 @@ public class DocumentsListHandlerTest {
         verify(commonUtils).offerToStart(123L);
     }
     @Test
+    @DisplayName("Проверяет, что при вызове метода handle класса DocumentsListHandler \" +\n" +
+            "            \"в состоянии \\\"Назад\\\" вызывается метод sendInvalidCommandResponse класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsBack() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
 
@@ -77,6 +86,8 @@ public class DocumentsListHandlerTest {
         verify(commonUtils).sendInvalidCommandResponse(123L);
     }
     @Test
+    @DisplayName("Проверяет, что метод getCommand класса DocumentsListHandler возвращает " +
+            "правильную команду BotCommand.DOCUMENTS.")
     public void testGetCommand() {
         BotCommand expectedCommand = BotCommand.DOCUMENTS;
         BotCommand actualCommand = documentsListHandler.getCommand();
