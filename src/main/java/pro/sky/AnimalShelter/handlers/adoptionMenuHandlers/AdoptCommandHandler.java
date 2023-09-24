@@ -11,8 +11,8 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
-import static pro.sky.AnimalShelter.messages.MessagesBot.adoptCommandCat;
-import static pro.sky.AnimalShelter.messages.MessagesBot.adoptCommandDog;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_DOG_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class AdoptCommandHandler implements CommandHandler {
 
         if (currentState == DOG || (currentState == ADOPT && previousState == DOG)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
-            String responseText = menuMessage + adoptCommandDog;
+            String responseText = menuMessage + ADOPT_DOG_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == ADOPT)) {
@@ -54,7 +54,7 @@ public class AdoptCommandHandler implements CommandHandler {
             }
         } else if (currentState == CAT || (currentState == ADOPT && previousState == CAT)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
-            String responseText = menuMessage + adoptCommandCat;
+            String responseText = menuMessage + ADOPT_CAT_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == ADOPT)) {

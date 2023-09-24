@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SCHEDULE_COMMAND_TEXT;
 
 /**
  * Обработчик команды "/schedule".
@@ -46,20 +47,7 @@ public class ScheduleCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == SHELTER_INFO) {
-            String responseText = "Мы находимя по адресу:\n" +
-                    "ул. Аккорган, 5В, микрорайон Коктал, Астана\n" +
-                    "телефон для связи: +7(123)4567890\n" +
-                    "Расписание работы приюта: \n" +
-                    "Понедельник 09:00–16:00 \n" +
-                    "Вторник 09:00–16:00 \n" +
-                    "Среда 09:00–16:00 \n" +
-                    "Четверг 09:00–16:00 \n" +
-                    "Пятница 09:00–16:00 \n" +
-                    "Суббота 09:00–16:00 \n" +
-                    "Воскресенье 09:00–16:00\n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            SendMessage message = new SendMessage(chatId.toString(), SCHEDULE_COMMAND_TEXT);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);

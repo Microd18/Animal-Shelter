@@ -11,7 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
-import static pro.sky.AnimalShelter.messages.MessagesBot.documentsListHandler;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOCUMENTS_LIST_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class DocumentsListHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADOPT) {
 
-            SendMessage message = new SendMessage(chatId.toString(), documentsListHandler);
+            SendMessage message = new SendMessage(chatId.toString(), DOCUMENTS_LIST_TEXT);
             telegramBot.execute(message);
 
         } else if (currentState == STOP) {

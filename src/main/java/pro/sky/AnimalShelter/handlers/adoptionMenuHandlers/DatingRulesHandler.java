@@ -1,4 +1,5 @@
 package pro.sky.AnimalShelter.handlers.adoptionMenuHandlers;
+
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -8,9 +9,10 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
+
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
-import static pro.sky.AnimalShelter.messages.MessagesBot.datingRulesHandlerCat;
-import static pro.sky.AnimalShelter.messages.MessagesBot.datingRulesHandlerDog;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DATING_RULES_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DATING_RULES_DOG_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -45,12 +47,12 @@ public class DatingRulesHandler implements CommandHandler {
 
             if (previousState == DOG) {
 
-                SendMessage message = new SendMessage(chatId.toString(), datingRulesHandlerDog);
+                SendMessage message = new SendMessage(chatId.toString(), DATING_RULES_DOG_TEXT);
                 telegramBot.execute(message);
             }
             if (previousState == CAT) {
 
-                SendMessage message = new SendMessage(chatId.toString(), datingRulesHandlerCat);
+                SendMessage message = new SendMessage(chatId.toString(), DATING_RULES_CAT_TEXT);
                 telegramBot.execute(message);
             }
         } else if (currentState == STOP) {
