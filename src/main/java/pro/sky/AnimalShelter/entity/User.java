@@ -42,4 +42,13 @@ public class User extends BaseEntity {
     @OneToOne()
     @JoinColumn(name = "chat_id")
     private Chat chat;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Cat cat;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Dog dog;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private CatReport report;
 }
