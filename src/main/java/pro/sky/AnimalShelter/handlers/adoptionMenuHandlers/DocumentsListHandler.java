@@ -11,6 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOCUMENTS_LIST_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +41,8 @@ public class DocumentsListHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADOPT) {
-            String responseText = "     В этом меню я расскажу какие документы нужны, чтобы взять животное из приюта.\n" +
-                    "             \n" +
-                    "  Чтобы забрать животное из приюта, необходимо при себе необходимо иметь копию паспорта и справку с места жительства.\n " +
-                    "Приют пристраивает только обработанных от паразитов, вакцинированных и стерилизованных животных.\n" +
-                    "\n" +
-                    "После передачи животного администрация приюта просит новых владельцев раз в месяц отправлять фотоотчёты о жизни бывшего подопечного.\n" +
-                    "             \n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
+
+            SendMessage message = new SendMessage(chatId.toString(), DOCUMENTS_LIST_TEXT);
             telegramBot.execute(message);
 
         } else if (currentState == STOP) {

@@ -11,6 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.HELP_COMMAND_TEXT;
 
 /**
  * Обработчик команды "/help".
@@ -43,16 +44,8 @@ public class HelpCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO || currentState == ADOPT ) {
-            String shelterType = currentState == DOG ? "приюте для собак" : "приюте для кошек";
-            String responseText = "Для связи с волонтером пройдите по ссылке: \n" +
-                    "\n" +
-                    "По четным дням месяца Вам поможет Дмитрий, ссылка на Телеграмм - https://t.me/DmitriyVolkov \n" +
-                    "\n" +
-                    "По нечетным дням месяца Вам поможет Елена, ссылка на Телеграмм - https://t.me/koroliana \n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
+        if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO || currentState == ADOPT) {
+            SendMessage message = new SendMessage(chatId.toString(), HELP_COMMAND_TEXT);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);

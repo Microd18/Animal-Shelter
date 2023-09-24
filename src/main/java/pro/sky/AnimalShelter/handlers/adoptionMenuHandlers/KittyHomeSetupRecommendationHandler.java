@@ -11,6 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.KITTY_HOME_SETUP_RECOMMENDATION_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,17 +41,7 @@ public class KittyHomeSetupRecommendationHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADOPT) {
-            String responseText = "    6 советов по обустройству дома для котенка:\n" +
-                    "1.Уберите мелкие предметы.\n" +
-                    "2.Уделите максимум внимания в первые дни\n" +
-                    "3.Подготовьте котенку место для сна\n" +
-                    "4.Подготовьте лоток и место для приема пищи\n" +
-                    "5.Приготовьте игрушки для котенка\n" +
-                    "6.Будьте готовы к уходу за когтями\n" +
-                    "             \n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            SendMessage message = new SendMessage(chatId.toString(), KITTY_HOME_SETUP_RECOMMENDATION_TEXT);
             telegramBot.execute(message);
 
         } else if (currentState == STOP) {
