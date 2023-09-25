@@ -51,4 +51,15 @@ public class User extends BaseEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private CatReport report;
+
+    @Override
+    public String toString() {
+        return "id=" + super.getId() +
+                ", username=" + username +
+                ", phone=" + phone +
+                ", email=" + email +
+                ", cat=" + cat +
+                ", dog=" + dog;
+    }
+
 }

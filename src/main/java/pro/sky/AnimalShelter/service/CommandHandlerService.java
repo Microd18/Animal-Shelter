@@ -11,7 +11,7 @@ import pro.sky.AnimalShelter.handlers.CommandHandler;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.CONTACT;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
 /**
  * Сервис для обработки команд.
@@ -31,6 +31,11 @@ public class CommandHandlerService {
      * Сервис для управления очередью состояний чатов.
      */
     private final ChatStateService chatStateService;
+
+    /**
+     * Сервис для меню волонтера.
+     */
+    private final VolunteerService volunteerService;
 
     /**
      * Список обработчиков команд.
@@ -61,6 +66,19 @@ public class CommandHandlerService {
                 Long chatId = message.chat().id();
                 if (chatStateService.getCurrentStateByChatId(chatId) == CONTACT) {
                     userService.updateContact(chatId, message.text());
+                    return;
+                }
+                if (chatStateService.getCurrentStateByChatId(chatId) == FIND_USER_BY_PHONE) {
+                    String phone = update.message().text();
+                    SendMessage answerMessage = new SendMessage(chatId.toString(), volunteerService.findUsersByPhone(phone));
+                    //todo тут ещё сократить
+                    telegramBot.execute(answerMessage);
+                    return;
+                }
+                if (chatStateService.getCurrentStateByChatId(chatId) == FIND_ANIMAL_BY_NAME) {
+                    String messageText = update.message().text();
+                    SendMessage answerMessage = new SendMessage(chatId.toString(), volunteerService.findAnimalByName(messageText));
+                    telegramBot.execute(answerMessage);
                     return;
                 }
             }

@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_RETURN_TEXT;
 
 /**
  * Обработчик команды "/back". Позволяет вернуться в предыдущее меню.
@@ -58,6 +59,11 @@ public class BackCommandHandler implements CommandHandler {
                     "7. Назад (/back)\n" +
                     "8. Выключить бота (/stop)";
             SendMessage message = new SendMessage(chatId.toString(), responseText);
+            telegramBot.execute(message);
+            chatStateService.goToPreviousState(chatId);
+        }
+        if (currentState == FIND_USER_BY_PHONE || currentState == FIND_ANIMAL_BY_NAME) {
+            SendMessage message = new SendMessage(chatId.toString(), ADMIN_COMMAND_RETURN_TEXT);
             telegramBot.execute(message);
             chatStateService.goToPreviousState(chatId);
         }

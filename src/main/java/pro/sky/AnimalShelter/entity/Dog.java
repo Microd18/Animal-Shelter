@@ -27,4 +27,13 @@ public class Dog extends BaseEntity {
 
     @OneToOne(mappedBy = "dog", cascade = CascadeType.ALL)
     private DogReport dogReport;
+
+    @Override
+    public String toString() {
+        return "Собака: id=" + super.getId() +
+                ", nickname=" + nickname +
+                ", age=" + age +
+                ", user=" + user;
+    }
+
 }

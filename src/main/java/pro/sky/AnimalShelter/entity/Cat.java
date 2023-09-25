@@ -27,4 +27,13 @@ public class Cat extends BaseEntity {
 
     @OneToOne(mappedBy = "cat", cascade = CascadeType.ALL)
     private CatReport catReport;
+
+    @Override
+    public String toString() {
+        return "Кошка: id=" + super.getId() +
+                ", nickname=" + nickname +
+                ", age=" + age +
+                ", user=" + user;
+    }
+
 }

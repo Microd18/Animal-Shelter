@@ -236,12 +236,24 @@ public class MessagesBot {
             "Возврат в предыдущее меню (/back)\n" +
             "Выключить бота (/stop)";
     public static final String ADMIN_COMMAND_TEXT = "Добро пожаловать в меню волонтера!\uD83D\uDE3C\n\n" +
-            "1. Перевести юзера в усыновителя кошки или собаки \n(/make_adopter)\n" +
-            "2. Получить список усыновителей \n(/all_adopters)\n" +
-            "3. Проверить отчет по усыновителю \n(/check_report)\n" +
-            "4. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
-            "5. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
-            "6. Выключить бота \n(/stop)";
+            "1. Найти юзера по номеру телефона \n(/find_user_by_phone)\n" +
+            "2. Найти питомца по кличке \n(/find_animal_by_name)\n" +
+            "3. Перевести юзера в усыновителя кошки или собаки \n(/make_adopter)\n" +
+            "4. Получить список усыновителей \n(/all_adopters)\n" +
+            "5. Проверить отчет по усыновителю \n(/check_report)\n" +
+            "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
+            "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
+            "8. Выключить бота \n(/stop)";
+
+    public static final String ADMIN_COMMAND_RETURN_TEXT = "Вы вернулись в меню волонтера\uD83D\uDE3C\n\n" +
+            "1. Найти юзера по номеру телефона \n(/find_user_by_phone)\n" +
+            "2. Найти питомца по кличке \n(/find_animal_by_name)\n" +
+            "3. Перевести юзера в усыновителя кошки или собаки \n(/make_adopter)\n" +
+            "4. Получить список усыновителей \n(/all_adopters)\n" +
+            "5. Проверить отчет по усыновителю \n(/check_report)\n" +
+            "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
+            "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
+            "8. Выключить бота \n(/stop)";
 
     public static final String HELP_COMMAND_TEXT = "Для связи с волонтером пройдите по ссылке: \n" +
             "\n" +
@@ -342,6 +354,22 @@ public class MessagesBot {
             "Воскресенье 09:00–16:00\n" +
             "Возврат в предыдущее меню (/back)\n" +
             "Выключить бота (/stop)";
+    public static final String WAY_BACK_TEXT = "\n" +
+            "Возврат в предыдущее меню (/back) \n" +
+            "Выключить бота (/stop)";
+    public static final String USER_FOUND_BY_PHONE_TEXT = "Вот что я нашел по введенному номеру телефона:\n";
+
+    public static final String ANIMAL_FOUND_BY_NAME_TEXT = "Вот что я нашел по введенной кличке: \n";
+    public static final String USER_NOT_FOUND_TEXT = "К сожалению, я никого не нашел по введенному номеру. Попробуйте снова.";
+    public static final String CAT_NOT_FOUND_TEXT = "К сожалению, я не нашел кошек с кличкой ";
+    public static final String DOG_NOT_FOUND_TEXT = "К сожалению, я не нашел собак с кличкой ";
+    public static final String WAITING_PHONE_NUMBER_TEXT = "Пожалуйста, введите номер телефона.";
+
+    public static final String WAITING_ANIMAL_NAME_TEXT = "Пожалуйста, введите кличку питомца в формате:\n" +
+            "Собака(или Кошка),Кличка)";
+
+    public static final String DATA_IS_NOT_CORRECT_TEXT = "Проверьте, пожалуйста, " +
+            "соответствует ли введенная информация рекомендуемому формату.";
 
 
 }
