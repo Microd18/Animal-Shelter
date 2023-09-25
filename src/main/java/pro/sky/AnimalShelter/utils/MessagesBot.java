@@ -240,7 +240,7 @@ public class MessagesBot {
             "2. Получить список усыновителей \n(/all_adopters)\n" +
             "3. Проверить отчет по усыновителю \n(/check_report)\n" +
             "4. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
-            "5. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
+            "5. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/without_report_adopters)\n" +
             "6. Выключить бота \n(/stop)";
 
     public static final String HELP_COMMAND_TEXT = "Для связи с волонтером пройдите по ссылке: \n" +
