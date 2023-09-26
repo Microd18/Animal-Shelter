@@ -14,8 +14,7 @@ import pro.sky.AnimalShelter.handlers.CommandHandler;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.CONTACT;
-import static pro.sky.AnimalShelter.enums.BotCommand.SEND_REPORT;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 import static pro.sky.AnimalShelter.enums.UserReportStates.*;
 
 /**
@@ -26,6 +25,14 @@ import static pro.sky.AnimalShelter.enums.UserReportStates.*;
 @RequiredArgsConstructor
 public class CommandHandlerService {
 
+    /**
+     * Сервис для обработки команд меню волонтера.
+     */
+    private final VolunteerService volunteerService;
+
+    /**
+     * Сервис для обновления контактных данных пользователей.
+     */
     private final UserService userService;
 
     /**
