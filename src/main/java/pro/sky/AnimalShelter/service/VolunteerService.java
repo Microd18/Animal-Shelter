@@ -78,11 +78,13 @@ public class VolunteerService {
      */
     public void findAnimalByName(Long chatId, String messageText) {
         String[] animalData = messageText.split(",");
-        String pet = animalData[0].replaceAll("\\s+", "");
-        String nickname = animalData[1].replaceAll("\\s+", "");
         if (animalData.length != 2) {
             telegramBot.execute(new SendMessage(chatId, DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT));
-        } else if (pet.equalsIgnoreCase("Кошка")) {
+            return;
+        }
+        String pet = animalData[0].replaceAll("\\s+", "");
+        String nickname = animalData[1].replaceAll("\\s+", "");
+        if (pet.equalsIgnoreCase("Кошка")) {
             List<Cat> catList = getCatsByName(nickname);
             if (catList.isEmpty()) {
                 telegramBot.execute(new SendMessage(chatId, CAT_NOT_FOUND_BY_NAME_TEXT + nickname + WAY_BACK_TEXT));
@@ -97,13 +99,16 @@ public class VolunteerService {
                 telegramBot.execute(new SendMessage(chatId, ANIMAL_FOUND_BY_NAME_TEXT + dogList + WAY_BACK_TEXT));
             }
         } else telegramBot.execute(new SendMessage(chatId, DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT));
+
     }
+
 
     @Transactional
     public void allowUserBecomeAdopter(Long chatId, String messageText) {
         String[] userAndPetData = messageText.split(",");
         if (userAndPetData.length != 3) {
             telegramBot.execute(new SendMessage(chatId, DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT));
+            return;
         }
         try {
             Long userId = Long.parseLong(userAndPetData[0].replaceAll("\\s+", ""));
