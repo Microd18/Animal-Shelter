@@ -3,6 +3,7 @@ package pro.sky.AnimalShelter.service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,9 @@ import java.util.stream.IntStream;
 /**
  * Сервис для обновления контактных данных пользователей.
  */
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
@@ -52,8 +55,8 @@ public class UserService {
      * @param chatId      идентификатор чата пользователя.
      * @param messageText текст сообщения, содержащего новые контактные данные в формате: Имя, Телефон, Email.
      */
-    @Transactional
     public void updateContact(Long chatId, String messageText) {
+        log.info("updateContact method was invoked");
 
         String[] contactData = messageText.split(",");
 
@@ -98,6 +101,7 @@ public class UserService {
      * @param invalidFields список невалидных полей.
      */
     protected void sendValidationErrors(Long chatId, List<String> invalidFields) {
+        log.info("sendValidationErrors method was invoked");
         List<String> errorMessages = new ArrayList<>();
         if (invalidFields.contains("Имя")) {
             errorMessages.add("Имя может содержать только буквы и пробелы.");
@@ -122,6 +126,7 @@ public class UserService {
      * @param email  адрес электронной почты пользователя.
      */
     protected void updateUserData(Long chatId, String name, String phone, String email) {
+        log.info("updateUserData method was invoked");
         userRepository.findByChatId(chatRepository.findByChatId(chatId).map(Chat::getId).orElse(null)).ifPresentOrElse(
                 user -> {
                     user.setUsername(StringUtils.capitalize(name));
@@ -150,6 +155,7 @@ public class UserService {
      * @param chatId идентификатор чата пользователя.
      */
     protected void sendInvalidInputMessage(Long chatId) {
+        log.info("sendInvalidInputMessage method was invoked");
         SendMessage message = new SendMessage(chatId, "Для занесения или перезаписи, пожалуйста, " +
                 "введите контактные данные в формате: Имя, Телефон, Email (даже если хотите поменять не все данные)\n" +
                 "Возврат в предыдущее меню (/back)\n" +
@@ -165,6 +171,7 @@ public class UserService {
      * @return true, если данные действительны, и false в противном случае.
      */
     protected boolean isValidContactData(String data, int index) {
+        log.info("isValidContactData method was invoked");
         switch (index) {
             case 0:
                 return validationUtils.isValidName(data);

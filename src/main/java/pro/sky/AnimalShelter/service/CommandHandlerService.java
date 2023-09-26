@@ -6,17 +6,23 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.CONTACT;
+import static pro.sky.AnimalShelter.enums.BotCommand.SEND_REPORT;
+import static pro.sky.AnimalShelter.enums.UserReportStates.*;
 
 /**
  * Сервис для обработки команд.
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CommandHandlerService {
 
@@ -33,6 +39,16 @@ public class CommandHandlerService {
     private final ChatStateService chatStateService;
 
     /**
+     * Сервис для управления состоянием отчетов о пользователях.
+     */
+    private final UserReportStateService userReportStateService;
+
+    /**
+     * Сервис для работы с отчетами о пользователях.
+     */
+    private final UserReportService userReportService;
+
+    /**
      * Список обработчиков команд.
      */
     private final List<CommandHandler> commandHandlers;
@@ -44,26 +60,36 @@ public class CommandHandlerService {
      */
     public void process(Update update) {
         Message message = update.message();
-        if (message != null) {
-            if (message.text() != null) {
-                String messageText = message.text();
+        if (message == null)
+            return;
 
-                List<CommandHandler> matchedHandlers = commandHandlers.stream()
-                        .filter(commandHandler -> commandHandler.getCommand().getCommandText().equals(messageText))
-                        .collect(Collectors.toList());
+        Long chatId = message.chat().id();
+        UserReportStates reportCurrentState = userReportStateService.getCurrentStateByChatId(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+        String messageText = message.text();
 
-                if (!matchedHandlers.isEmpty()) {
-                    matchedHandlers.get(0).handle(update);
-                    return;
-                }
+        if (messageText != null) {
+            List<CommandHandler> matchedHandlers = commandHandlers.stream()
+                    .filter(commandHandler -> commandHandler.getCommand().getCommandText().equals(messageText))
+                    .collect(Collectors.toList());
+
+            if (!matchedHandlers.isEmpty()) {
+                matchedHandlers.get(0).handle(update);
+                return;
             }
-            if (message.chat() != null) {
-                Long chatId = message.chat().id();
-                if (chatStateService.getCurrentStateByChatId(chatId) == CONTACT) {
-                    userService.updateContact(chatId, message.text());
-                    return;
-                }
+
+            if (currentState == CONTACT) {
+                userService.updateContact(chatId, messageText);
+                return;
             }
+            if (currentState == SEND_REPORT && (reportCurrentState == RATION || reportCurrentState == WELL_BEING || reportCurrentState == BEHAVIOR)) {
+                userReportService.saveReportData(chatId, messageText, reportCurrentState);
+                return;
+            }
+        }
+        if (currentState == SEND_REPORT && reportCurrentState == PHOTO && message.photo() != null) {
+            userReportService.savePhotoForReport(chatId, message.photo());
+            return;
         }
         handleUnknownCommand(update);
     }
