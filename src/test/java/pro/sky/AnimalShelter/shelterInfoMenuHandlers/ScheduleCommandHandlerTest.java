@@ -5,10 +5,13 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers.ScheduleCommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
@@ -17,10 +20,11 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 import static pro.sky.AnimalShelter.utils.MessagesBot.SCHEDULE_COMMAND_TEXT;
 
+@ExtendWith(MockitoExtension.class)
 public class ScheduleCommandHandlerTest {
+
     @Mock
     private ChatStateService chatStateService;
 
@@ -39,15 +43,14 @@ public class ScheduleCommandHandlerTest {
     @Mock
     private Chat chat;
 
+    @InjectMocks
     private ScheduleCommandHandler scheduleCommandHandler;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        initMocks(this);
-        scheduleCommandHandler = new ScheduleCommandHandler(chatStateService, commonUtils, telegramBot);
-        when(update.message()).thenReturn(message);
-        when(message.chat()).thenReturn(chat);
-        when(chat.id()).thenReturn(123L);
+        lenient().when(update.message()).thenReturn(message);
+        lenient().when(message.chat()).thenReturn(chat);
+        lenient().when(chat.id()).thenReturn(123L);
     }
 
     @Test
@@ -56,10 +59,8 @@ public class ScheduleCommandHandlerTest {
             "в чат с заданным chatId.")
     public void testSafetyCommandHandler() {
         Long chatId = 123L;
-        BotCommand currentState = BotCommand.SCHEDULE;
 
-        when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(currentState);
-        SendMessage message = new SendMessage(chatId.toString(), SCHEDULE_COMMAND_TEXT);
+        SendMessage message = new SendMessage(chatId, SCHEDULE_COMMAND_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
     }

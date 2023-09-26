@@ -4,6 +4,9 @@ package pro.sky.AnimalShelter.enums;
  * Перечисление, представляющее команды бота.
  */
 public enum BotCommand {
+    SEND_REPORT("/send_report"),
+    REPORT_TEMPLATE("/report_template"),
+    PET_REPORT("/pet_report"),
     CAT("/cat"),                                                        //приют для кошек
     DOG("/dog"),                                                        //приют для собак
     HELP("/help"),                                                      //Если бот не может ответить на вопросы клиента, то можно позвать волонтера

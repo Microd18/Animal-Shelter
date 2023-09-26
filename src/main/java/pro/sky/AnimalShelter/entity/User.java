@@ -44,13 +44,25 @@ public class User extends BaseEntity {
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    /**
+     * Поле для связи пользователя с кошкой.
+     * Один пользователь связан с одной кошкой.
+     */
+    @OneToOne(mappedBy = "user")
     private Cat cat;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    /**
+     * Поле для связи пользователя с собакой.
+     * Один пользователь связан с одной собакой.
+     */
+    @OneToOne(mappedBy = "user")
     private Dog dog;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    /**
+     * Поле для связи пользователя с отчетом о кошке.
+     * Один пользователь связан с одним отчетом о кошке.
+     */
+    @OneToOne(mappedBy = "user")
     private CatReport report;
 
     @Override

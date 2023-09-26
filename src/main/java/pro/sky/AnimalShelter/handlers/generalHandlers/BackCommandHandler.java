@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
+import pro.sky.AnimalShelter.service.UserReportStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
@@ -26,6 +27,11 @@ public class BackCommandHandler implements CommandHandler {
      * Сервис для управления очередью состояний чатов.
      */
     private final ChatStateService chatStateService;
+
+    /**
+     * Сервис для управления очередью состояний отчётов пользователей.
+     */
+    private final UserReportStateService userReportStateService;
 
     /**
      * Экземпляр утилитарного класс для общих методов.
@@ -47,6 +53,17 @@ public class BackCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         BotCommand lastState = chatStateService.getLastStateCatOrDogByChatId(chatId);
+        if (currentState == SEND_REPORT) {
+            String responseText = "Вы вернулись назад. Это меню для отправки отчёта, выберите действие:\n" +
+                    "1. Отправить отчёт: выберите этот пункт меню, чтобы отправить ежедневный отчёт о вашем питомце (/send_report)\n" +
+                    "2. Посмотреть шаблон для отчёта: если вам нужно ознакомиться с шаблоном для ежедневного отчёта перед его отправкой, выберите этот пункт меню (/report_template)\n" +
+                    "3. Назад* (/back)\n" +
+                    "4. Выключить бота (/stop)";
+
+            telegramBot.execute(new SendMessage(chatId.toString(), responseText));
+            userReportStateService.clearUserReportStates(chatId);
+            chatStateService.goToPreviousState(chatId);
+        }
         if (currentState == CONTACT) {
             String shelterType = lastState == DOG ? "приюте для собак" : "приюте для кошек";
             String responseText = "Вы вернулись назад. Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
@@ -58,16 +75,19 @@ public class BackCommandHandler implements CommandHandler {
                     "6. Позвать волонтера (/help)\n" +
                     "7. Назад (/back)\n" +
                     "8. Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+
+            telegramBot.execute(new SendMessage(chatId.toString(), responseText));
             chatStateService.goToPreviousState(chatId);
         }
+
         if (currentState == FIND_USER_BY_PHONE || currentState == FIND_ANIMAL_BY_NAME || currentState == MAKE_ADOPTER) {
             SendMessage message = new SendMessage(chatId.toString(), ADMIN_COMMAND_RETURN_TEXT);
             telegramBot.execute(message);
             chatStateService.goToPreviousState(chatId);
         }
-        if (currentState == SHELTER_INFO || currentState == ADOPT) {
+
+        if (currentState == SHELTER_INFO || currentState == ADOPT || currentState == PET_REPORT) {
+
             BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 
             var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
@@ -78,8 +98,8 @@ public class BackCommandHandler implements CommandHandler {
                     "4. Позвать волонтера (/help)\n" +
                     "5. Назад (/back)\n" +
                     "6. Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+
+            telegramBot.execute(new SendMessage(chatId.toString(), responseText));
             chatStateService.goToPreviousState(chatId);
         } else if (currentState == DOG || currentState == CAT || currentState == START) {
             String responseText = "Вы вернулись в главное меню." +
@@ -90,8 +110,8 @@ public class BackCommandHandler implements CommandHandler {
                     "От маленьких щенков до зрелых спутников жизни - выбор за вами. Для выбора введи команду /dog\n" +
                     "\n" +
                     "Остановить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
-            telegramBot.execute(message);
+
+            telegramBot.execute(new SendMessage(chatId.toString(), responseText));
             if (currentState != START) {
                 chatStateService.goToPreviousState(chatId);
             }

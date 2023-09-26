@@ -236,6 +236,7 @@ public class MessagesBot {
             "Возврат в предыдущее меню (/back)\n" +
             "Выключить бота (/stop)";
     public static final String ADMIN_COMMAND_TEXT = "Добро пожаловать в меню волонтера!\uD83D\uDE3C\n\n" +
+
             "1. Найти юзера по номеру телефона \n(/find_user_by_phone)\n" +
             "2. Найти питомца по кличке \n(/find_animal_by_name)\n" +
             "3. Перевести юзера в усыновителя кошки или собаки \n(/make_adopter)\n" +
@@ -254,6 +255,7 @@ public class MessagesBot {
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
             "8. Выключить бота \n(/stop)";
+
 
     public static final String HELP_COMMAND_TEXT = "Для связи с волонтером пройдите по ссылке: \n" +
             "\n" +

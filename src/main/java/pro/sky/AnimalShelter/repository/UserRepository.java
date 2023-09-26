@@ -1,6 +1,7 @@
 package pro.sky.AnimalShelter.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import pro.sky.AnimalShelter.entity.User;
 
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.Optional;
 /**
  * Репозиторий для доступа к данным о юзере.
  */
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**

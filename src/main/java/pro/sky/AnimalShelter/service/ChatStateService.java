@@ -3,6 +3,7 @@ package pro.sky.AnimalShelter.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pro.sky.AnimalShelter.entity.Chat;
 import pro.sky.AnimalShelter.entity.ChatState;
 import pro.sky.AnimalShelter.enums.BotCommand;
@@ -19,13 +20,14 @@ import static pro.sky.AnimalShelter.enums.BotCommand.*;
  */
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ChatStateService {
 
     /**
      * Класс-конвертер для преобразования между JSON и объектами типа Map<Long, Deque<BotCommand>>.
      */
-    private final JsonMapConverter jsonMapConverter;
+    private final JsonMapConverter<BotCommand> jsonMapConverter = new JsonMapConverter<>(BotCommand.class);
 
     /**
      * Репозиторий для доступа к данным о состояниях чатов.
@@ -40,7 +42,7 @@ public class ChatStateService {
     /**
      * Размер очереди состояний.
      */
-    private static final int MAX_HISTORY_SIZE = 4;
+    private static final int MAX_HISTORY_CHAT_STATE_SIZE = 4;
 
     /**
      * Получает текущее состояние чата по его идентификатору.
@@ -49,6 +51,7 @@ public class ChatStateService {
      * @return Текущее состояние чата или {@code STOP}, если чат не существует или бот не запущен.
      */
     public BotCommand getCurrentStateByChatId(Long chatId) {
+        log.info("getCurrentStateByChatId method was invoked");
         return chatRepository.findByChatId(chatId)
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
@@ -125,7 +128,7 @@ public class ChatStateService {
                     Map<Long, Deque<BotCommand>> chatStateHistory = jsonMapConverter.toMap(chatStateEntity.getStateData());
                     Deque<BotCommand> stateStack = chatStateHistory.computeIfAbsent(chatId, k -> new LinkedList<>());
 
-                    if (stateStack.size() >= MAX_HISTORY_SIZE) {
+                    if (stateStack.size() >= MAX_HISTORY_CHAT_STATE_SIZE) {
                         stateStack.pollLast();
                     }
 
