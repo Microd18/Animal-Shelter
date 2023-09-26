@@ -5,10 +5,13 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers.DescriptionCommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
@@ -17,11 +20,12 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_SHELTER_DESCRIPTION_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_SHELTER_DESCRIPTION_TEXT;
 
+@ExtendWith(MockitoExtension.class)
 public class DescriptionCommandHandlerTest {
+
     @Mock
     private ChatStateService chatStateService;
 
@@ -30,6 +34,7 @@ public class DescriptionCommandHandlerTest {
 
     @Mock
     private CommonUtils commonUtils;
+
     @Mock
     private Update update;
 
@@ -39,15 +44,14 @@ public class DescriptionCommandHandlerTest {
     @Mock
     private Chat chat;
 
+    @InjectMocks
     private DescriptionCommandHandler descriptionCommandHandler;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        initMocks(this);
-        descriptionCommandHandler = new DescriptionCommandHandler(chatStateService, telegramBot, commonUtils);
-        when(update.message()).thenReturn(message);
-        when(message.chat()).thenReturn(chat);
-        when(chat.id()).thenReturn(123L);
+        lenient().when(update.message()).thenReturn(message);
+        lenient().when(message.chat()).thenReturn(chat);
+        lenient().when(chat.id()).thenReturn(123L);
     }
 
     @Test
@@ -56,10 +60,8 @@ public class DescriptionCommandHandlerTest {
             "в чат с заданным chatId.")
     public void testDescriptionCommandHandlerDog() {
         Long chatId = 123L;
-        BotCommand currentState = BotCommand.DESCRIPTION;
 
-        when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(currentState);
-        SendMessage message = new SendMessage(chatId.toString(), DOG_SHELTER_DESCRIPTION_TEXT);
+        SendMessage message = new SendMessage(chatId, DOG_SHELTER_DESCRIPTION_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
     }
@@ -70,10 +72,8 @@ public class DescriptionCommandHandlerTest {
             "в чат с заданным chatId.")
     public void testDescriptionCommandHandlerCat() {
         Long chatId = 123L;
-        BotCommand currentState = BotCommand.DESCRIPTION;
 
-        when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(currentState);
-        SendMessage message = new SendMessage(chatId.toString(), CAT_SHELTER_DESCRIPTION_TEXT);
+        SendMessage message = new SendMessage(chatId, CAT_SHELTER_DESCRIPTION_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
     }
