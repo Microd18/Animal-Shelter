@@ -360,17 +360,26 @@ public class MessagesBot {
     public static final String USER_FOUND_BY_PHONE_TEXT = "Вот что я нашел по введенному номеру телефона:\n";
 
     public static final String ANIMAL_FOUND_BY_NAME_TEXT = "Вот что я нашел по введенной кличке: \n";
-    public static final String USER_NOT_FOUND_TEXT = "К сожалению, я никого не нашел по введенному номеру. Попробуйте снова.";
-    public static final String CAT_NOT_FOUND_TEXT = "К сожалению, я не нашел кошек с кличкой ";
+    public static final String USER_NOT_FOUND_BY_PHONE_TEXT = "К сожалению, я никого не нашел по введенному номеру. Попробуйте снова.";
+    public static final String USER_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел юзера по введенному id. Попробуйте снова.";
+
+    public static final String CAT_NOT_FOUND_BY_NAME_TEXT = "К сожалению, я не нашел кошек с кличкой ";
+    public static final String CAT_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел кошку по введенному id. Попробуйте снова.";
     public static final String DOG_NOT_FOUND_TEXT = "К сожалению, я не нашел собак с кличкой ";
+    public static final String DOG_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел собаку по введенному id. Попробуйте снова.";
     public static final String WAITING_PHONE_NUMBER_TEXT = "Пожалуйста, введите номер телефона.";
 
     public static final String WAITING_ANIMAL_NAME_TEXT = "Пожалуйста, введите кличку питомца в формате:\n" +
-            "Собака(или Кошка),Кличка)";
+            "Собака(или Кошка),Кличка";
 
     public static final String DATA_IS_NOT_CORRECT_TEXT = "Проверьте, пожалуйста, " +
             "соответствует ли введенная информация рекомендуемому формату.";
 
+    public static final String WAITING_USER_PET_DATA_TEXT = "Для подтверждения усыновления, " +
+            "пожалуйста, введите id юзера и id питомца в формате:\n" +
+            "user_id, Собака(или Кошка), pet_id";
+
+    public static final String ADOPTION_SUCCESS_TEXT = "Юзер успешно переведен в усыновители";
 
 }
 

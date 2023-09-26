@@ -69,16 +69,15 @@ public class CommandHandlerService {
                     return;
                 }
                 if (chatStateService.getCurrentStateByChatId(chatId) == FIND_USER_BY_PHONE) {
-                    String phone = update.message().text();
-                    SendMessage answerMessage = new SendMessage(chatId.toString(), volunteerService.findUsersByPhone(phone));
-                    //todo тут ещё сократить
-                    telegramBot.execute(answerMessage);
+                    volunteerService.findUsersByPhone(chatId, message.text());
                     return;
                 }
                 if (chatStateService.getCurrentStateByChatId(chatId) == FIND_ANIMAL_BY_NAME) {
-                    String messageText = update.message().text();
-                    SendMessage answerMessage = new SendMessage(chatId.toString(), volunteerService.findAnimalByName(messageText));
-                    telegramBot.execute(answerMessage);
+                    volunteerService.findAnimalByName(chatId, message.text());
+                    return;
+                }
+                if (chatStateService.getCurrentStateByChatId(chatId) == MAKE_ADOPTER) {
+                    volunteerService.allowUserBecomeAdopter(chatId, message.text());
                     return;
                 }
             }
