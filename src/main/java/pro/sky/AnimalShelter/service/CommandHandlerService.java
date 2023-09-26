@@ -81,7 +81,19 @@ public class CommandHandlerService {
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;
+			}	
+			if (currentState == FIND_USER_BY_PHONE) {
+                    volunteerService.findUsersByPhone(chatId, messageText);
+                    return;
             }
+            if (currentState == FIND_ANIMAL_BY_NAME) {
+                    volunteerService.findAnimalByName(chatId, messageText);
+                    return;
+            }
+            if (currentState == MAKE_ADOPTER) {
+                    volunteerService.allowUserBecomeAdopter(chatId, messageText);
+                    return;
+            }           	          
             if (currentState == SEND_REPORT && (reportCurrentState == RATION || reportCurrentState == WELL_BEING || reportCurrentState == BEHAVIOR)) {
                 userReportService.saveReportData(chatId, messageText, reportCurrentState);
                 return;

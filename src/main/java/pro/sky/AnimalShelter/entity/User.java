@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Сущность, представляющая пользователя.
@@ -63,4 +64,17 @@ public class User extends BaseEntity {
      */
     @OneToOne(mappedBy = "user")
     private CatReport report;
+
+    @Override
+    public String toString() {
+        String catName = Objects.isNull(cat) ? null : cat.getNickname();
+        String dogName = (Objects.isNull(dog) ? null : dog.getNickname());
+        return "id=" + super.getId() +
+                ", username=" + username +
+                ", phone=" + phone +
+                ", email=" + email +
+                ", cat=" + catName +
+                ", dog=" + dogName;
+    }
+
 }

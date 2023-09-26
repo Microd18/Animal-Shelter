@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Класс представляет собой сущность "Собака" в базе данных.
@@ -45,4 +46,14 @@ public class Dog extends BaseEntity {
      */
     @OneToOne(mappedBy = "dog")
     private DogReport dogReport;
+
+    @Override
+    public String toString() {
+        String userName = Objects.isNull(user) ? null : user.getUsername();
+        return "Собака: id=" + super.getId() +
+                ", nickname=" + nickname +
+                ", age=" + age +
+                ", user=" + userName;
+    }
+
 }

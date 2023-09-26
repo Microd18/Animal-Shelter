@@ -31,6 +31,9 @@ public enum BotCommand {
     PUPPY_HOME_SETUP_RECOMMENDATION("/puppy_home_setup_recommendation"),//Бот может  выдать список рекомендаций по обустройству дома для щенка
     KITTY_HOME_SETUP_RECOMMENDATION("/kitty_home_setup_recommendation"),//Бот может  выдать список рекомендаций по обустройству дома для котёнка
     ADMIN("/admin"),                                                    //Меню взаимодействия с волонтером
+
+    FIND_USER_BY_PHONE("/find_user_by_phone"),                          //Найти юзеров по номеру телефона
+    FIND_ANIMAL_BY_NAME("/find_animal_by_name"),                        //Найти животное по кличке
     MAKE_ADOPTER("/make_adopter"),                                      //Перевести юзера в усыновителя кошки или собаки
     ALL_ADOPTERS("/all_adopters"),                                      //Получить список усыновителей
     CHECK_REPORT("/check_report"),                                      //Проверить отчет по усыновителю

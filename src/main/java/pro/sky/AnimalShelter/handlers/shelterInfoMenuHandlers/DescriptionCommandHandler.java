@@ -15,6 +15,9 @@ import pro.sky.AnimalShelter.utils.MessagesBot;
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_SHELTER_DESCRIPTION_TEXT;
 
+/**
+ * Обработчик команды "/description".
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,6 @@ public class DescriptionCommandHandler implements CommandHandler {
      * Экземпляр утилитарного класс для общих методов.
      */
     private final CommonUtils commonUtils;
-
 
 
     /**
