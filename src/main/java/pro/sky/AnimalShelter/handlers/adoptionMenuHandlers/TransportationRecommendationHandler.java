@@ -11,6 +11,8 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.TRANSPORTATION_RECOMMENDATION_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.TRANSPORTATION_RECOMMENDATION_DOG_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -42,36 +44,28 @@ public class TransportationRecommendationHandler implements CommandHandler {
             BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
 
             if (previousState == DOG) {
-                String responseText = "Желательно для перевозки собаки иметь специальную клетку-контейнер, либо переноску, как для кошек,допустимо для мелких пород собак.\n" +
-                        "             \n" +
-                        "Возврат в предыдущее меню (/back)\n" +
-                        "Выключить бота (/stop)";
-                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                SendMessage message = new SendMessage(chatId.toString(), TRANSPORTATION_RECOMMENDATION_DOG_TEXT);
                 telegramBot.execute(message);
             }
             if (previousState == CAT) {
-                String responseText = "Для перевозки кошки обязательно нужна переноска для кошек. \n" +
-                        "             \n" +
-                        "Возврат в предыдущее меню (/back)\n" +
-                        "Выключить бота (/stop)";
-                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                SendMessage message = new SendMessage(chatId.toString(), TRANSPORTATION_RECOMMENDATION_CAT_TEXT);
                 telegramBot.execute(message);
             }
         } else if (currentState == STOP) {
-                commonUtils.offerToStart(chatId);
-            } else {
-                commonUtils.sendInvalidCommandResponse(chatId);
-            }
-        }
-
-        /**
-         * Возвращает команду, связанную с этим обработчиком ("/transportation_recommendation").
-         *
-         * @return Команда, связанная с обработчиком.
-         */
-
-        @Override
-        public BotCommand getCommand () {
-            return TRANSPORTATION_RECOMMENDATION;
+            commonUtils.offerToStart(chatId);
+        } else {
+            commonUtils.sendInvalidCommandResponse(chatId);
         }
     }
+
+    /**
+     * Возвращает команду, связанную с этим обработчиком ("/transportation_recommendation").
+     *
+     * @return Команда, связанная с обработчиком.
+     */
+
+    @Override
+    public BotCommand getCommand() {
+        return TRANSPORTATION_RECOMMENDATION;
+    }
+}
