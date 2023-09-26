@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS cats
     nickname      VARCHAR(255),
     age           INTEGER,
     user_id       BIGINT
-        CONSTRAINT fk_cats_users REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_cats_users REFERENCES users (id)
 );
 
 --changeset pruglo-ve:20230923-5 failOnError:true
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS dogs
     nickname      VARCHAR(255),
     age           INTEGER,
     user_id       BIGINT
-        CONSTRAINT fk_dogs_users REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_dogs_users REFERENCES users (id)
 );
 
 --changeset pruglo-ve:20230923-6 failOnError:true
@@ -101,16 +101,16 @@ CREATE TABLE IF NOT EXISTS cat_reports
 (
     id                  BIGSERIAL PRIMARY KEY,
     photo_id            BIGINT
-        CONSTRAINT fk_reports_cat_photos REFERENCES cat_photos (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT fk_reports_cat_photos REFERENCES cat_photos (id),
     ration              OID,
     well_being          OID,
     behavior            OID,
     updated             TIMESTAMP,
     created             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id             BIGINT
-        CONSTRAINT fk_reports_users REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT fk_reports_users REFERENCES users (id),
     cat_id              BIGINT
-        CONSTRAINT fk_reports_cats REFERENCES cats (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_reports_cats REFERENCES cats (id)
 );
 
 --changeset pruglo-ve:20230923-9 failOnError:true
@@ -122,16 +122,16 @@ CREATE TABLE IF NOT EXISTS dog_reports
 (
     id                  BIGSERIAL PRIMARY KEY,
     photo_id            BIGINT
-        CONSTRAINT fk_reports_dog_photos REFERENCES dog_photos (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT fk_reports_dog_photos REFERENCES dog_photos (id),
     ration              OID,
     well_being          OID,
     behavior            OID,
     updated             TIMESTAMP,
     created             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id             BIGINT
-        CONSTRAINT fk_reports_users REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT fk_reports_users REFERENCES users (id),
     dog_id              BIGINT
-        CONSTRAINT fk_reports_dogs REFERENCES dogs (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_reports_dogs REFERENCES dogs (id)
 );
 
 --changeset pruglo-ve:20230923-10 failOnError:true
@@ -167,3 +167,16 @@ INSERT INTO dogs (nickname, age) VALUES
                                      ('Жучка', 6),
                                      ('Лайка', 3),
                                      ('Рэмбо', 4);
+
+--changeset pruglo-ve:20230924-12 failOnError:true
+--comment: Create user_reports_states table.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'user_reports_states';
+
+CREATE TABLE IF NOT EXISTS user_reports_states
+(
+    id              BIGSERIAL PRIMARY KEY,
+    state_data      JSONB,
+    chat_id         BIGINT UNIQUE
+        CONSTRAINT fk_user_reports_states_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
+);

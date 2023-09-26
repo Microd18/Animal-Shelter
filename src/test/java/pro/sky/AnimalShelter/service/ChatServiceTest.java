@@ -24,7 +24,7 @@ class ChatServiceTest {
 
     @Test
     public void isBotStartedTest() {
-        Chat chat = new Chat(null, true, null, null);
+        Chat chat = new Chat(null, true, null, null, null);
 
         when(chatRepository.findByChatId(any(Long.class))).thenReturn(Optional.of(chat));
 
