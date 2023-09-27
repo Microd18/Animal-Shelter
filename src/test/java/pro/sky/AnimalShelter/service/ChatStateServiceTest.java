@@ -32,7 +32,7 @@ public class ChatStateServiceTest {
     private ChatStateRepository chatStateRepository;
 
     @Mock
-    private JsonMapConverter<BotCommand> jsonMapConverter;
+    private JsonMapConverter jsonMapConverter;
 
     @InjectMocks
     private ChatStateService chatStateService;
@@ -56,9 +56,9 @@ public class ChatStateServiceTest {
         lenient().when(chatStateRepository.findByChatId(chat.getId())).thenReturn(Optional.of(chatState));
         lenient().when(chatRepository.findByChatId(chatId)).thenReturn(Optional.empty());
         lenient().when(chatRepository.findByChatId(chatId)).thenReturn(Optional.of(chat));
-        lenient().when(jsonMapConverter.toJson(any())).thenReturn("{}");
+        lenient().when(jsonMapConverter.toCommandStatesJson(any())).thenReturn("{}");
         lenient().when(chatStateRepository.findByChatId(chat.getId())).thenReturn(Optional.empty());
-        lenient().when(jsonMapConverter.toMap(chatState.getStateData())).thenReturn(Collections.singletonMap(chatId, new LinkedList<>(Arrays.asList(START, STOP))));
+        lenient().when(jsonMapConverter.toCommandStatesMap(chatState.getStateData())).thenReturn(Collections.singletonMap(chatId, new LinkedList<>(Arrays.asList(START, STOP))));
     }
 
     @Test
@@ -79,7 +79,6 @@ public class ChatStateServiceTest {
     @DisplayName("Проверка на получение текущего состояния по ИД чата при включенном боте и наличии состояния чата")
     void testGetCurrentStateByChatId_BotStarted_ChatStateExists() {
         chat.setBotStarted(true);
-        chatState.setStateData("{\"1\": [\"START\"]}");
         when(chatStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(chatState));
         BotCommand result = chatStateService.getCurrentStateByChatId(chatId);
         assertEquals(START, result);
@@ -102,8 +101,7 @@ public class ChatStateServiceTest {
     @Test
     @DisplayName("Проверка на получение предыдущего состояния по ИД чата при включенном боте и наличии состояния чата")
     void testGetPreviousStateByChatId_BotStarted_ChatStateExists() {
-        chat.setBotStarted(true);
-        chatState.setStateData("{\"1\": [\"START\",\"DOG\"]}");
+           chat.setBotStarted(true);
         when(chatStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(chatState));
         BotCommand result = chatStateService.getPreviousStateByChatId(chatId);
         assertEquals(START, result);
@@ -215,8 +213,8 @@ public class ChatStateServiceTest {
     @DisplayName("Проверка на получение последнего состояния Cat или Dog по ИД чата при включенном боте и наличии состояния чата с Cat или Dog")
     void testGetLastStateCatOrDogByChatId_BotStarted_ChatStateExists_CatOrDogFound() {
         chat.setBotStarted(true);
-        chatState.setStateData("{\"1\": [\"CAT\", \"DOG\",\"START\"]}");
         when(chatStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(chatState));
+        when(jsonMapConverter.toCommandStatesMap(chatState.getStateData())).thenReturn(Collections.singletonMap(chatId, new LinkedList<>(Arrays.asList(START, BotCommand.CAT, BotCommand.DOG))));
 
         BotCommand result = chatStateService.getLastStateCatOrDogByChatId(chatId);
         assertEquals(CAT, result);
@@ -240,13 +238,16 @@ public class ChatStateServiceTest {
     @DisplayName("Проверка на переход к предыдущему состоянию при наличии чата, состоянии чата и непустой очереди состояний")
     void testGoToPreviousState_ChatExists_ChatStateExists_StateQueueNotEmpty() {
         chat.setBotStarted(true);
-        chatState.setStateData("{\"1\": [\"START\",\"STOP\"]}");
+        Deque<BotCommand> stateQueue = new LinkedList<>(Arrays.asList(START, STOP));
+        when(jsonMapConverter.toCommandStatesMap(any())).thenReturn(Collections.singletonMap(chatId, stateQueue));
         when(chatStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(chatState));
 
         chatStateService.goToPreviousState(chatId);
 
         verify(chatStateRepository, times(1)).save(any());
         verify(chatStateRepository, times(1)).findByChatId(any());
+        verify(jsonMapConverter, times(1)).toCommandStatesMap(any());
+        verify(jsonMapConverter, times(1)).toCommandStatesJson(any());
     }
 }
 

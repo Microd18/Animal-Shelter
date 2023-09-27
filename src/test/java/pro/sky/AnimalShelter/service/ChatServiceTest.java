@@ -1,35 +1,62 @@
 package pro.sky.AnimalShelter.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.entity.Chat;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest
+@ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
 
-    @MockBean
+    @Mock
     private ChatRepository chatRepository;
 
-    @SpyBean
+    @InjectMocks
     private ChatService chatService;
 
     @Test
-    public void isBotStartedTest() {
-        Chat chat = new Chat(null, true, null, null, null);
+    public void testIsBotStartedWhenChatDoesNotExist() {
+        when(chatRepository.findByChatId(anyLong())).thenReturn(Optional.empty());
 
-        when(chatRepository.findByChatId(any(Long.class))).thenReturn(Optional.of(chat));
+        boolean result = chatService.isBotStarted(123L);
 
-        Assertions.assertThat(chatService.isBotStarted(null)).isEqualTo(false);
-        Assertions.assertThat(chatService.isBotStarted(1L)).isEqualTo(true);
+        verify(chatRepository, times(1)).findByChatId(anyLong());
+        assertFalse(result);
     }
 
+    @Test
+    public void testIsBotStartedWhenBotIsNotStarted() {
+        Chat chat = new Chat();
+        chat.setBotStarted(false);
+
+        when(chatRepository.findByChatId(anyLong())).thenReturn(Optional.of(chat));
+
+        boolean result = chatService.isBotStarted(123L);
+
+        verify(chatRepository, times(2)).findByChatId(anyLong());
+        assertFalse(result);
+    }
+
+    @Test
+    public void testIsBotStartedWhenBotIsStarted() {
+        Chat chat = new Chat();
+        chat.setBotStarted(true);
+
+        when(chatRepository.findByChatId(anyLong())).thenReturn(Optional.of(chat));
+
+        boolean result = chatService.isBotStarted(123L);
+
+        verify(chatRepository, times(2)).findByChatId(anyLong());
+        assertTrue(result);
+    }
 }
