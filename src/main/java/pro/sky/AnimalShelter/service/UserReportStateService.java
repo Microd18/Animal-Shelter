@@ -26,7 +26,7 @@ public class UserReportStateService {
     /**
      * Класс-конвертер для преобразования между JSON и объектами типа Map<Long, Deque<>>.
      */
-    private final JsonMapConverter<UserReportStates> jsonMapConverter = new JsonMapConverter<>(UserReportStates.class);
+    private final JsonMapConverter jsonMapConverter;
 
     /**
      * Репозиторий для доступа к данным о состояниях чатов.
@@ -60,7 +60,7 @@ public class UserReportStateService {
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> userReportStateRepository.findByChatId(chat.getId()))
                 .map(UserReportState::getStateData)
-                .map(jsonMapConverter::toMap)
+                .map(jsonMapConverter::toUserReportStatesMap)
                 .map(map -> map.get(chatId))
                 .flatMap(stateQueue -> stateQueue.isEmpty() ? Optional.empty() : Optional.of(stateQueue.peek()))
                 .orElse(null);
@@ -86,7 +86,7 @@ public class UserReportStateService {
 
         userReportStateRepository.findByChatId(chat.getId()).ifPresentOrElse(
                 userReportState -> {
-                    Map<Long, Deque<UserReportStates>> userReportStateHistory = jsonMapConverter.toMap(userReportState.getStateData());
+                    Map<Long, Deque<UserReportStates>> userReportStateHistory = jsonMapConverter.toUserReportStatesMap(userReportState.getStateData());
                     Deque<UserReportStates> stateStack = userReportStateHistory.computeIfAbsent(chatId, k -> new LinkedList<>());
 
                     if (stateStack.size() >= MAX_HISTORY_USER_REPORT_STATE_SIZE) {
@@ -94,12 +94,12 @@ public class UserReportStateService {
                     }
 
                     stateStack.push(state);
-                    String stateDataJson = jsonMapConverter.toJson(userReportStateHistory);
+                    String stateDataJson = jsonMapConverter.toUserReportStatesJson(userReportStateHistory);
                     userReportState.setStateData(stateDataJson);
                     userReportStateRepository.save(userReportState);
                 },
                 () -> userReportStateRepository.save(UserReportState.builder()
-                        .stateData(jsonMapConverter.toJson(
+                        .stateData(jsonMapConverter.toUserReportStatesJson(
                                 Collections.singletonMap(chatId, new LinkedList<>(Collections.singleton(state))))
                         )
                         .chat(chat)
@@ -119,7 +119,7 @@ public class UserReportStateService {
                 userReportStateRepository.findByChatId(foundChat.getId())).ifPresent(foundUserReportState -> {
             Map<Long, Deque<UserReportStates>> userReportStatesHistory = new HashMap<>();
             userReportStatesHistory.put(chatId, new LinkedList<>());
-            foundUserReportState.setStateData(jsonMapConverter.toJson(userReportStatesHistory));
+            foundUserReportState.setStateData(jsonMapConverter.toUserReportStatesJson(userReportStatesHistory));
             userReportStateRepository.save(foundUserReportState);
         });
     }
