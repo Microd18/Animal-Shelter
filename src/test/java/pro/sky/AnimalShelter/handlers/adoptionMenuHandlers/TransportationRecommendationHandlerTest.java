@@ -18,11 +18,12 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_CAT_TEXT;
-import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_DOG_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.TRANSPORTATION_RECOMMENDATION_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.TRANSPORTATION_RECOMMENDATION_DOG_TEXT;
 
 @ExtendWith(MockitoExtension.class)
-class AdoptCommandHandlerTest {
+public class TransportationRecommendationHandlerTest {
+
     @Mock
     private ChatStateService chatStateService;
 
@@ -42,98 +43,95 @@ class AdoptCommandHandlerTest {
     private Chat chat;
 
     @InjectMocks
-    private AdoptCommandHandler adoptCommandHandler;
+    private TransportationRecommendationHandler transportationRecommendationHandler;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         lenient().when(update.message()).thenReturn(message);
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, ччто при выполнении команды /adopt, если текущее состояние чата " +
-            "(chatId) равно /ADOPT и /DOG, и предыдущее состояние чата равно " +
+    @DisplayName("Проверяет, ччто при выполнении команды /transportation_recommendation, если текущее состояние чата " +
+            "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
             "/DOG, будет отправлено правильное сообщение в чат с указанным chatId")
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.DOG);
         when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
-        adoptCommandHandler.handle(update);
-        SendMessage message = new SendMessage(chatId, ADOPT_DOG_TEXT);
+        transportationRecommendationHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, TRANSPORTATION_RECOMMENDATION_DOG_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при выполнении команды /adopt, если текущее состояние чата " +
-            "(chatId) равно /ADOPT и /DOG, и предыдущее состояние чата равно " +
-            "/DOG, будет отправлено правильное сообщение в чат с указанным chatId")
+    @DisplayName("Проверяет, что при выполнении команды /transportation_recommendation, если текущее состояние чата " +
+            "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
+            "/CAT, будет отправлено правильное сообщение в чат с указанным chatId")
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.CAT);
         when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.CAT);
-        adoptCommandHandler.handle(update);
-        SendMessage message = new SendMessage(chatId, ADOPT_CAT_TEXT);
-        telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(message);
-    }
-
-
-    @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса AdoptCommandHandler " +
-            "в состоянии \"Меню Adopt собак\" отправляется сообщение с текстом " +
-            "в чат с заданным chatId.")
-    public void testAdoptCommandHandlerDog() {
-        Long chatId = 123L;
-
-        SendMessage message = new SendMessage(chatId, ADOPT_DOG_TEXT);
+        transportationRecommendationHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, TRANSPORTATION_RECOMMENDATION_CAT_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса AdoptCommandHandler " +
-            "в состоянии \"Меню adopt кошек\" отправляется сообщение с текстом " +
+    @DisplayName("Проверяет, что при вызове метода handle класса TransportationRecommendationHandler " +
+            "в состоянии \"Рекомендации по транспортировке собаки\" отправляется сообщение с текстом " +
             "в чат с заданным chatId.")
-    public void testAdoptCommandHandlerCat() {
+    public void testTransportationRecommendationHandlerDog() {
         Long chatId = 123L;
 
-        SendMessage message = new SendMessage(chatId, ADOPT_CAT_TEXT);
+        SendMessage message = new SendMessage(chatId, TRANSPORTATION_RECOMMENDATION_DOG_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
+
+    @Test
+    @DisplayName("Проверяет, что при вызове метода handle класса TransportationRecommendationHandler " +
+            "в состоянии \"Рекомендации по транспортировке кошки\" отправляется сообщение с текстом " +
+            "в чат с заданным chatId.")
+    public void testTransportationRecommendationHandlerCat() {
+        Long chatId = 123L;
+
+        SendMessage message = new SendMessage(chatId, TRANSPORTATION_RECOMMENDATION_CAT_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle " +
-            "класса AdoptCommandHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
+            "класса TransportationRecommendationHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
             "класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsStop() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.STOP);
 
-        adoptCommandHandler.handle(update);
+        transportationRecommendationHandler.handle(update);
 
         verify(commonUtils).offerToStart(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса AdoptCommandHandler \" +\n"
+    @DisplayName("Проверяет, что при вызове метода handle класса TransportationRecommendationHandler \" +\n"
             + "в состоянии \\\"Назад\\\" вызывается метод sendInvalidCommandResponse класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsBack() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
 
-        adoptCommandHandler.handle(update);
+        transportationRecommendationHandler.handle(update);
 
         verify(commonUtils).sendInvalidCommandResponse(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, что метод getCommand класса AdoptCommandHandler возвращает правильную команду BotCommand.DATING_RULES")
+    @DisplayName("Проверяет, что метод getCommand класса TransportationRecommendationHandler возвращает правильную команду BotCommand.TRANSPORTATION_RECOMMENDATION")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.ADOPT;
-        BotCommand actualCommand = adoptCommandHandler.getCommand();
+        BotCommand expectedCommand = BotCommand.TRANSPORTATION_RECOMMENDATION;
+        BotCommand actualCommand = transportationRecommendationHandler.getCommand();
         assertEquals(expectedCommand, actualCommand);
     }
 }

@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.adoptionMenuHandlers;
+package pro.sky.AnimalShelter.handlers.adoptionMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -13,13 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.VerifiedDogHandlersHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.TRANSPORTATION_RECOMMENDATION_DOG_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.VERIFIED_DOG_TEXT;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +54,20 @@ public class VerifiedDogHandlersHandlerTest {
     }
 
     @Test
+    @DisplayName("Проверяет, ччто при выполнении команды /transportation_recommendation, если текущее состояние чата " +
+            "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
+            "/DOG, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleDogStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
+        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
+        verifiedDogHandlersHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, VERIFIED_DOG_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
+
+    @Test
     @DisplayName("Проверяет, что при вызове метода handle класса VerifiedDogHandlers " +
             "в состоянии \"Рекомендации по проверенным кинологам\" отправляется сообщение с текстом " +
             "в чат с заданным chatId.")
@@ -62,7 +76,7 @@ public class VerifiedDogHandlersHandlerTest {
 
         SendMessage message = new SendMessage(chatId, VERIFIED_DOG_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

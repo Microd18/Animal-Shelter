@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.adoptionMenuHandlers;
+package pro.sky.AnimalShelter.handlers.adoptionMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -13,17 +13,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.RefusalReasonHandler;
+import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.DocumentsListHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.REFUSAL_REASON_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOCUMENTS_LIST_TEXT;
 
 @ExtendWith(MockitoExtension.class)
-public class RefusalReasonHandlerTest {
+public class DocumentsListHandlerTest {
 
     @Mock
     private ChatStateService chatStateService;
@@ -44,7 +45,7 @@ public class RefusalReasonHandlerTest {
     private Chat chat;
 
     @InjectMocks
-    private RefusalReasonHandler refusalReasonHandler;
+    private DocumentsListHandler documentsListHandler;
 
     @BeforeEach
     public void setUp() {
@@ -52,47 +53,58 @@ public class RefusalReasonHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+    @Test
+    @DisplayName("Проверяет, ччто при выполнении команды /documents\", если текущее состояние чата " +
+            "(chatId) равно /ADOPT ,, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
+        documentsListHandler.handle(update);
+        SendMessage message = new SendMessage(chatId,ADOPT_CAT_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot,times(1)).execute(message);
+    }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса RefusalReasonHandler " +
-            "в состоянии \"Причины, почему могут отказать и не дать забрать собаку из приюта\" отправляется сообщение с текстом " +
+    @DisplayName("Проверяет, что при вызове метода handle класса DocumentsListHandler " +
+            "в состоянии \"Список документов\" отправляется сообщение с текстом " +
             "в чат с заданным chatId.")
     public void testDocumentsListHandler() {
         Long chatId = 123L;
 
-        SendMessage message = new SendMessage(chatId, REFUSAL_REASON_TEXT);
+        SendMessage message = new SendMessage(chatId, DOCUMENTS_LIST_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
     }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle " +
-            "класса RefusalReasonHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
+            "класса DocumentsListHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
             "класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsStop() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.STOP);
 
-        refusalReasonHandler.handle(update);
+        documentsListHandler.handle(update);
 
         verify(commonUtils).offerToStart(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса RefusalReasonHandler \" +\n"
+    @DisplayName("Проверяет, что при вызове метода handle класса DocumentsListHandler \" +\n"
             + "в состоянии \\\"Назад\\\" вызывается метод sendInvalidCommandResponse класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsBack() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
 
-        refusalReasonHandler.handle(update);
+        documentsListHandler.handle(update);
 
         verify(commonUtils).sendInvalidCommandResponse(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, что метод getCommand класса RefusalReasonHandler возвращает правильную команду BotCommand.REFUSAL_REASON.")
+    @DisplayName("Проверяет, что метод getCommand класса DocumentsListHandler возвращает правильную команду BotCommand.DOCUMENTS.")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.REFUSAL_REASON;
-        BotCommand actualCommand = refusalReasonHandler.getCommand();
+        BotCommand expectedCommand = BotCommand.DOCUMENTS;
+        BotCommand actualCommand = documentsListHandler.getCommand();
         assertEquals(expectedCommand, actualCommand);
     }
 }
