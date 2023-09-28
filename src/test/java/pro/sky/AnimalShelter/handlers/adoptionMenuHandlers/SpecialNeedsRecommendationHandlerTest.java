@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.adoptionMenuHandlers;
+package pro.sky.AnimalShelter.handlers.adoptionMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -20,8 +20,7 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.SPECIAL_NEEDS_RECOMMENDATION_CAT_TEXT;
-import static pro.sky.AnimalShelter.utils.MessagesBot.SPECIAL_NEEDS_RECOMMENDATION_DOG_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SpecialNeedsRecommendationHandlerTest {
@@ -53,6 +52,32 @@ public class SpecialNeedsRecommendationHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+    @Test
+    @DisplayName("Проверяет, ччто при выполнении команды /special_need_recommendation, если текущее состояние чата " +
+            "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
+            "/DOG, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleDogStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
+        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
+        specialNeedsRecommendationHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_DOG_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
+    @Test
+    @DisplayName("Проверяет, что при выполнении команды /special_need_recommendation, если текущее состояние чата " +
+            "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
+            "/CAT, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleCatStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
+        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.CAT);
+        specialNeedsRecommendationHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_CAT_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle класса SpecialNeedsRecommendationHandler " +
@@ -63,7 +88,7 @@ public class SpecialNeedsRecommendationHandlerTest {
 
         SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_DOG_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
@@ -75,7 +100,7 @@ public class SpecialNeedsRecommendationHandlerTest {
 
         SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_CAT_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

@@ -10,9 +10,9 @@ import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatService;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
-import pro.sky.AnimalShelter.utils.MessagesBot;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,7 @@ public class AdminCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
 
         if (chatService.isBotStarted(chatId)) {
-            telegramBot.execute(new SendMessage(chatId.toString(), MessagesBot.ADMIN_COMMAND_TEXT));
+            telegramBot.execute(new SendMessage(chatId.toString(), ADMIN_COMMAND_TEXT));
             chatStateService.updateChatState(chatId, ADMIN);
         } else {
             commonUtils.offerToStart(chatId);

@@ -19,23 +19,21 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
-import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_TEXT;
-import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_CAT_TEXT;
+import static pro.sky.AnimalShelter.enums.BotCommand.START;
+import static pro.sky.AnimalShelter.utils.MessagesBot.START_TEXT;
 
 @ExtendWith(MockitoExtension.class)
-class AdminCommandHandlerTest {
+class StartCommandHandlerTest {
     @Mock
     private ChatStateService chatStateService;
 
-    @Mock
     private ChatService chatService;
 
     @Mock
-    private CommonUtils commonUtils;
+    private TelegramBot telegramBot;
 
     @Mock
-    private TelegramBot telegramBot;
+    private CommonUtils commonUtils;
 
     @Mock
     private Update update;
@@ -47,7 +45,7 @@ class AdminCommandHandlerTest {
     private Chat chat;
 
     @InjectMocks
-    private AdminCommandHandler adminCommandHandler;
+    private StartCommandHandler startCommandHandler;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +58,7 @@ class AdminCommandHandlerTest {
     @DisplayName("Проверяет, что при вызове метода handle класса AdminCommandHandler " + "в состоянии \"Вызов меню Admin\" отправляется сообщение с текстом " + "в чат с заданным chatId.")
     public void testAdminCommandHandler() {
         Long chatId = 123L;
-        SendMessage message = new SendMessage(chatId, ADMIN_COMMAND_TEXT);
+        SendMessage message = new SendMessage(chatId, START_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
@@ -68,33 +66,7 @@ class AdminCommandHandlerTest {
     @Test
     @DisplayName("Проверяет, что метод getCommand класса AdminCommandHandler возвращает правильную команду BotCommand.DATING_RULES")
     public void testGetCommand() {
-        BotCommand actualCommand = adminCommandHandler.getCommand();
-        assertEquals(ADMIN, actualCommand);
+        BotCommand actualCommand = startCommandHandler.getCommand();
+        assertEquals(START, actualCommand);
     }
-
-    @Test
-    @DisplayName("Проверяем, что корректное сообщение отправлено в чат и Проверяем, что состояние чата было обновлено")
-    public void testHandleAdminCommandBotStartedSendAdminCommandText() {
-        Long chatId = 123L;
-        when(chatService.isBotStarted(chatId)).thenReturn(true);
-        adminCommandHandler.handle(update);
-        SendMessage message = new SendMessage(chatId, ADMIN_COMMAND_TEXT);
-        telegramBot.execute(message);
-        verify(telegramBot).execute(message);
-        verify(chatStateService).updateChatState(chatId, ADMIN);
-    }
-    @Test
-    @DisplayName("Проверяем, что вызывается метод offerToStart у commonUtils и Проверяем, что состояние чата не обновляется")
-    public void testHandleAdminCommandBotNotStartedOfferToStart() {
-        Long chatId = 123L;
-        when(chatService.isBotStarted(chatId)).thenReturn(false);
-        adminCommandHandler.handle(update);
-        SendMessage message = new SendMessage(chatId, ADMIN_COMMAND_TEXT);
-        telegramBot.execute(message);
-        verify(commonUtils).offerToStart(chatId);
-        verify(chatStateService, never()).updateChatState(anyLong(), any(BotCommand.class));
-    }
-
-
 }
-

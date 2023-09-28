@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.adoptionMenuHandlers;
+package pro.sky.AnimalShelter.handlers.adoptionMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -13,18 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.DatingRulesHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.DATING_RULES_CAT_TEXT;
-import static pro.sky.AnimalShelter.utils.MessagesBot.DATING_RULES_DOG_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.PUPPY_HOME_SETUP_RECOMMENDATION_TEXT;
 
 @ExtendWith(MockitoExtension.class)
-public class DatingRulesHandlerTest {
+public class PuppyHomeSetupRecommendationHandlerTest {
 
     @Mock
     private ChatStateService chatStateService;
@@ -45,7 +42,7 @@ public class DatingRulesHandlerTest {
     private Chat chat;
 
     @InjectMocks
-    private DatingRulesHandler datingRulesHandler;
+    private PuppyHomeSetupRecommendationHandler puppyHomeSetupRecommendationHandler;
 
     @BeforeEach
     public void setUp() {
@@ -55,57 +52,58 @@ public class DatingRulesHandlerTest {
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса DatingRulesHandler " +
-            "в состоянии \"Правила знакомства с животным\" отправляется сообщение с текстом " +
-            "в чат с заданным chatId.")
-    public void testDatingRulesHandlerDog() {
+    @DisplayName("Проверяет, что при выполнении команды /puppy_home_setup_recommendation, если текущее состояние чата " +
+            "(chatId) равно /ADOPT,  будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
-
-        SendMessage message = new SendMessage(chatId, DATING_RULES_DOG_TEXT);
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
+        puppyHomeSetupRecommendationHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, PUPPY_HOME_SETUP_RECOMMENDATION_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса DatingRulesHandler " +
-            "в состоянии \"Правила знакомства с животным\" отправляется сообщение с текстом " +
+    @DisplayName("Проверяет, что при вызове метода handle класса PuppyHomeSetupRecommendationHandler " +
+            "в состоянии \"Рекомендации по обустройству дома для щенка\" отправляется сообщение с текстом " +
             "в чат с заданным chatId.")
-    public void testDatingRulesHandlerCat() {
+    public void testPuppyHomeSetupRecommendationHandler() {
         Long chatId = 123L;
 
-        SendMessage message = new SendMessage(chatId, DATING_RULES_CAT_TEXT);
+        SendMessage message = new SendMessage(chatId, PUPPY_HOME_SETUP_RECOMMENDATION_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle " +
-            "класса DatingRulesHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
+            "класса PuppyHomeSetupRecommendationHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
             "класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsStop() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.STOP);
 
-        datingRulesHandler.handle(update);
+        puppyHomeSetupRecommendationHandler.handle(update);
 
         verify(commonUtils).offerToStart(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса DatingRulesHandler \" +\n"
+    @DisplayName("Проверяет, что при вызове метода handle класса PuppyHomeSetupRecommendationHandler \" +\n"
             + "в состоянии \\\"Назад\\\" вызывается метод sendInvalidCommandResponse класса CommonUtils с заданным chatId.")
     public void testHandleWhenCurrentStateIsBack() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
 
-        datingRulesHandler.handle(update);
+        puppyHomeSetupRecommendationHandler.handle(update);
 
         verify(commonUtils).sendInvalidCommandResponse(123L);
     }
 
     @Test
-    @DisplayName("Проверяет, что метод getCommand класса DatingRulesHandler возвращает правильную команду BotCommand.DATING_RULES")
+    @DisplayName("Проверяет, что метод getCommand класса PuppyHomeSetupRecommendationHandler возвращает правильную команду BotCommand.PUPPY_HOME_SETUP_RECOMMENDATION")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.DATING_RULES;
-        BotCommand actualCommand = datingRulesHandler.getCommand();
+        BotCommand expectedCommand = BotCommand.PUPPY_HOME_SETUP_RECOMMENDATION;
+        BotCommand actualCommand = puppyHomeSetupRecommendationHandler.getCommand();
         assertEquals(expectedCommand, actualCommand);
     }
 }
+
