@@ -17,9 +17,8 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.TRANSPORTATION_RECOMMENDATION_DOG_TEXT;
+import static pro.sky.AnimalShelter.enums.BotCommand.VERIFIED_DOG_HANDLERS;
 import static pro.sky.AnimalShelter.utils.MessagesBot.VERIFIED_DOG_TEXT;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,8 +104,7 @@ public class VerifiedDogHandlersHandlerTest {
     @Test
     @DisplayName("Проверяет, что метод getCommand класса VerifiedDogHandlers возвращает правильную команду BotCommand.VERIFIED_DOG_HANDLERS.")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.VERIFIED_DOG_HANDLERS;
         BotCommand actualCommand = verifiedDogHandlersHandler.getCommand();
-        assertEquals(expectedCommand, actualCommand);
+        assertEquals(VERIFIED_DOG_HANDLERS, actualCommand);
     }
 }

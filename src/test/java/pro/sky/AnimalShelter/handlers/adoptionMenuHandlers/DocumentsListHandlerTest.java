@@ -74,7 +74,7 @@ public class DocumentsListHandlerTest {
 
         SendMessage message = new SendMessage(chatId, DOCUMENTS_LIST_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

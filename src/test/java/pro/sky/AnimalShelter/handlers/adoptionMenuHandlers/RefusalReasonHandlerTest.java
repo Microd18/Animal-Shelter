@@ -74,7 +74,7 @@ public class RefusalReasonHandlerTest {
 
         SendMessage message = new SendMessage(chatId, REFUSAL_REASON_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

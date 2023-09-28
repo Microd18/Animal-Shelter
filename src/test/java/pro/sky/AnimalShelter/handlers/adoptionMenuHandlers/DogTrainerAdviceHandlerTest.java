@@ -75,7 +75,7 @@ public class DogTrainerAdviceHandlerTest {
 
         SendMessage message = new SendMessage(chatId, DOG_TRAINER_ADVICE_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

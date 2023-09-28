@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatService;
 import pro.sky.AnimalShelter.service.ChatStateService;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
+import static pro.sky.AnimalShelter.utils.MessagesBot.START_TEXT;
 
 /**
  * Обработчик команды "/start".
@@ -46,22 +47,7 @@ public class StartCommandHandler implements CommandHandler {
             telegramBot.execute(new SendMessage(chatId.toString(), "Бот уже запущен"));
             return;
         }
-        String response = "Добро пожаловать! \uD83C\uDF1F\n" +
-                "Я - твой верный компаньон, телеграм-бот помощник. " +
-                "Моя цель - помогать тебе найти идеального пушистого или верного друга на четырех лапках. \uD83D\uDC36\uD83D\uDC31\n" +
-                "\n" +
-                "Чтобы начать приключение и найти своего нового друга, просто выбери один из вариантов ниже:\n" +
-                "\n" +
-                "    Приют для кошек \uD83D\uDC31: Здесь мы заботимся о пушистых котиках всех возрастов и размеров, каждый из которых ищет свой дом и своего человека. " +
-                "Если у вас есть желание подарить теплый дом и заботу коту, этот приют идеально подойдет. Для выбора введи команду /cat\n" +
-                "\n" +
-                "    Приют для собак \uD83D\uDC36: Если вы думаете о взятии пушистого друга на прогулки и веселые игры, здесь живут забавные и преданные собачки. " +
-                "От маленьких щенков до зрелых спутников жизни - выбор за вами. Для выбора введи команду /dog\n" +
-                "\n" +
-                "Остановить бота (/stop)";
-
-
-        telegramBot.execute(new SendMessage(chatId.toString(), response));
+        telegramBot.execute(new SendMessage(chatId.toString(), START_TEXT));
         chatStateService.updateChatState(chatId, START);
     }
 

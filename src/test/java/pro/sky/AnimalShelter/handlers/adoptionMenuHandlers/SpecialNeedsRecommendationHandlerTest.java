@@ -88,7 +88,7 @@ public class SpecialNeedsRecommendationHandlerTest {
 
         SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_DOG_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
