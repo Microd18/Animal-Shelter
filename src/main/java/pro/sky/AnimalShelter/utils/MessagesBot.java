@@ -383,6 +383,11 @@ public class MessagesBot {
 
     public static final String ADOPTION_SUCCESS_TEXT = "Юзер успешно переведен в усыновители";
 
+    public static final String CONTACT_TEXT="Пожалуйста, введите контактные данные в формате" +
+            ": Имя, Телефон, Email (даже если хотите поменять не все данные)\n" +
+            "Возврат в предыдущее меню (/back)\n" +
+            "Выключить бота (/stop)";
+
 }
 
 
