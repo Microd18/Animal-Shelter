@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.CONTACT_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -44,10 +45,7 @@ public class ContactCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == SHELTER_INFO || currentState == ADOPT) {
 
-            SendMessage message = new SendMessage(chatId, "Пожалуйста, введите контактные данные в формате" +
-                    ": Имя, Телефон, Email (даже если хотите поменять не все данные)\n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)");
+            SendMessage message = new SendMessage(chatId, CONTACT_TEXT);
 
             telegramBot.execute(message);
             chatStateService.updateChatState(chatId, CONTACT);
