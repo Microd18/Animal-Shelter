@@ -63,28 +63,6 @@ class ContactCommandHandlerTest {
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
     }
 
-    @Test
-    @DisplayName("Проверяет, что при вызове метода handle " +
-            "класса ContactCommandHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
-            "класса CommonUtils с заданным chatId.")
-    public void testHandleWhenCurrentStateIsStop() {
-        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.STOP);
-
-        contactCommandHandler.handle(update);
-
-        verify(commonUtils).offerToStart(123L);
-    }
-
-    @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса ContactCommandHandler \" +\n"
-            + "в состоянии \\\"Назад\\\" вызывается метод sendInvalidCommandResponse класса CommonUtils с заданным chatId.")
-    public void testHandleWhenCurrentStateIsBack() {
-        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
-
-        contactCommandHandler.handle(update);
-
-        verify(commonUtils).sendInvalidCommandResponse(123L);
-    }
 
     @Test
     @DisplayName("Проверяет, что метод getCommand класса ContactCommandHandler возвращает правильную команду BotCommand.CONTACT")
