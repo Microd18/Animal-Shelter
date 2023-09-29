@@ -17,8 +17,9 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.enums.BotCommand.FIND_USER_BY_PHONE;
 import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_PHONE_NUMBER_TEXT;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,15 +53,27 @@ class FindUserByPhoneCommandHandlerTest {
     }
 
     @Test
+    @DisplayName("Проверяет, что при выполнении команды /find_user_by_phone, если текущее состояние чата " +
+            "(chatId) равно /ADOPT ,, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(ADMIN);
+        findUserByPhoneCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, WAITING_PHONE_NUMBER_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
+
+    @Test
     @DisplayName("Проверяет, что при вызове метода handle класса FindUserByPhoneCommandHandler " +
-            "в состоянии \"Меню Admin\" отправляется сообщение с текстом " +
+            "в состоянии Меню Admin отправляется сообщение с текстом " +
             "в чат с заданным chatId.")
     public void testFindUserByPhoneCommandHandler() {
         Long chatId = 123L;
 
         SendMessage message = new SendMessage(chatId, WAITING_PHONE_NUMBER_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
@@ -89,9 +102,8 @@ class FindUserByPhoneCommandHandlerTest {
     @Test
     @DisplayName("Проверяет, что метод getCommand класса FindUserByPhoneCommandHandler возвращает правильную команду BotCommand.DATING_RULES")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.FIND_USER_BY_PHONE;
         BotCommand actualCommand = findUserByPhoneCommandHandler.getCommand();
-        assertEquals(expectedCommand, actualCommand);
+        assertEquals(FIND_USER_BY_PHONE, actualCommand);
     }
 
 }

@@ -13,14 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.KittyHomeSetupRecommendationHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.HOME_SETUP_RECOMMENDATION_CAT_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.KITTY_HOME_SETUP_RECOMMENDATION_TEXT;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +50,7 @@ public class KittyHomeSetupRecommendationHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+
     @Test
     @DisplayName("Проверяет, что при выполнении команды /kitty_home_setup_recommendation, если текущее состояние чата " +
             "(chatId) равно /ADOPT,  будет отправлено правильное сообщение в чат с указанным chatId")
