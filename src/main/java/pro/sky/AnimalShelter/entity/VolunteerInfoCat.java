@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Table(name = "volunteer_info_cat")
 @NoArgsConstructor
 @AllArgsConstructor
-public class VolunteerInfoCat extends BaseEntity{
+public class VolunteerInfoCat extends BaseEntity {
 
     /**
      * Поле для хранения количества дней содержания кошки у усыновителя.
@@ -37,4 +37,10 @@ public class VolunteerInfoCat extends BaseEntity{
     @OneToOne()
     @JoinColumn(name = "user_id")
     private User user;
+
+    /**
+     * Поле для хранения значения отображающего дополнительный (14 дневный) срок для усыновления.
+     */
+    @Column(name = "extra_days")
+    private int extraDays;
 }

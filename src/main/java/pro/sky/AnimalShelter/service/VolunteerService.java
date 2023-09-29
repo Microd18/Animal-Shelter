@@ -249,11 +249,11 @@ public class VolunteerService {
     }
 
     protected void saveUserOnCatReport(Long userId) {
-        volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get()));
+        volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get(),0));
     }
 
     protected void saveUserOnDogReport(Long userId) {
-        volunteerInfoDogRepository.save(new VolunteerInfoDog(0, 0D, userRepository.findById(userId).get()));
+        volunteerInfoDogRepository.save(new VolunteerInfoDog(0, 0D, userRepository.findById(userId).get(), 0));
     }
 
 }

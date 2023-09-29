@@ -208,3 +208,17 @@ CREATE TABLE IF NOT EXISTS volunteer_info_dog
     user_id             BIGINT
         CONSTRAINT fk_cats_users REFERENCES users (id)
 );
+
+--changeset microd18:20230930-15 failOnError:true
+--comment: Add extraDays column.
+--preconditions onFail:MARK_RAN onError:HALT
+
+ALTER TABLE volunteer_info_cat ADD extra_days INTEGER;
+
+--changeset microd18:20230930-16 failOnError:true
+--comment: Add extraDays column.
+--preconditions onFail:MARK_RAN onError:HALT
+
+ALTER TABLE volunteer_info_dog ADD extra_days INTEGER;
+
+

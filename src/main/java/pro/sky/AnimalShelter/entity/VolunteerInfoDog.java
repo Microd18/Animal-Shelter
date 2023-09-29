@@ -37,4 +37,11 @@ public class VolunteerInfoDog extends BaseEntity {
     @OneToOne()
     @JoinColumn(name = "user_id")
     private User user;
+
+    /**
+     * Поле для хранения значения отображающего дополнительный (14 дневный) срок для усыновления.
+     */
+    @Column(name = "extra_days")
+    private int extraDays;
+
 }

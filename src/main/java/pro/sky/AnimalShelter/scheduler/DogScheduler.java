@@ -16,17 +16,31 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * Счетчик для подсчета дней нахождения собаки у усыновителя
+ * отправляет уведомления на 1/2/30/44/60 день волонтеру либо усыновителю
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class DogScheduler {
-
+    /**
+     * Репозиторий для доступа к отчетам по собакам
+     */
     private final DogReportRepository dogReportRepository;
+    /**
+     * Экземпляр Telegram-бота для отправки сообщений.
+     */
     private final TelegramBot telegramBot;
+    /**
+     * Репозиторий для доступа к дополнительной информации об отчетах по собакам
+     */
     private final VolunteerInfoDogRepository volunteerInfoDogRepository;
 
-    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 2)
+    /**
+     * Метод для отправки уведомления пользователю если он не отправлял отчет более 1 дня
+     */
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 3)
     @Transactional
     public void oneDayCounter() {
         log.info("oneDayCounter started");
@@ -39,8 +53,10 @@ public class DogScheduler {
                 .filter(dogReport -> elapsedTime.isAfter(dogReport.getUpdated()))
                 .forEach(dogReport -> telegramBot.execute(new SendMessage(dogReport.getUser().getChat().getChatId(), "Вы уже сутки не отправляли отчет по питомцу!")));
     }
-
-    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 12)
+    /**
+     * Метод для отправки уведомления волонтеру если пользователь не отправлял отчет более 1 дня
+     */
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 8)
     @Transactional
     public void twoDayCounter() {
         LocalDateTime elapsedTime = LocalDateTime.now().minus(48, ChronoUnit.HOURS);
@@ -49,7 +65,6 @@ public class DogScheduler {
                 .findAll()
                 .stream()
                 .filter(dogReport -> elapsedTime.isAfter(dogReport.getUpdated()))
-                //.filter(dogReport -> dogReport.getUpdated().isAfter(elapsedTime)) // для теста
                 .map(DogReport::getUser)
                 .forEach(u -> telegramBot.execute(new SendMessage(441625131,
                         "Усыновитель:\n"
@@ -59,28 +74,21 @@ public class DogScheduler {
                                 + "\nне присылал отчет более 2х дней!")));
 
     }
-
+    /**
+     * Метод для отправки уведомления волонтеру которое сообщает что прошло 30 дней со дня усыновления
+     */
     @Scheduled(timeUnit = TimeUnit.DAYS, fixedDelay = 1)
     @Transactional
     public void thirtyDaysCounter() {
-        int time;
-        boolean extra14 = false;
-        boolean extra30 = false; //добавить поля в таблицу и дергать с нее
 
-        if (extra14) {
-            time = 44;
-        } else if (extra30) {
-            time = 60;
-        } else {
-            time = 30;
-        }
-
-        LocalDateTime elapsedTime = LocalDateTime.now().minus(time, ChronoUnit.DAYS);
+        LocalDateTime elapsedTime1 = LocalDateTime.now().minus(30, ChronoUnit.DAYS);
+        LocalDateTime elapsedTime2 = LocalDateTime.now().minus(44, ChronoUnit.DAYS);
+        LocalDateTime elapsedTime3 = LocalDateTime.now().minus(60, ChronoUnit.DAYS);
 
         dogReportRepository
                 .findAll()
                 .stream()
-                .filter(dogReport -> elapsedTime.isAfter(dogReport.getCreated()))
+                .filter(dogReport -> elapsedTime1.isAfter(dogReport.getCreated()))
                 .map(DogReport::getUser)
                 .forEach(u -> telegramBot.execute(new SendMessage(441625131,
                         "Усыновитель:\n"
@@ -88,18 +96,47 @@ public class DogScheduler {
                                 + " "
                                 + u.getPhone()
                                 + "\nсодержит животное уже 30 дней, пора принимать решение!")));
-    }
 
+
+        dogReportRepository
+                .findAll()
+                .stream()
+                .filter(dogReport -> elapsedTime2.isAfter(dogReport.getCreated()))
+                .map(DogReport::getUser)
+                .forEach(u -> telegramBot.execute(new SendMessage(441625131,
+                        "Усыновитель:\n"
+                                + u.getUsername()
+                                + " "
+                                + u.getPhone()
+                                + "\nсодержит животное уже 44 дня, пора принимать решение!")));
+
+
+        dogReportRepository
+                .findAll()
+                .stream()
+                .filter(dogReport -> elapsedTime3.isAfter(dogReport.getCreated()))
+                .map(DogReport::getUser)
+                .forEach(u -> telegramBot.execute(new SendMessage(441625131,
+                        "Усыновитель:\n"
+                                + u.getUsername()
+                                + " "
+                                + u.getPhone()
+                                + "\nсодержит животное уже 60 дней, пора принимать решение!")));
+    }
+    /**
+     * Метод, который проставляет количество дней в таблицу с дополнительной информацией для волонтера
+     */
     @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 2)
     @Transactional
     public void setDayInTable() {
-        log.info("task X started");
 
         dogReportRepository
                 .findAll()
                 .forEach(dogReport -> saveDaysCounter(dogReport.getUser().getId(), differenceInDays(dogReport.getCreated(), LocalDateTime.now())));
     }
-
+    /**
+     * Метод, который сохраняет измененную сущность
+     */
     @Transactional
     public void saveDaysCounter(Long userId, Integer daysCounter) {
 
@@ -108,7 +145,9 @@ public class DogScheduler {
 
         volunteerInfoDogRepository.save(report);
     }
-
+    /**
+     * Метод, который считает прошедшие дни между созданием первого отчета и текущим временем
+     */
     @Transactional
     public int differenceInDays(LocalDateTime after, LocalDateTime now) {
         return Math.toIntExact(ChronoUnit.DAYS.between(after, now));
