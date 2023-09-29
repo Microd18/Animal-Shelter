@@ -416,7 +416,6 @@ public class MessagesBot {
     public static final String CAT_ADOPTERS_FOUND_TEXT = "Вот список id всех усыновителей кошек:\n";
     public static final String DOG_ADOPTERS_FOUND_TEXT = "Вот список id всех усыновителей собак:\n";
 
-
 }
 
 
