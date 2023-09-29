@@ -402,6 +402,15 @@ public class MessagesBot {
             "\n" +
             "Остановить бота (/stop)";
 
+    public static final String CAT_ALREADY_HAS_ADOPTER_TEXT = "У выбранной кошки уже есть усыновитель!\n";
+    public static final String DOG_ALREADY_HAS_ADOPTER_TEXT = "У выбранной собаки уже есть усыновитель!\n";
+
+    public static final String ADOPTER_ALREADY_TOOK_CAT_TEXT = "Выбранный усыновитель уже взял кошку " +
+            "и проходит испытательный срок.\n";
+    public static final String ADOPTER_ALREADY_TOOK_DOG_TEXT = "Выбранный усыновитель уже взял собаку " +
+            "и проходит испытательный срок.\n";
+
+
 }
 
 
