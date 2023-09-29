@@ -71,6 +71,42 @@ public class VolunteerService {
     }
 
     /**
+     * Метод для вывода списка айди всех усыновителей.
+     *
+     * @param chatId идентификатор чата пользователя.
+     */
+    public void getAllAdopters(Long chatId) {
+        List<Long> catAdopterIdSet = catRepository.getCatAdopters();
+        List<Long> dogAdopterIdSet = dogRepository.getDogAdopters();
+        if (catAdopterIdSet.isEmpty() && dogAdopterIdSet.isEmpty()) {
+            telegramBot.execute(new SendMessage(chatId, ADOPTERS_NOT_FOUND_TEXT + WAY_BACK_TEXT));
+        } else if (!catAdopterIdSet.isEmpty() && !dogAdopterIdSet.isEmpty()) {
+            telegramBot.execute(
+                    new SendMessage(chatId,
+                            CAT_ADOPTERS_FOUND_TEXT + catAdopterIdSet + "\n"
+                                    + DOG_ADOPTERS_FOUND_TEXT + dogAdopterIdSet + "\n"
+                                    + WAY_BACK_TEXT)
+            );
+
+        } else if (!catAdopterIdSet.isEmpty()) {
+            telegramBot.execute(
+                    new SendMessage(chatId,
+                            CAT_ADOPTERS_FOUND_TEXT + catAdopterIdSet + "\n"
+                                    + DOG_ADOPTERS_NOT_FOUND_TEXT
+                                    + WAY_BACK_TEXT)
+            );
+        } else {
+            telegramBot.execute(
+                    new SendMessage(chatId,
+                            DOG_ADOPTERS_FOUND_TEXT + dogAdopterIdSet + "\n"
+                                    + CAT_ADOPTERS_NOT_FOUND_TEXT
+                                    + WAY_BACK_TEXT)
+            );
+        }
+    }
+
+
+    /**
      * Метод для поиска питомцев по кличке.
      *
      * @param chatId      идентификатор чата пользователя.
@@ -124,7 +160,6 @@ public class VolunteerService {
             telegramBot.execute(new SendMessage(chatId, DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT));
         }
     }
-
 
     protected void updateCatData(Long chatId, Long userId, Long catId) {
         catRepository.findById(catId)
