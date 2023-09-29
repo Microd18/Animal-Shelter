@@ -6,12 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pro.sky.AnimalShelter.entity.Cat;
-import pro.sky.AnimalShelter.entity.Dog;
-import pro.sky.AnimalShelter.entity.User;
-import pro.sky.AnimalShelter.repository.CatRepository;
-import pro.sky.AnimalShelter.repository.DogRepository;
-import pro.sky.AnimalShelter.repository.UserRepository;
+import pro.sky.AnimalShelter.entity.*;
+import pro.sky.AnimalShelter.repository.*;
 import pro.sky.AnimalShelter.utils.ValidationUtils;
 
 import java.util.List;
@@ -50,6 +46,15 @@ public class VolunteerService {
      * Утилиты для валидации данных.
      */
     private final ValidationUtils validationUtils;
+
+    /**
+     * Репозиторий для доступа к информации для волонтера о кошках.
+     */
+    private final VolunteerInfoDogRepository volunteerInfoDogRepository;
+    /**
+     * Репозиторий для доступа к информации для волонтера о собаках.
+     */
+    private final VolunteerInfoCatRepository volunteerInfoCatRepository;
 
     /**
      * Метод для поиска юзеров по номеру телефона.
@@ -116,8 +121,10 @@ public class VolunteerService {
             Long petId = Long.parseLong(userAndPetData[2].replaceAll("\\s+", ""));
             if (dogOrCat.equalsIgnoreCase("Кошка")) {
                 updateCatData(chatId, userId, petId);
+                saveUserOnCatReport(userId);
             } else if (dogOrCat.equalsIgnoreCase("Собака")) {
                 updateDogData(chatId, userId, petId);
+                saveUserOnDogReport(userId);
             } else telegramBot.execute(new SendMessage(chatId, DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT));
             telegramBot.execute(new SendMessage(chatId, ADOPTION_SUCCESS_TEXT));
         } catch (NumberFormatException e) {
@@ -153,8 +160,6 @@ public class VolunteerService {
                                 )
                         ), () -> telegramBot.execute(new SendMessage(chatId, DOG_NOT_FOUND_BY_ID_TEXT)));
     }
-
-
     private List<Cat> getCatsByName(String name) {
         return catRepository.findAll().stream()
                 .filter(cat ->
@@ -169,6 +174,14 @@ public class VolunteerService {
                         cat.getNickname()
                                 .equalsIgnoreCase(name))
                 .collect(Collectors.toList());
+    }
+
+    protected void saveUserOnCatReport(Long userId) {
+        volunteerInfoCatRepository.save(new VolunteerInfoCat(0,0D,userRepository.findById(userId).get()));
+    }
+
+    protected void saveUserOnDogReport(Long userId) {
+        volunteerInfoDogRepository.save(new VolunteerInfoDog(0,0D,userRepository.findById(userId).get()));
     }
 
 }

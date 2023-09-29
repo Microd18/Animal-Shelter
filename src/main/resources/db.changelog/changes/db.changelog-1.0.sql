@@ -180,3 +180,31 @@ CREATE TABLE IF NOT EXISTS user_reports_states
     chat_id         BIGINT UNIQUE
         CONSTRAINT fk_user_reports_states_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+--changeset microd18:20230929-13 failOnError:true
+--comment: Create volunteer_info_cat table.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'volunteer_info_cat';
+
+CREATE TABLE IF NOT EXISTS volunteer_info_cat
+(
+    id                  BIGSERIAL PRIMARY KEY,
+    amount_of_days      INTEGER,
+    rating              DOUBLE PRECISION,
+    user_id             BIGINT
+        CONSTRAINT fk_cats_users REFERENCES users (id)
+);
+
+--changeset microd18:20230929-14 failOnError:true
+--comment: Create volunteer_info_dog table.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'volunteer_info_dog';
+
+CREATE TABLE IF NOT EXISTS volunteer_info_dog
+(
+    id                  BIGSERIAL PRIMARY KEY,
+    amount_of_days      INTEGER,
+    rating              DOUBLE PRECISION,
+    user_id             BIGINT
+        CONSTRAINT fk_cats_users REFERENCES users (id)
+);

@@ -65,6 +65,22 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "user")
     private CatReport report;
 
+    /**
+     * Поле для связи пользователя с отчетом для волонтера.
+     * Один пользователь связан с одним отчетом о собаке.
+     */
+    @OneToOne(mappedBy = "user")
+    private VolunteerInfoDog volunteerInfoDog;
+
+    /**
+     * Поле для связи пользователя с отчетом для волонтера.
+     * Один пользователь связан с одним отчетом о кошке.
+     */
+    @OneToOne(mappedBy = "user")
+    private VolunteerInfoCat volunteerInfoCat;
+
+
+
     @Override
     public String toString() {
         String catName = Objects.isNull(cat) ? null : cat.getNickname();
