@@ -19,6 +19,8 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_PHONE_NUMBER_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_USER_PET_DATA_TEXT;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +51,17 @@ class MakeAdopterCommandHandlerTest {
         lenient().when(update.message()).thenReturn(message);
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
+    }
+    @Test
+    @DisplayName("Проверяет, что при выполнении команды /make_adopter, если текущее состояние чата " +
+            "(chatId) равно /ADOPT ,, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(ADMIN);
+        makeAdopterCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, WAITING_USER_PET_DATA_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

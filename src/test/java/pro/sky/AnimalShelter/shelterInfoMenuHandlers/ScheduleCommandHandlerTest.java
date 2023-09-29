@@ -20,6 +20,8 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SAFETY_COMMAND_TEST;
 import static pro.sky.AnimalShelter.utils.MessagesBot.SCHEDULE_COMMAND_TEXT;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +54,17 @@ public class ScheduleCommandHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+    @Test
+    @DisplayName("Проверяет, что при выполнении команды /schedule, если текущее состояние чата " +
+            "(chatId) равно /shelter_info, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleCatStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
+        scheduleCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, SCHEDULE_COMMAND_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle класса ScheduleCommandHandler " +
@@ -62,7 +75,7 @@ public class ScheduleCommandHandlerTest {
 
         SendMessage message = new SendMessage(chatId, SCHEDULE_COMMAND_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
