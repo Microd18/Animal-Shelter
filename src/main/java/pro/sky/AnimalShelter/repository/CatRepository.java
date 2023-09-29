@@ -1,9 +1,11 @@
 package pro.sky.AnimalShelter.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pro.sky.AnimalShelter.entity.Cat;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,4 +21,12 @@ public interface CatRepository extends JpaRepository<Cat, Long> {
      * @return Optional, содержащий чат, если найден, иначе пустой Optional.
      */
     Optional<Cat> findByUserId(Long chatId);
+
+    /**
+     * Отдает список айди юзеров, которые усыновили кошек.
+     *
+     * @return Set, содержащий user_id из таблицы кошек. Если таких нет, то пустой Set.
+     */
+    @Query(value = "SELECT cats.user_id FROM cats WHERE cats.user_id IS NOT NULL", nativeQuery = true)
+    List<Long> getCatAdopters();
 }
