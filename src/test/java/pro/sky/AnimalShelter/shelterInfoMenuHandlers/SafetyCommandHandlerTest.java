@@ -18,9 +18,10 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.SAFETY_COMMAND_TEST;
+import static pro.sky.AnimalShelter.enums.BotCommand.CAT;
+import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
+import static pro.sky.AnimalShelter.utils.MessagesBot.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SafetyCommandHandlerTest {
@@ -52,6 +53,17 @@ public class SafetyCommandHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+    @Test
+    @DisplayName("Проверяет, что при выполнении команды /safety, если текущее состояние чата " +
+            "(chatId) равно /shelter_info, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleCatStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
+        safetyCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, SAFETY_COMMAND_TEST);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle класса SafetyCommandHandler " +
@@ -59,10 +71,9 @@ public class SafetyCommandHandlerTest {
             "в чат с заданным chatId.")
     public void testSafetyCommandHandler() {
         Long chatId = 123L;
-
         SendMessage message = new SendMessage(chatId, SAFETY_COMMAND_TEST);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

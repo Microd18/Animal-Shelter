@@ -13,14 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.HomeSetupRecommendationHandler;
+
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.HOME_SETUP_RECOMMENDATION_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.HOME_SETUP_RECOMMENDATION_DOG_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 public class HomeSetupRecommendationHandlerTest {
@@ -52,6 +52,7 @@ public class HomeSetupRecommendationHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+
     @Test
     @DisplayName("Проверяет, что при выполнении команды /home_setup_recommendations, если текущее состояние чата " +
             "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
@@ -65,6 +66,7 @@ public class HomeSetupRecommendationHandlerTest {
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
+
     @Test
     @DisplayName("Проверяет, что при выполнении команды /home_setup_recommendations, если текущее состояние чата " +
             "(chatId) равно /ADOPT, и предыдущее состояние чата равно " +
