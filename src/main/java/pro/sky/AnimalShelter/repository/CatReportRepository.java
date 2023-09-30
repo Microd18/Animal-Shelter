@@ -15,8 +15,8 @@ public interface CatReportRepository extends JpaRepository<CatReport, Long> {
     /**
      * Находит отчёт по его идентификатору.
      *
-     * @param chatId Идентификатор чата.
+     * @param userId Идентификатор юзера.
      * @return Optional, содержащий чат, если найден, иначе пустой Optional.
      */
-    Optional<CatReport> findByUserId(Long chatId);
+    Optional<CatReport> findByUserId(Long userId);
 }

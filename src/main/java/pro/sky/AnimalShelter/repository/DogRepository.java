@@ -25,7 +25,7 @@ public interface DogRepository extends JpaRepository<Dog, Long> {
     /**
      * Отдает список айди юзеров, которые усыновили собак.
      *
-     * @return Set, содержащий user_id из таблицы собак. Если таких нет, то пустой Set.
+     * @return List, содержащий user_id из таблицы собак. Если таких нет, то пустой List.
      */
     @Query(value = "SELECT dogs.user_id FROM dogs WHERE dogs.user_id IS NOT NULL", nativeQuery = true)
     List<Long> getDogAdopters();

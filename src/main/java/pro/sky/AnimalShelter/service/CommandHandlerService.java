@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.enums.CheckUserReportStates;
 import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 
@@ -51,6 +52,16 @@ public class CommandHandlerService {
     private final UserReportStateService userReportStateService;
 
     /**
+     * Сервис для управления состоянием просмотра и проверки отчета.
+     */
+    private final CheckUserReportStateService checkUserReportStateService;
+
+    /**
+     * Сервис для обработки состояний просмотра и проверки отчета.
+     */
+    private final CheckUserReportService checkUserReportService;
+
+    /**
      * Сервис для работы с отчетами о пользователях.
      */
     private final UserReportService userReportService;
@@ -71,6 +82,7 @@ public class CommandHandlerService {
             return;
 
         Long chatId = message.chat().id();
+        CheckUserReportStates checkUserReportCurrentState = checkUserReportStateService.getCurrentStateByChatId(chatId);
         UserReportStates reportCurrentState = userReportStateService.getCurrentStateByChatId(chatId);
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         String messageText = message.text();
@@ -88,23 +100,29 @@ public class CommandHandlerService {
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;
-			}	
-			if (currentState == FIND_USER_BY_PHONE) {
-                    volunteerService.findUsersByPhone(chatId, messageText);
-                    return;
+            }
+            if (currentState == FIND_USER_BY_PHONE) {
+                volunteerService.findUsersByPhone(chatId, messageText);
+                return;
             }
             if (currentState == FIND_ANIMAL_BY_NAME) {
-                    volunteerService.findAnimalByName(chatId, messageText);
-                    return;
+                volunteerService.findAnimalByName(chatId, messageText);
+                return;
             }
             if (currentState == MAKE_ADOPTER) {
-                    volunteerService.allowUserBecomeAdopter(chatId, messageText);
-                    return;
-            }           	          
+                volunteerService.allowUserBecomeAdopter(chatId, messageText);
+                return;
+            }
             if (currentState == SEND_REPORT && (reportCurrentState == RATION || reportCurrentState == WELL_BEING || reportCurrentState == BEHAVIOR)) {
                 userReportService.saveReportData(chatId, messageText, reportCurrentState);
                 return;
             }
+
+            if (currentState == CHECK_REPORT) {
+                checkUserReportService.determinateAndSetCheckReportState(chatId, messageText, checkUserReportCurrentState);
+                return;
+            }
+
         }
         if (currentState == SEND_REPORT && reportCurrentState == PHOTO && message.photo() != null) {
             userReportService.savePhotoForReport(chatId, message.photo());

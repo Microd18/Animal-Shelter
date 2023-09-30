@@ -241,7 +241,7 @@ public class MessagesBot {
             "2. Найти питомца по кличке \n(/find_animal_by_name)\n" +
             "3. Перевести юзера в усыновителя кошки или собаки \n(/make_adopter)\n" +
             "4. Получить список усыновителей \n(/all_adopters)\n" +
-            "5. Проверить отчет по усыновителю \n(/check_report)\n" +
+            "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
             "8. Выключить бота \n(/stop)";
@@ -251,7 +251,7 @@ public class MessagesBot {
             "2. Найти питомца по кличке \n(/find_animal_by_name)\n" +
             "3. Перевести юзера в усыновителя кошки или собаки \n(/make_adopter)\n" +
             "4. Получить список усыновителей \n(/all_adopters)\n" +
-            "5. Проверить отчет по усыновителю \n(/check_report)\n" +
+            "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
             "8. Выключить бота \n(/stop)";
@@ -415,6 +415,36 @@ public class MessagesBot {
     public static final String DOG_ADOPTERS_NOT_FOUND_TEXT = "Усыновителей собак я не нашел.\n";
     public static final String CAT_ADOPTERS_FOUND_TEXT = "Вот список id всех усыновителей кошек:\n";
     public static final String DOG_ADOPTERS_FOUND_TEXT = "Вот список id всех усыновителей собак:\n";
+
+    public static final String CHECK_REPORT_IN_PROGRESS_TEXT = "Проверка отчета усыновителя уже запущена.\n";
+    public static final String CHECK_REPORT_START_TEXT = "Запущена проверка отчета усыновителя.\n" +
+            "Проверка состоит из 3 этапов:\n" +
+            "• Получение списка кликабельных идентификаторов отчетов.\n" +
+            "• Для просмотра определенного отчета необходимо кликнуть на его идентификатор.\n" +
+            "• После ознакомления с отчетом необходимо отправить его оценку по пятибальной шкале.";
+
+    public static final String CAT_REPORT_LIST_TEXT = "Cписок идентификаторов отчетов по кошкам:\n";
+
+    public static final String CAT_REPORT_EMPTY_LIST_TEXT = "По кошкам отчетов на проверку сейчас нет\n";
+
+    public static final String DOG_REPORT_LIST_TEXT = "Cписок идентификаторов отчетов по собакам:\n";
+
+    public static final String DOG_REPORT_EMPTY_LIST_TEXT = "По cобакам отчетов на проверку сейчас нет\n";
+
+    public static final String RATING_EQUALS_FIVE_TEXT =
+            " - отлично, можно составить подробное представление о жизни питомца на новом месте;\n";
+    public static final String RATING_EQUALS_FOUR_TEXT =
+            " - хорошо, можно составить достаточное представление о жизни питомца на новом месте;\n";
+    public static final String RATING_EQUALS_THREE_TEXT = " - удовлетворительно, лаконичная информация, " +
+            "по которой можно составить общее представление о жизни питомца на новом месте;\n";
+    public static final String RATING_EQUALS_TWO_OR_ONE_TEXT =
+            " - неудовлетворительно, усыновителю будет отправлено ПРЕДУПРЕЖДЕНИЕ о недобросовестном заполнении отчета.";
+    public static final String DOG_REPORT_EVALUATION_TEXT = "После ознакомления с отчетом необходимо " +
+            "отправить его оценку по пятибальной шкале в формате \"\\оценка_dog_идентификатор\"" + ", где:\n";
+
+    public static final String CAT_REPORT_EVALUATION_TEXT = "После ознакомления с отчетом необходимо " +
+            "отправить его оценку по пятибальной шкале в формате \"\\оценка_cat_идентификатор\"" + ", где:\n";
+
 
 }
 

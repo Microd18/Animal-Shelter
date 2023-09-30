@@ -7,7 +7,7 @@ import pro.sky.AnimalShelter.entity.CheckUserReportState;
 import java.util.Optional;
 
 /**
- * Репозиторий для доступа к данным о состояниях меню проверки и оценки отчетов.
+ * Репозиторий для доступа к данным о состояниях проверки и оценки отчетов.
  */
 @Repository
 public interface CheckUserReportStateRepository extends JpaRepository<CheckUserReportState, Long> {
@@ -15,7 +15,7 @@ public interface CheckUserReportStateRepository extends JpaRepository<CheckUserR
      * Находит состояние чата по идентификатору чата.
      *
      * @param chatId Идентификатор чата.
-     * @return Optional, содержащий состояние меню проверки и оценки отчетов.
+     * @return Optional, содержащий состояние проверки и оценки отчетов.
      */
     Optional<CheckUserReportState> findByChatId(Long chatId);
 }

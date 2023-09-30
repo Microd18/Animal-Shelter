@@ -25,8 +25,9 @@ public interface CatRepository extends JpaRepository<Cat, Long> {
     /**
      * Отдает список айди юзеров, которые усыновили кошек.
      *
-     * @return Set, содержащий user_id из таблицы кошек. Если таких нет, то пустой Set.
+     * @return List, содержащий user_id из таблицы кошек. Если таких нет, то пустой List.
      */
     @Query(value = "SELECT cats.user_id FROM cats WHERE cats.user_id IS NOT NULL", nativeQuery = true)
     List<Long> getCatAdopters();
+
 }

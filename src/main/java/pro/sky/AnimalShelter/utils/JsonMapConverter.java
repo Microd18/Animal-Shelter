@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.enums.CheckUserReportStates;
 import pro.sky.AnimalShelter.enums.UserReportStates;
 
 import java.io.IOException;
@@ -74,6 +75,21 @@ public class JsonMapConverter {
     }
 
     /**
+     * Преобразует объект типа Map<Long, Deque<CheckUserReportStates>> в JSON-строку.
+     *
+     * @param attribute объект для преобразования
+     * @return JSON-строка
+     * @throws RuntimeException если произошла ошибка при преобразовании
+     */
+    public String toCheckUserReportStatesJson(Map<Long, Deque<CheckUserReportStates>> attribute) {
+        try {
+            return objectMapper.writeValueAsString(attribute);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting map to JSON", e);
+        }
+    }
+
+    /**
      * Преобразует JSON-строку в объект типа Map<Long, Deque<UserReportStates>>.
      *
      * @param dbData JSON-строка для преобразования
@@ -85,7 +101,28 @@ public class JsonMapConverter {
             return null;
         }
         try {
-            TypeReference<Map<Long, Deque<UserReportStates>>> typeRef = new TypeReference<>() {};
+            TypeReference<Map<Long, Deque<UserReportStates>>> typeRef = new TypeReference<>() {
+            };
+            return objectMapper.readValue(dbData, typeRef);
+        } catch (IOException e) {
+            throw new RuntimeException("Error converting JSON to map", e);
+        }
+    }
+
+    /**
+     * Преобразует JSON-строку в объект типа Map<Long, Deque<CheckUserReportStates>>.
+     *
+     * @param dbData JSON-строка для преобразования
+     * @return объект типа Map<Long, Deque<CheckUserReportStates>>
+     * @throws RuntimeException если произошла ошибка при преобразовании
+     */
+    public Map<Long, Deque<CheckUserReportStates>> toCheckUserReportStatesMap(String dbData) {
+        if (dbData == null) {
+            return null;
+        }
+        try {
+            TypeReference<Map<Long, Deque<CheckUserReportStates>>> typeRef = new TypeReference<>() {
+            };
             return objectMapper.readValue(dbData, typeRef);
         } catch (IOException e) {
             throw new RuntimeException("Error converting JSON to map", e);
