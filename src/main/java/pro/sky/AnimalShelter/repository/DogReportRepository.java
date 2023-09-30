@@ -15,8 +15,8 @@ public interface DogReportRepository extends JpaRepository<DogReport, Long> {
     /**
      * Находит отчёт по его идентификатору.
      *
-     * @param chatId Идентификатор чата.
+     * @param userId Идентификатор юзера.
      * @return Optional, содержащий чат, если найден, иначе пустой Optional.
      */
-    Optional<DogReport> findByUserId(Long chatId);
+    Optional<DogReport> findByUserId(Long userId);
 }

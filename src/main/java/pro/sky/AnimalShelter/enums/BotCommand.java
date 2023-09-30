@@ -30,6 +30,9 @@ public enum BotCommand {
     FIND_USER_BY_PHONE("/find_user_by_phone"),                          //Найти юзеров по номеру телефона
     DOG_TRAINER_ADVICE("/dog_trainer_advice"),                          //Бот может выдать советы кинолога по первичному общению с собакой
     FIND_ANIMAL_BY_NAME("/find_animal_by_name"),                        //Найти животное по кличке
+    MAKE_ADOPTER("/make_adopter"),                                      //Перевести юзера в усыновителя кошки или собаки
+    ALL_ADOPTERS("/all_adopters"),                                      //Получить список id усыновителей
+    CHECK_REPORT("/check_report"),                                      //запуск проверки и оценки отчета усыновителя
     CHECK_ADMIN_PASSWORD("/password"),                                  //проверка пароля админа
     VERIFIED_DOG_HANDLERS("/verified_dog_handlers"),                    //Бот может выдать рекомендации по проверенным кинологам для дальнейшего обращения к ним
     WITHOUT_REPORT_ADOPTERS("/without_report_adopters"),                //Получить список усыновителей, которые не высылали отчет более 2 дней

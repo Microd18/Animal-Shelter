@@ -77,6 +77,42 @@ public class VolunteerService {
     }
 
     /**
+     * Метод для вывода списка айди всех усыновителей.
+     *
+     * @param chatId идентификатор чата пользователя.
+     */
+    public void getAllAdopters(Long chatId) {
+        List<Long> catAdopterIdSet = catRepository.getCatAdopters();
+        List<Long> dogAdopterIdSet = dogRepository.getDogAdopters();
+        if (catAdopterIdSet.isEmpty() && dogAdopterIdSet.isEmpty()) {
+            telegramBot.execute(new SendMessage(chatId, ADOPTERS_NOT_FOUND_TEXT + WAY_BACK_TEXT));
+        } else if (!catAdopterIdSet.isEmpty() && !dogAdopterIdSet.isEmpty()) {
+            telegramBot.execute(
+                    new SendMessage(chatId,
+                            CAT_ADOPTERS_FOUND_TEXT + catAdopterIdSet + "\n"
+                                    + DOG_ADOPTERS_FOUND_TEXT + dogAdopterIdSet + "\n"
+                                    + WAY_BACK_TEXT)
+            );
+
+        } else if (!catAdopterIdSet.isEmpty()) {
+            telegramBot.execute(
+                    new SendMessage(chatId,
+                            CAT_ADOPTERS_FOUND_TEXT + catAdopterIdSet + "\n"
+                                    + DOG_ADOPTERS_NOT_FOUND_TEXT
+                                    + WAY_BACK_TEXT)
+            );
+        } else {
+            telegramBot.execute(
+                    new SendMessage(chatId,
+                            DOG_ADOPTERS_FOUND_TEXT + dogAdopterIdSet + "\n"
+                                    + CAT_ADOPTERS_NOT_FOUND_TEXT
+                                    + WAY_BACK_TEXT)
+            );
+        }
+    }
+
+
+    /**
      * Метод для поиска питомцев по кличке.
      *
      * @param chatId      идентификатор чата пользователя.
@@ -151,7 +187,7 @@ public class VolunteerService {
                                                 foundCat.setUser(user);
                                                 catRepository.save(foundCat);
                                                 saveUserOnCatReport(userId);
-                                                telegramBot.execute(new SendMessage(chatId, ADOPTION_SUCCESS_TEXT));
+                                                telegramBot.execute(new SendMessage(chatId, ADOPTION_SUCCESS_TEXT + WAY_BACK_TEXT));
                                             }
                                         },
                                         () -> telegramBot.execute(new SendMessage(chatId, USER_NOT_FOUND_BY_ID_TEXT + WAY_BACK_TEXT))
@@ -249,7 +285,7 @@ public class VolunteerService {
     }
 
     protected void saveUserOnCatReport(Long userId) {
-        volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get(),0));
+        volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get(), 0));
     }
 
     protected void saveUserOnDogReport(Long userId) {

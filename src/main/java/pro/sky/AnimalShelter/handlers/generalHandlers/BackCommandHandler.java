@@ -67,7 +67,8 @@ public class BackCommandHandler implements CommandHandler {
             chatStateService.goToPreviousState(chatId);
         }
 
-        if (currentState == FIND_USER_BY_PHONE || currentState == FIND_ANIMAL_BY_NAME || currentState == MAKE_ADOPTER) {
+        if (currentState == FIND_USER_BY_PHONE || currentState == FIND_ANIMAL_BY_NAME
+                || currentState == MAKE_ADOPTER || currentState == CHECK_REPORT) {
             SendMessage message = new SendMessage(chatId.toString(), ADMIN_COMMAND_RETURN_TEXT);
             telegramBot.execute(message);
             chatStateService.goToPreviousState(chatId);
