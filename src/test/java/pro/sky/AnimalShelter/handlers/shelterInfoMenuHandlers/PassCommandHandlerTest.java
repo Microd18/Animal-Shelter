@@ -22,7 +22,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 import static pro.sky.AnimalShelter.utils.MessagesBot.*;
-import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_SHELTER_DESCRIPTION_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 public class PassCommandHandlerTest {
@@ -61,7 +60,7 @@ public class PassCommandHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(DOG);
         passCommandHandler.handle(update);
         SendMessage message = new SendMessage(chatId, PASS_COMMAND_DOG_TEXT);
         telegramBot.execute(message);
@@ -74,7 +73,7 @@ public class PassCommandHandlerTest {
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(CAT);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(CAT);
         passCommandHandler.handle(update);
         SendMessage message = new SendMessage(chatId, PASS_COMMAND_CAT_TEXT);
         telegramBot.execute(message);
@@ -131,8 +130,7 @@ public class PassCommandHandlerTest {
     @Test
     @DisplayName("Проверяет, что метод getCommand класса PassCommandHandler возвращает правильную команду BotCommand.PASS")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.PASS;
         BotCommand actualCommand = passCommandHandler.getCommand();
-        assertEquals(expectedCommand, actualCommand);
+        assertEquals(PASS, actualCommand);
     }
 }

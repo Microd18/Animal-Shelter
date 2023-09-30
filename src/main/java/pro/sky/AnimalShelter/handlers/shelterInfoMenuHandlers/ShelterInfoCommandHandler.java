@@ -47,7 +47,7 @@ public class ShelterInfoCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
             String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
             String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
                     ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";

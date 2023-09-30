@@ -60,9 +60,9 @@ class ShelterInfoCommandHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(DOG);
         shelterInfoCommandHandler.handle(update);
         String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
         String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
@@ -81,9 +81,9 @@ class ShelterInfoCommandHandlerTest {
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(CAT);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(CAT);
         shelterInfoCommandHandler.handle(update);
         String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
         String shelterType = currentState == CAT ? "приюте для собак" : currentState == SHELTER_INFO
@@ -103,7 +103,7 @@ class ShelterInfoCommandHandlerTest {
     public void testDescriptionCommandHandlerDog() {
         Long chatId = 123L;
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
         String shelterType = currentState == CAT ? "приюте для собак" : currentState == SHELTER_INFO
                 ? previousState == CAT ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";

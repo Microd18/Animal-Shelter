@@ -59,7 +59,7 @@ public class VerifiedDogHandlersHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.DOG);
         verifiedDogHandlersHandler.handle(update);
         SendMessage message = new SendMessage(chatId, VERIFIED_DOG_TEXT);
         telegramBot.execute(message);

@@ -140,7 +140,7 @@ class BackCommandHandlerTest {
         when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(ADOPT);
         when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(PET_REPORT);
         backCommandHandler.handle(update);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
         String responseText = "Вы вернулись назад. У вас выбран " + shelterType + ". Чем я могу помочь?\n" +
                 "1. Узнать информацию о приюте (/shelter_info)\n" +

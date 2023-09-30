@@ -49,7 +49,7 @@ public class DescriptionCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == SHELTER_INFO) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
             if (previousState == DOG) {
                 SendMessage message = new SendMessage(chatId.toString(), MessagesBot.DOG_SHELTER_DESCRIPTION_TEXT);
