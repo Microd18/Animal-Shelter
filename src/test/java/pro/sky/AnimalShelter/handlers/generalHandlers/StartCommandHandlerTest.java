@@ -20,12 +20,14 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.START_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 class StartCommandHandlerTest {
     @Mock
     private ChatStateService chatStateService;
+    @Mock
 
     private ChatService chatService;
 
@@ -53,9 +55,19 @@ class StartCommandHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
-
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса AdminCommandHandler " + "в состоянии \"Вызов меню Admin\" отправляется сообщение с текстом " + "в чат с заданным chatId.")
+    @DisplayName("Проверяем, что вызывается метод offerToStart у commonUtils и Проверяем, что состояние чата не обновляется")
+    public void handle_shouldSendMessageAndUpdateChatState_whenChatIsNotStarted() {
+        Long chatId = 123L;
+        when(chatService.isBotStarted(chatId)).thenReturn(false);
+        startCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, START_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+        verify(chatStateService, times(1)).updateChatState(chatId, START);
+    }
+    @Test
+    @DisplayName("Проверяет, что при вызове метода handle класса StartCommandHandler " + "в состоянии \"Запуск бота\" отправляется сообщение с текстом " + "в чат с заданным chatId.")
     public void testAdminCommandHandler() {
         Long chatId = 123L;
         SendMessage message = new SendMessage(chatId, START_TEXT);

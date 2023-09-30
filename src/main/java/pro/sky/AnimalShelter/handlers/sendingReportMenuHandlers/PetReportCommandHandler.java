@@ -11,6 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.PET_REPORT_TEXT;
 
 /**
  * Обработчик команды "/pet_report".
@@ -45,11 +46,7 @@ public class PetReportCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == DOG || currentState == CAT || currentState == PET_REPORT) {
             String s = currentState == PET_REPORT ? "Вы уже в этом меню." : "";
-            String responseText = s + "Это меню для отправки отчёта, выберите действие:\n" +
-                    "1. Отправить отчёт: выберите этот пункт меню, чтобы отправить ежедневный отчёт о вашем питомце (/send_report)\n" +
-                    "2. Посмотреть шаблон для отчёта: если вам нужно ознакомиться с шаблоном для ежедневного отчёта перед его отправкой, выберите этот пункт меню (/report_template)\n" +
-                    "3. Назад (/back)\n" +
-                    "4. Выключить бота (/stop)";
+            String responseText = s + PET_REPORT_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
 
