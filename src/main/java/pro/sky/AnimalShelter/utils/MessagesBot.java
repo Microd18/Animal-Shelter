@@ -410,6 +410,12 @@ public class MessagesBot {
     public static final String ADOPTER_ALREADY_TOOK_DOG_TEXT = "Выбранный усыновитель уже взял собаку " +
             "и проходит испытательный срок.\n";
 
+    public static final String ADOPTERS_NOT_FOUND_TEXT = "Я не нашел усыновителей.\n";
+    public static final String CAT_ADOPTERS_NOT_FOUND_TEXT = "Усыновителей кошек я не нашел.\n";
+    public static final String DOG_ADOPTERS_NOT_FOUND_TEXT = "Усыновителей собак я не нашел.\n";
+    public static final String CAT_ADOPTERS_FOUND_TEXT = "Вот список id всех усыновителей кошек:\n";
+    public static final String DOG_ADOPTERS_FOUND_TEXT = "Вот список id всех усыновителей собак:\n";
+
 
 }
 
