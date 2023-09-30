@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.adoptionMenuHandlers.SpecialNeedsRecommendationHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
@@ -59,7 +58,7 @@ public class SpecialNeedsRecommendationHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.DOG);
         specialNeedsRecommendationHandler.handle(update);
         SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_DOG_TEXT);
         telegramBot.execute(message);
@@ -72,7 +71,7 @@ public class SpecialNeedsRecommendationHandlerTest {
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.CAT);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.CAT);
         specialNeedsRecommendationHandler.handle(update);
         SendMessage message = new SendMessage(chatId, SPECIAL_NEEDS_RECOMMENDATION_CAT_TEXT);
         telegramBot.execute(message);

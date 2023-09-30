@@ -40,6 +40,11 @@ public class ChatStateService {
     private final ChatRepository chatRepository;
 
     /**
+     * Сервис для управления состояниями отчётов.
+     */
+    private final UserReportStateService userReportStateService;
+
+    /**
      * Размер очереди состояний.
      */
     private static final int MAX_HISTORY_CHAT_STATE_SIZE = 4;
@@ -63,51 +68,6 @@ public class ChatStateService {
     }
 
     /**
-     * Получает предыдущее состояние чата по его идентификатору.
-     *
-     * @param chatId Идентификатор чата.
-     * @return Предыдущее состояние чата или {@code STOP}, если чат не существует или бот не запущен.
-     */
-    public BotCommand getPreviousStateByChatId(Long chatId) {
-        log.info("getPreviousStateByChatId method was invoked");
-        return chatRepository.findByChatId(chatId)
-                .filter(Chat::isBotStarted)
-                .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
-                .map(ChatState::getStateData)
-                .map(jsonMapConverter::toCommandStatesMap)
-                .map(map -> map.get(chatId))
-                .map(stateQueue -> {
-                    if (!stateQueue.isEmpty()) {
-                        Iterator<BotCommand> iterator = stateQueue.descendingIterator();
-                        iterator.next();
-                        if (iterator.hasNext()) {
-                            return iterator.next();
-                        }
-                    }
-                    return BotCommand.STOP;
-                })
-                .orElse(BotCommand.STOP);
-    }
-
-    /**
-     * Получает последнее состояние чата по его идентификатору.
-     *
-     * @param chatId Идентификатор чата.
-     * @return Предыдущее состояние чата или {@code STOP}, если чат не существует или бот не запущен.
-     */
-    public BotCommand getLastStateByChatId(Long chatId) {
-        log.info("getLastStateByChatId method was invoked");
-        return chatRepository.findByChatId(chatId)
-                .filter(Chat::isBotStarted)
-                .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
-                .map(ChatState::getStateData)
-                .map(jsonMapConverter::toCommandStatesMap)
-                .map(map -> map.get(chatId))
-                .flatMap(stateQueue -> stateQueue.isEmpty() ? Optional.of(STOP) : Optional.of(stateQueue.peekLast()))
-                .orElse(STOP);
-    }
-
-    /**
      * Добавляет новое состояние в историю чата.
      *
      * @param chatId Идентификатор чата.
@@ -122,28 +82,22 @@ public class ChatStateService {
                     newChat.setBotStarted(true);
                     return chatRepository.save(newChat);
                 });
-
         chatStateRepository.findByChatId(chat.getId()).ifPresentOrElse(
                 chatStateEntity -> {
                     Map<Long, Deque<BotCommand>> chatStateHistory = jsonMapConverter.toCommandStatesMap(chatStateEntity.getStateData());
                     Deque<BotCommand> stateStack = chatStateHistory.computeIfAbsent(chatId, k -> new LinkedList<>());
-
                     if (stateStack.size() >= MAX_HISTORY_CHAT_STATE_SIZE) {
                         stateStack.pollLast();
                     }
-
                     if (state == BotCommand.START) {
                         chat.setBotStarted(true);
                         chatRepository.save(chat);
                     }
-
                     stateStack.push(state);
-
                     String stateDataJson = jsonMapConverter.toCommandStatesJson(chatStateHistory);
                     chatStateEntity.setStateData(stateDataJson);
                     chatStateRepository.save(chatStateEntity);
-                },
-                () -> {
+                }, () -> {
                     Map<Long, Deque<BotCommand>> chatStateHistory = new HashMap<>();
                     Deque<BotCommand> stateStack = new LinkedList<>();
                     stateStack.push(state);
@@ -166,14 +120,15 @@ public class ChatStateService {
     public void stopBot(Long chatId) {
         log.info("stopBot method was invoked");
         chatRepository.findByChatId(chatId).ifPresent(foundChat ->
-                chatStateRepository.findByChatId(foundChat.getId()).ifPresent(foundChatState -> {
+                chatStateRepository.findByChatId(foundChat.getId()).ifPresentOrElse(foundChatState -> {
                     foundChat.setBotStarted(false);
                     Map<Long, Deque<BotCommand>> chatStateHistory = new HashMap<>();
                     chatStateHistory.put(chatId, new LinkedList<>());
                     foundChatState.setStateData(jsonMapConverter.toCommandStatesJson(chatStateHistory));
                     chatRepository.save(foundChat);
                     chatStateRepository.save(foundChatState);
-                }));
+                    userReportStateService.clearUserReportStates(chatId);
+                }, () -> foundChat.setBotStarted(false)));
     }
 
     /**

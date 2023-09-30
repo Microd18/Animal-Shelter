@@ -59,7 +59,7 @@ public class DatingRulesHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.DOG);
         datingRulesHandler.handle(update);
         SendMessage message = new SendMessage(chatId, DATING_RULES_DOG_TEXT);
         telegramBot.execute(message);
@@ -84,7 +84,7 @@ public class DatingRulesHandlerTest {
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.CAT);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.CAT);
         datingRulesHandler.handle(update);
         SendMessage message = new SendMessage(chatId, DATING_RULES_CAT_TEXT);
         telegramBot.execute(message);

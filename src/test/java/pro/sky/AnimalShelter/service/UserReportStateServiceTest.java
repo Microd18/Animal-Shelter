@@ -292,6 +292,26 @@ public class UserReportStateServiceTest {
     }
 
     @Test
+    @DisplayName("Проверка добавления нового состояния в историю отчёта с историей, когда data равна null")
+    public void testUpdateUserReportStateWithHistoryDataIsNull() {
+        UserReportState userReportState = new UserReportState();
+        userReportState.setStateData(null);
+        userReportState.setChat(chat);
+
+        when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
+
+        userReportStateService.updateUserReportState(123L, BEHAVIOR);
+
+        assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
+
+        verify(chatRepository, times(1)).findByChatId(123L);
+        verify(userReportStateRepository, times(1)).findByChatId(123L);
+        verify(userReportStateRepository, times(1)).save(any());
+        verify(jsonMapConverter, times(1)).toUserReportStatesJson(anyMap());
+        verify(jsonMapConverter, times(1)).toUserReportStatesMap(null);
+    }
+
+    @Test
     @DisplayName("Проверка добавления нового состояния в историю отчёта с максимальным размером")
     public void testUpdateUserReportStateWithMaxHistorySize() {
         UserReportState userReportState = new UserReportState();

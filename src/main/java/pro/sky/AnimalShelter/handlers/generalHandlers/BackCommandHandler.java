@@ -88,7 +88,7 @@ public class BackCommandHandler implements CommandHandler {
 
         if (currentState == SHELTER_INFO || currentState == ADOPT || currentState == PET_REPORT) {
 
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
             var shelterType = previousState == CAT ? "приют для кошек" : "приют для собак";
             String responseText = "Вы вернулись назад. У вас выбран " + shelterType + ". Чем я могу помочь?\n" +
