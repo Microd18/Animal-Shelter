@@ -187,7 +187,7 @@ public class VolunteerService {
                                                 foundCat.setUser(user);
                                                 catRepository.save(foundCat);
                                                 saveUserOnCatReport(userId);
-                                                telegramBot.execute(new SendMessage(chatId, ADOPTION_SUCCESS_TEXT));
+                                                telegramBot.execute(new SendMessage(chatId, ADOPTION_SUCCESS_TEXT + WAY_BACK_TEXT));
                                             }
                                         },
                                         () -> telegramBot.execute(new SendMessage(chatId, USER_NOT_FOUND_BY_ID_TEXT + WAY_BACK_TEXT))
@@ -285,7 +285,7 @@ public class VolunteerService {
     }
 
     protected void saveUserOnCatReport(Long userId) {
-        volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get(),0));
+        volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get(), 0));
     }
 
     protected void saveUserOnDogReport(Long userId) {

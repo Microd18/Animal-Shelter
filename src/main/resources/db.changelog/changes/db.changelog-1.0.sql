@@ -5,7 +5,7 @@
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'chat';
 
-CREATE TABLE IF NOT EXISTS chat
+create TABLE IF NOT EXISTS chat
 (
     id          BIGSERIAL               PRIMARY KEY,
     chat_id     BIGINT      UNIQUE      NOT NULL,
@@ -22,7 +22,7 @@ create TABLE IF NOT EXISTS chat_states
     id              BIGSERIAL PRIMARY KEY,
     state_data      JSONB,
     chat_id         BIGINT UNIQUE
-        CONSTRAINT fk_chat_states_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_chat_states_chat REFERENCES chat (id) ON delete CASCADE ON update CASCADE
 );
 
 --changeset pruglo-ve:20230911-3 failOnError:true
@@ -37,7 +37,7 @@ create TABLE IF NOT EXISTS users
     phone         VARCHAR(255),
     username      VARCHAR(255),
     chat_id       BIGINT UNIQUE
-        CONSTRAINT fk_users_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_users_chat REFERENCES chat (id) ON delete CASCADE ON update CASCADE
 );
 
 --changeset pruglo-ve:20230923-4 failOnError:true
@@ -45,7 +45,7 @@ create TABLE IF NOT EXISTS users
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'cats';
 
-CREATE TABLE IF NOT EXISTS cats
+create TABLE IF NOT EXISTS cats
 (
     id            BIGSERIAL PRIMARY KEY,
     nickname      VARCHAR(255),
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS cats
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'dogs';
 
-CREATE TABLE IF NOT EXISTS dogs
+create TABLE IF NOT EXISTS dogs
 (
     id            BIGSERIAL PRIMARY KEY,
     nickname      VARCHAR(255),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS dogs
 --comment: Create cat_photos table.
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'cat_photos';
-CREATE TABLE IF NOT EXISTS cat_photos
+create TABLE IF NOT EXISTS cat_photos
 (
     id              BIGSERIAL PRIMARY KEY,
     file_size       BIGINT,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS cat_photos
 --comment: Create dog_photos table.
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'dog_photos';
-CREATE TABLE IF NOT EXISTS dog_photos
+create TABLE IF NOT EXISTS dog_photos
 (
     id              BIGSERIAL PRIMARY KEY,
     file_size       BIGINT,
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS dog_photos
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'cat_reports';
 
-CREATE TABLE IF NOT EXISTS cat_reports
+create TABLE IF NOT EXISTS cat_reports
 (
     id                  BIGSERIAL PRIMARY KEY,
     photo_id            BIGINT
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS cat_reports
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'dog_reports';
 
-CREATE TABLE IF NOT EXISTS dog_reports
+create TABLE IF NOT EXISTS dog_reports
 (
     id                  BIGSERIAL PRIMARY KEY,
     photo_id            BIGINT
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS dog_reports
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:1 select count(*) from information_schema.tables where table_name = 'cats';
 
-INSERT INTO cats (nickname, age) VALUES
+insert into cats (nickname, age) values
                                      ('Васька', 3),
                                      ('Мурка', 2),
                                      ('Барсик', 5),
@@ -156,7 +156,7 @@ INSERT INTO cats (nickname, age) VALUES
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:1 select count(*) from information_schema.tables where table_name = 'dogs';
 
-INSERT INTO dogs (nickname, age) VALUES
+insert into dogs (nickname, age) values
                                      ('Барбос', 2),
                                      ('Рекс', 4),
                                      ('Бобик', 3),
@@ -173,12 +173,12 @@ INSERT INTO dogs (nickname, age) VALUES
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'user_reports_states';
 
-CREATE TABLE IF NOT EXISTS user_reports_states
+create TABLE IF NOT EXISTS user_reports_states
 (
     id              BIGSERIAL PRIMARY KEY,
     state_data      JSONB,
     chat_id         BIGINT UNIQUE
-        CONSTRAINT fk_user_reports_states_chat REFERENCES chat (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT fk_user_reports_states_chat REFERENCES chat (id) ON delete CASCADE ON update CASCADE
 );
 
 --changeset microd18:20230929-13 failOnError:true
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS user_reports_states
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'volunteer_info_cat';
 
-CREATE TABLE IF NOT EXISTS volunteer_info_cat
+create TABLE IF NOT EXISTS volunteer_info_cat
 (
     id                  BIGSERIAL PRIMARY KEY,
     amount_of_days      INTEGER,
@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS volunteer_info_cat
 --preconditions onFail:MARK_RAN onError:HALT
 --precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'volunteer_info_dog';
 
-CREATE TABLE IF NOT EXISTS volunteer_info_dog
+create TABLE IF NOT EXISTS volunteer_info_dog
 (
     id                  BIGSERIAL PRIMARY KEY,
     amount_of_days      INTEGER,
@@ -213,12 +213,25 @@ CREATE TABLE IF NOT EXISTS volunteer_info_dog
 --comment: Add extraDays column.
 --preconditions onFail:MARK_RAN onError:HALT
 
-ALTER TABLE volunteer_info_cat ADD extra_days INTEGER;
+alter table volunteer_info_cat add extra_days INTEGER;
 
 --changeset microd18:20230930-16 failOnError:true
 --comment: Add extraDays column.
 --preconditions onFail:MARK_RAN onError:HALT
 
-ALTER TABLE volunteer_info_dog ADD extra_days INTEGER;
+alter table volunteer_info_dog add extra_days INTEGER;
+
+--changeset koroliana:20230930-17 failOnError:true
+--comment: Create check_user_reports_states table.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 select count(*) from information_schema.tables where table_name = 'check_user_reports_states';
+
+create TABLE IF NOT EXISTS check_user_reports_states
+(
+    id              BIGSERIAL PRIMARY KEY,
+    state_data      JSONB,
+    chat_id         BIGINT UNIQUE
+        CONSTRAINT fk_check_user_reports_states_chat REFERENCES chat (id) ON delete CASCADE ON update CASCADE
+);
 
 
