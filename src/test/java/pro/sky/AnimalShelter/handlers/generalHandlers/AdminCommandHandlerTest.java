@@ -92,7 +92,7 @@ class AdminCommandHandlerTest {
         SendMessage message = new SendMessage(chatId, ADMIN_COMMAND_TEXT);
         telegramBot.execute(message);
         verify(commonUtils).offerToStart(chatId);
-        verify(chatStateService, never()).updateChatState(anyLong(), any(BotCommand.class));
+        verify(chatStateService, never()).updateChatState(chatId, ADMIN);
     }
 
 
