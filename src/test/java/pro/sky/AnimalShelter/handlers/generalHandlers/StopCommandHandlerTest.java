@@ -22,12 +22,13 @@ import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.BotCommand.START;
 import static pro.sky.AnimalShelter.enums.BotCommand.STOP;
 import static pro.sky.AnimalShelter.utils.MessagesBot.START_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.STOP_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 class StopCommandHandlerTest {
     @Mock
     private ChatStateService chatStateService;
-
+    @Mock
     private ChatService chatService;
 
     @Mock
@@ -53,6 +54,16 @@ class StopCommandHandlerTest {
         lenient().when(update.message()).thenReturn(message);
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
+    }
+    @Test
+    @DisplayName("Проверка на остановку чата")
+    public void testStopHandler() {
+        Long chatId = 123L;
+        stopCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId.toString(), STOP_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+        verify(chatStateService, times(1)).stopBot(chatId);
     }
 
     @Test

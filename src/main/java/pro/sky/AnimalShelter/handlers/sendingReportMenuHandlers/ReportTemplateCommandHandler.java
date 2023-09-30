@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.REPORT_TEMPLATE_COMMAND_TEXT;
 
 /**
  * Обработчик команды "/report_template".
@@ -45,14 +46,7 @@ public class ReportTemplateCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == PET_REPORT) {
-            String responseText = "Для формирования ежедневного отчета о вашем питомце, пожалуйста, пришлите следующую информацию:\n" +
-                    "1. Фото животного: в этой части отчета вы можете отправить фотографию вашего питомца. Фото помогут нам видеть, как изменяется ваш пушистый друг со временем.\n" +
-                    "2. Рацион животного: укажите, что ваш питомец ел сегодня. Это важно для контроля его питания и здоровья. Например, вы можете описать, сколько порций и какой еды ваш питомец съел сегодня.\n" +
-                    "3. Общее самочувствие и привыкание к новому месту: поделитесь, как себя чувствует ваш пушистый друг. Важно знать, как он приспосабливается к новой обстановке и окружению. Напишите о его настроении, активности или любых изменениях в поведении.\n" +
-                    "4. Изменение в поведении: опишите любые изменения в поведении вашего питомца. Может быть, он перестал делать что-то, что раньше делал, или, наоборот, начал проявлять новые привычки. Такие наблюдения могут быть важными для понимания его состояния.\n" +
-                    "5. Назад (/back)\n" +
-                    "6. Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText).parseMode(ParseMode.Markdown);
+            SendMessage message = new SendMessage(chatId.toString(), REPORT_TEMPLATE_COMMAND_TEXT).parseMode(ParseMode.Markdown);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);

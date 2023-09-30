@@ -13,6 +13,7 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 import static pro.sky.AnimalShelter.enums.UserReportStates.PHOTO;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SEND_REPORT_TEXT;
 
 
 /**
@@ -50,9 +51,7 @@ public class SendReportCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == PET_REPORT || currentState == SEND_REPORT) {
             String s = currentState == SEND_REPORT ? "Вы уже в этом меню. " : "";
-            String responseText = s + "Отправьте фото:\n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
+            String responseText = s + SEND_REPORT_TEXT;
 
             telegramBot.execute(new SendMessage(chatId.toString(), responseText));
             if (!(currentState == SEND_REPORT)) {
