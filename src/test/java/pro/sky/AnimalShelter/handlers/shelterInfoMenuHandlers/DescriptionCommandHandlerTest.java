@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.shelterInfoMenuHandlers;
+package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
