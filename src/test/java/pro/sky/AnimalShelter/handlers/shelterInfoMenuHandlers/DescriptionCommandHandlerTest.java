@@ -19,7 +19,7 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
 import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_SHELTER_DESCRIPTION_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_SHELTER_DESCRIPTION_TEXT;
 
@@ -60,7 +60,6 @@ public class DescriptionCommandHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(DOG);
         descriptionCommandHandler.handle(update);
         SendMessage message = new SendMessage(chatId, DOG_SHELTER_DESCRIPTION_TEXT);
         telegramBot.execute(message);
@@ -73,7 +72,6 @@ public class DescriptionCommandHandlerTest {
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(CAT);
         descriptionCommandHandler.handle(update);
         SendMessage message = new SendMessage(chatId, DOG_SHELTER_DESCRIPTION_TEXT);
         telegramBot.execute(message);
@@ -130,7 +128,8 @@ public class DescriptionCommandHandlerTest {
     @Test
     @DisplayName("Проверяет, что метод getCommand класса DescriptionCommandHandler возвращает правильную команду BotCommand.DESCRIPTION")
     public void testGetCommand() {
+        BotCommand expectedCommand = BotCommand.DESCRIPTION;
         BotCommand actualCommand = descriptionCommandHandler.getCommand();
-        assertEquals(DESCRIPTION, actualCommand);
+        assertEquals(expectedCommand, actualCommand);
     }
 }
