@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.shelterInfoMenuHandlers;
+package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -20,6 +20,7 @@ import pro.sky.AnimalShelter.utils.CommonUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SHELTER_INFO_COMMAND_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 class ShelterInfoCommandHandlerTest {
@@ -59,22 +60,15 @@ class ShelterInfoCommandHandlerTest {
     public void testHandleDogStateSendCorrectMessage() {
         Long chatId = 123L;
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(DOG);
         shelterInfoCommandHandler.handle(update);
         String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
         String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
                 ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
         String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
-                "1. Описание приюта (/description)\n" +
-                "2. Расписание работы и контакты (/schedule)\n" +
-                "3. Контактные данные охраны для пропуска (/pass)\n" +
-                "4. Техника безопасности на территории приюта (/safety)\n" +
-                "5. Оставить контактные данные (/contact)\n" +
-                "6. Позвать волонтера (/help)\n" +
-                "7. Назад (/back)\n" +
-                "8. Выключить бота (/stop)";
+                SHELTER_INFO_COMMAND_TEXT;
         SendMessage message = new SendMessage(chatId.toString(), responseText);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
@@ -87,22 +81,15 @@ class ShelterInfoCommandHandlerTest {
     public void testHandleCatStateSendCorrectMessage() {
         Long chatId = 123L;
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(CAT);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(CAT);
         shelterInfoCommandHandler.handle(update);
         String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
         String shelterType = currentState == CAT ? "приюте для собак" : currentState == SHELTER_INFO
                 ? previousState == CAT ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
         String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
-                "1. Описание приюта (/description)\n" +
-                "2. Расписание работы и контакты (/schedule)\n" +
-                "3. Контактные данные охраны для пропуска (/pass)\n" +
-                "4. Техника безопасности на территории приюта (/safety)\n" +
-                "5. Оставить контактные данные (/contact)\n" +
-                "6. Позвать волонтера (/help)\n" +
-                "7. Назад (/back)\n" +
-                "8. Выключить бота (/stop)";
+                SHELTER_INFO_COMMAND_TEXT;
         SendMessage message = new SendMessage(chatId.toString(), responseText);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
@@ -116,19 +103,12 @@ class ShelterInfoCommandHandlerTest {
     public void testDescriptionCommandHandlerDog() {
         Long chatId = 123L;
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
         String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
         String shelterType = currentState == CAT ? "приюте для собак" : currentState == SHELTER_INFO
                 ? previousState == CAT ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
         String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
-                "1. Описание приюта (/description)\n" +
-                "2. Расписание работы и контакты (/schedule)\n" +
-                "3. Контактные данные охраны для пропуска (/pass)\n" +
-                "4. Техника безопасности на территории приюта (/safety)\n" +
-                "5. Оставить контактные данные (/contact)\n" +
-                "6. Позвать волонтера (/help)\n" +
-                "7. Назад (/back)\n" +
-                "8. Выключить бота (/stop)";
+                SHELTER_INFO_COMMAND_TEXT;
         SendMessage message = new SendMessage(chatId.toString(), responseText);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);

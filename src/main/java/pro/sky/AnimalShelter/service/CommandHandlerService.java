@@ -11,12 +11,14 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.enums.CheckUserReportStates;
 import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.utils.ValidationUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 import static pro.sky.AnimalShelter.enums.UserReportStates.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_TEXT;
 
 /**
  * Сервис для обработки команд.
@@ -67,6 +69,11 @@ public class CommandHandlerService {
     private final UserReportService userReportService;
 
     /**
+     * Бин для прохождения валидации.
+     */
+    private final ValidationUtils validationUtils;
+
+    /**
      * Список обработчиков команд.
      */
     private final List<CommandHandler> commandHandlers;
@@ -96,7 +103,15 @@ public class CommandHandlerService {
                 matchedHandlers.get(0).handle(update);
                 return;
             }
-
+            if (currentState == CHECK_ADMIN_PASSWORD) {
+                if (validationUtils.isValidAdminPassword(messageText)) {
+                    telegramBot.execute(new SendMessage(chatId, ADMIN_COMMAND_TEXT));
+                    chatStateService.updateChatState(chatId, ADMIN);
+                } else {
+                    telegramBot.execute(new SendMessage(chatId, "Введён неправильный пароль"));
+                }
+                return;
+            }
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;

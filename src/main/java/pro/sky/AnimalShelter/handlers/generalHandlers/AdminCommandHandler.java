@@ -5,14 +5,15 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pro.sky.AnimalShelter.entity.Chat;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
-import pro.sky.AnimalShelter.service.ChatService;
+import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
-import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_TEXT;
+import static pro.sky.AnimalShelter.enums.BotCommand.CHECK_ADMIN_PASSWORD;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class AdminCommandHandler implements CommandHandler {
      */
     private final ChatStateService chatStateService;
 
-    private final ChatService chatService;
+    private final ChatRepository chatRepository;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -43,12 +44,20 @@ public class AdminCommandHandler implements CommandHandler {
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
-        if (chatService.isBotStarted(chatId)) {
-            telegramBot.execute(new SendMessage(chatId.toString(), ADMIN_COMMAND_TEXT));
-            chatStateService.updateChatState(chatId, ADMIN);
-        } else {
-            commonUtils.offerToStart(chatId);
+        if (currentState != ADMIN) {
+            telegramBot.execute(new SendMessage(chatId.toString(), "Введите пароль:"));
+            chatRepository.findByChatId(chatId).ifPresentOrElse(chat -> {
+                chat.setBotStarted(true);
+                chatRepository.save(chat);
+            }, () -> {
+                Chat newChat = new Chat();
+                newChat.setChatId(chatId);
+                newChat.setBotStarted(true);
+                chatRepository.save(newChat);
+            });
+            chatStateService.updateChatState(chatId, CHECK_ADMIN_PASSWORD);
         }
     }
 

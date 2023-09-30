@@ -1,4 +1,4 @@
-package pro.sky.AnimalShelter.shelterInfoMenuHandlers;
+package pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -13,13 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
-import pro.sky.AnimalShelter.handlers.shelterInfoMenuHandlers.DescriptionCommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.SHELTER_INFO;
 import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_SHELTER_DESCRIPTION_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_SHELTER_DESCRIPTION_TEXT;
 
@@ -53,6 +53,30 @@ public class DescriptionCommandHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+    @Test
+    @DisplayName("Проверяет, что при выполнении команды /description, если текущее состояние чата " +
+            "(chatId) равно /shelter_info, и предыдущее состояние чата равно " +
+            "/DOG, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleDogStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
+        descriptionCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, DOG_SHELTER_DESCRIPTION_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
+    @Test
+    @DisplayName("Проверяет, что при выполнении команды /pass, если текущее состояние чата " +
+            "(chatId) равно /shelter_info, и предыдущее состояние чата равно " +
+            "/CAT, будет отправлено правильное сообщение в чат с указанным chatId")
+    public void testHandleCatStateSendCorrectMessage() {
+        Long chatId = 123L;
+        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(SHELTER_INFO);
+        descriptionCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, DOG_SHELTER_DESCRIPTION_TEXT);
+        telegramBot.execute(message);
+        verify(telegramBot, times(1)).execute(message);
+    }
 
     @Test
     @DisplayName("Проверяет, что при вызове метода handle класса DescriptionCommandHandler " +
@@ -75,7 +99,7 @@ public class DescriptionCommandHandlerTest {
 
         SendMessage message = new SendMessage(chatId, CAT_SHELTER_DESCRIPTION_TEXT);
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(telegramBot, times(1)).execute(message);
     }
 
     @Test

@@ -42,7 +42,7 @@ public class AdoptCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
         if (currentState == DOG || (currentState == ADOPT && previousState == DOG)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";

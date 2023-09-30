@@ -43,7 +43,7 @@ public class DatingRulesHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADOPT) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
             if (previousState == DOG) {
 

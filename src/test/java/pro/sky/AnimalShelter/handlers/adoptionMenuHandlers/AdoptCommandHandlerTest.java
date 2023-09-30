@@ -59,7 +59,7 @@ class AdoptCommandHandlerTest {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.DOG);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.DOG);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.DOG);
         adoptCommandHandler.handle(update);
         SendMessage message = new SendMessage(chatId, ADOPT_DOG_TEXT);
         telegramBot.execute(message);
@@ -74,7 +74,7 @@ class AdoptCommandHandlerTest {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.ADOPT);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.CAT);
-        when(chatStateService.getPreviousStateByChatId(123L)).thenReturn(BotCommand.CAT);
+        when(chatStateService.getLastStateCatOrDogByChatId(123L)).thenReturn(BotCommand.CAT);
         adoptCommandHandler.handle(update);
         SendMessage message = new SendMessage(chatId, ADOPT_CAT_TEXT);
         telegramBot.execute(message);
