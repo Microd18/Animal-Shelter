@@ -246,7 +246,8 @@ public class MessagesBot {
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/without_report_adopters)\n" +
             "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
             "9. Отдать животное пользователю\n(/successful_probationary)\n" +
-            "10. Выключить бота \n(/stop)";
+            "10. Забрать животное у пользователя\n(/probation_failed)\n" +
+            "11. Выключить бота \n(/stop)";
 
     public static final String ADMIN_COMMAND_RETURN_TEXT = "Вы вернулись в меню волонтера\uD83D\uDE3C\n\n" +
             "1. Найти юзера по номеру телефона \n(/find_user_by_phone)\n" +
@@ -258,7 +259,8 @@ public class MessagesBot {
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
             "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
             "9. Отдать животное пользователю\n(/successful_probationary)\n" +
-            "10. Выключить бота \n(/stop)";
+            "10. Забрать животное у пользователя\n(/probation_failed)\n" +
+            "11. Выключить бота \n(/stop)";
 
 
     public static final String HELP_COMMAND_TEXT = "Для связи с волонтером пройдите по ссылке: \n" +
@@ -436,13 +438,13 @@ public class MessagesBot {
 
     public static final String SHELTER_INFO_COMMAND_TEXT =
             "1. Описание приюта (/description)\n" +
-            "2. Расписание работы и контакты (/schedule)\n" +
-            "3. Контактные данные охраны для пропуска (/pass)\n" +
-            "4. Техника безопасности на территории приюта (/safety)\n" +
-            "5. Оставить контактные данные (/contact)\n" +
-            "6. Позвать волонтера (/help)\n" +
-            "7. Назад (/back)\n" +
-            "8. Выключить бота (/stop)";
+                    "2. Расписание работы и контакты (/schedule)\n" +
+                    "3. Контактные данные охраны для пропуска (/pass)\n" +
+                    "4. Техника безопасности на территории приюта (/safety)\n" +
+                    "5. Оставить контактные данные (/contact)\n" +
+                    "6. Позвать волонтера (/help)\n" +
+                    "7. Назад (/back)\n" +
+                    "8. Выключить бота (/stop)";
 
     public static final String OFFER_TO_START_TEXT = "Для использования бота введите команду /start";
 
@@ -464,8 +466,6 @@ public class MessagesBot {
             "От маленьких щенков до зрелых спутников жизни - выбор за вами. Для выбора введи команду /dog\n" +
             "\n" +
             "Остановить бота (/stop)";
-
-
 
 
     public static final String CAT_ALREADY_HAS_ADOPTER_TEXT = "У выбранной кошки уже есть усыновитель!\n";
