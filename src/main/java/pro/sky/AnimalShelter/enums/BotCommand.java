@@ -4,6 +4,7 @@ package pro.sky.AnimalShelter.enums;
  * Перечисление, представляющее команды бота.
  */
 public enum BotCommand {
+    SUCCESSFUL_PROBATIONARY("/successful_probationary"),                //испытательный срок пройден, отдаём животное юзеру
     CAT("/cat"),                                                        //приют для кошек
     DOG("/dog"),                                                        //приют для собак
     HELP("/help"),                                                      //Если бот не может ответить на вопросы клиента, то можно позвать волонтера

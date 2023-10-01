@@ -30,4 +30,6 @@ public interface CatRepository extends JpaRepository<Cat, Long> {
     @Query(value = "SELECT cats.user_id FROM cats WHERE cats.user_id IS NOT NULL", nativeQuery = true)
     List<Long> getCatAdopters();
 
+    void deleteByUserId(Long userId);
+
 }

@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface VolunteerInfoCatRepository extends JpaRepository<VolunteerInfoCat, Long> {
     Optional<VolunteerInfoCat> findByUserId(Long chatId);
+
+    void deleteByUserId(Long userId);
 }

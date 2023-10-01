@@ -29,4 +29,6 @@ public interface DogRepository extends JpaRepository<Dog, Long> {
      */
     @Query(value = "SELECT dogs.user_id FROM dogs WHERE dogs.user_id IS NOT NULL", nativeQuery = true)
     List<Long> getDogAdopters();
+
+    void deleteByUserId(Long userId);
 }
