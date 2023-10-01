@@ -15,7 +15,7 @@ spring:
 
 telegram:
   bot:
-    token: 6697356066:AAHvg7o-LKAYj8aU7qnmmC-En0QLp4QA5S8
+    token: pro.sky.AnimalShelter.AnimalShelterApplication.run.xml
 
 most:
   important:

@@ -147,6 +147,7 @@ public class UserReportService {
                         telegramBot.execute(new SendMessage(chatId, "Общее самочувствие собаки успешно сохранено в отчёт, введите изменения в поведении:"));
                         userReportStateService.updateUserReportState(chatId, BEHAVIOR);
                     }
+                    dogReport.setReportVerified(false);
                     dogReportRepository.save(dogReport);
                 } else {
                     CatReport catReport = (CatReport) report;
@@ -168,6 +169,7 @@ public class UserReportService {
                         telegramBot.execute(new SendMessage(chatId, "Общее самочувствие кошки успешно сохранено в отчёт, введите изменения в поведении:"));
                         userReportStateService.updateUserReportState(chatId, BEHAVIOR);
                     }
+                    catReport.setReportVerified(false);
                     catReportRepository.save(catReport);
                 }
             } else {

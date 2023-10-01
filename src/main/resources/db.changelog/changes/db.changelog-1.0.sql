@@ -234,4 +234,16 @@ create TABLE IF NOT EXISTS check_user_reports_states
         CONSTRAINT fk_check_user_reports_states_chat REFERENCES chat (id) ON delete CASCADE ON update CASCADE
 );
 
+--changeset koroliana:20231001-18 failOnError:true
+--comment: Add report_verified column.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'cat_reports' AND column_name = 'report_verified';
+ALTER TABLE cat_reports ADD report_verified BOOLEAN DEFAULT FALSE;
+
+--changeset koroliana:20231002-18 failOnError:true
+--comment: Add report_verified column to dog_reports.
+--preconditions onFail:MARK_RAN onError:HALT
+--precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'dog_reports' AND column_name = 'report_verified';
+ALTER TABLE dog_reports ADD report_verified BOOLEAN DEFAULT FALSE;
+
 
