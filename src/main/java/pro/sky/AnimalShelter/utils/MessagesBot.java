@@ -1,9 +1,5 @@
 package pro.sky.AnimalShelter.utils;
 
-import pro.sky.AnimalShelter.handlers.shelterSelectionHandlers.CatCommandHandler;
-import pro.sky.AnimalShelter.handlers.shelterSelectionHandlers.DogCommandHandler;
-import pro.sky.AnimalShelter.handlers.shelterSelectionHandlers.ShelterCommandHandler;
-
 /**
  * Перечисление константных строк бота.
  */
@@ -247,7 +243,7 @@ public class MessagesBot {
             "4. Получить список усыновителей \n(/all_adopters)\n" +
             "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
-            "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
+            "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/without_report_adopters)\n" +
             "8. Выключить бота \n(/stop)";
 
     public static final String ADMIN_COMMAND_RETURN_TEXT = "Вы вернулись в меню волонтера\uD83D\uDE3C\n\n" +
