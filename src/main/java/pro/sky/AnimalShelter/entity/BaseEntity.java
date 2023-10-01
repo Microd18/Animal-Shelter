@@ -22,4 +22,9 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", updatable = false, nullable = false)
     private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
 }

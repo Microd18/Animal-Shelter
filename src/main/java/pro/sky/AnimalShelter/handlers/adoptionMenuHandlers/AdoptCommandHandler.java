@@ -11,6 +11,8 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPT_DOG_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,24 +42,11 @@ public class AdoptCommandHandler implements CommandHandler {
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
-        BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+        BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
         if (currentState == DOG || (currentState == ADOPT && previousState == DOG)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
-            String responseText = menuMessage + "В этом меню я расскажу вам как взять животное из приюта для собак. Какую информацию вы бы хотели получить?\n" +
-                    "1. Правила знакомства с животным (/dating_rules)\n" +
-                    "2. Список необходимых документов (/documents)\n" +
-                    "3. Рекомендации по транспортировке животного (/transportation_recommendation)\n" +
-                    "4. Рекомендации по обустройству дома для щенка (/puppy_home_setup_recommendation)\n" +
-                    "5. Рекомендации по обустройству дома для взрослого животного (/home_setup_recommendations)\n" +
-                    "6. Рекомендации по обустройству дома для животного с ограниченными возможностями (/special_need_recommendation)\n" +
-                    "7. Советы кинолога (/dog_trainer_advice)\n" +
-                    "8. Рекомендации по проверенным кинологам (/verified_dog_handlers)\n" +
-                    "9. Причины, почему могут отказать и не дать забрать собаку из приюта (/refusal_reason)\n" +
-                    "10. Оставить контактные данные (/contact)\n" +
-                    "11. Позвать волонтера (/help)\n" +
-                    "12. Назад (/back)\n" +
-                    "13. Выключить бота (/stop)";
+            String responseText = menuMessage + ADOPT_DOG_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == ADOPT)) {
@@ -65,17 +54,7 @@ public class AdoptCommandHandler implements CommandHandler {
             }
         } else if (currentState == CAT || (currentState == ADOPT && previousState == CAT)) {
             String menuMessage = currentState == ADOPT ? "Вы уже в этом меню. " : "";
-            String responseText = menuMessage + "В этом меню я расскажу вам как взять животное из приюта для кошек. Какую информацию вы бы хотели получить?\n" +
-                    "1. Правила знакомства с животным (/dating_rules)\n" +
-                    "2. Список необходимых документов (/documents)\n" +
-                    "3. Рекомендации по транспортировке животного (/transportation_recommendation)\n" +
-                    "4. Рекомендации по обустройству дома для котёнка (/kitty_home_setup_recommendation)\n" +
-                    "5. Рекомендации по обустройству дома для взрослого животного (/home_setup_recommendations)\n" +
-                    "6. Рекомендации по обустройству дома для животного с ограниченными возможностями (/special_need_recommendation)\n" +
-                    "7. Оставить контактные данные (/contact)\n" +
-                    "8. Позвать волонтера (/help)\n" +
-                    "9. Назад (/back)\n" +
-                    "10. Выключить бота (/stop)";
+            String responseText = menuMessage + ADOPT_CAT_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             if (!(currentState == ADOPT)) {

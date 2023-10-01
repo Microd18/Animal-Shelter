@@ -5,6 +5,9 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static pro.sky.AnimalShelter.utils.MessagesBot.OFFER_TO_START_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SEND_INVALID_COMMAND_RESPONSE_TEXT;
+
 /**
  * Утилитарный компонент для работы с Telegram ботом.
  */
@@ -23,8 +26,7 @@ public class CommonUtils {
      * @param chatId ID чата для отправки сообщения.
      */
     public void offerToStart(final Long chatId) {
-        String responseText = "Для использования бота введите команду /start";
-        SendMessage message = new SendMessage(chatId.toString(), responseText);
+        SendMessage message = new SendMessage(chatId.toString(), OFFER_TO_START_TEXT);
         telegramBot.execute(message);
     }
 
@@ -34,10 +36,8 @@ public class CommonUtils {
      * @param chatId ID чата для отправки сообщения.
      */
     public void sendInvalidCommandResponse(final Long chatId) {
-        String responseText = "Данная команда не допустима вэтом меню.\n" +
-                " Для возврата в предыдущее меню введите команду назад /back,\n" +
-                " Чтобы выключить бота введите команду /stop";
-        SendMessage message = new SendMessage(chatId.toString(), responseText);
+        SendMessage message = new SendMessage(chatId.toString(), SEND_INVALID_COMMAND_RESPONSE_TEXT);
         telegramBot.execute(message);
     }
+
 }

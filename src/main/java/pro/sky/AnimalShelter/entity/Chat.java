@@ -43,4 +43,10 @@ public class Chat extends BaseEntity {
      */
     @OneToOne(mappedBy = "chat", cascade = CascadeType.ALL)
     private ChatState chatState;
+
+    /**
+     * Состояние отчёта юзера.
+     */
+    @OneToOne(mappedBy = "chat", cascade = CascadeType.ALL)
+    private UserReportState userReportState;
 }

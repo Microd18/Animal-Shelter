@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SHELTER_COMMAND_TEXT;
 
 /**
  * Абстрактный класс для обработки команд в контексте приютов.
@@ -56,13 +57,7 @@ public abstract class ShelterCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == START) {
-            String responseText = "Вы выбрали " + shelterType + ". Чем я могу помочь?\n" +
-                    "1. Узнать информацию о приюте (/shelter_info)\n" +
-                    "2. Как взять животное из приюта (/adopt)\n" +
-                    "3. Прислать отчет о питомце (/pet_report)\n" +
-                    "4. Позвать волонтера (/help)\n" +
-                    "5. Назад (/back)\n" +
-                    "6. Выключить бота (/stop)";
+            String responseText = "Вы выбрали " + shelterType + SHELTER_COMMAND_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
             chatStateService.updateChatState(chatId, selectedCommand);
