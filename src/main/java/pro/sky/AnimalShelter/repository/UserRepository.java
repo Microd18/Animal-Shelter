@@ -29,4 +29,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE (cr.created + INTERVAL '2 days' < NOW() OR dr.created + INTERVAL '2 days' < NOW())",
             nativeQuery = true)
     List<User> findUsersWithOldReports();
+
+
+    @Query(value =
+            "SELECT DISTINCT u " +
+                    "FROM User u " +
+                    "LEFT JOIN u.volunteerInfoCat vid ON vid.amountOfDays >= 30 " +
+                    "LEFT JOIN u.volunteerInfoDog vod ON vod.amountOfDays >= 30 " +
+                    "WHERE vid.user.id IS NOT NULL OR vod.user.id IS NOT NULL")
+    List<User> findUsersWithOver30Days();
 }
