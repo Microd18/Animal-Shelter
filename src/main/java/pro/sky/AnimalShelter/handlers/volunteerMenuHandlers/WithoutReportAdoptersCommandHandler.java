@@ -5,13 +5,10 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pro.sky.AnimalShelter.entity.User;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.repository.UserRepository;
 import pro.sky.AnimalShelter.service.ChatStateService;
-
-import java.util.List;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
 import static pro.sky.AnimalShelter.enums.BotCommand.WITHOUT_REPORT_ADOPTERS;
@@ -43,9 +40,8 @@ public class WithoutReportAdoptersCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADMIN) {
-            List<User> usersWithOldReports = userRepository.findUsersWithOldReports();
-            SendMessage message = new SendMessage(chatId, usersWithOldReports.toString());
-            telegramBot.execute(message);
+            userRepository.findUsersWithOldReports().forEach(user ->
+                    telegramBot.execute(new SendMessage(chatId, user.toString())));
         } else {
             telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
