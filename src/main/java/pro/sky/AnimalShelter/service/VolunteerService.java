@@ -394,4 +394,53 @@ public class VolunteerService {
             telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
         }
     }
+
+    /**
+     * Забрать обратно животное у юзера.
+     *
+     * @param chatId идентификатор чата пользователя.
+     * @param text   текст с информацией.
+     */
+    public void takeBackAnimal(Long chatId, String text) {
+        String[] strings = text.split(",");
+        if (strings.length == 2) {
+            Long userId = Long.parseLong(strings[0]);
+            String petType = strings[1];
+            var user = userRepository.findById(userId).get();
+
+            if (petType.trim().equalsIgnoreCase("собака")) {
+                volunteerInfoDogRepository.deleteByUserId(userId);
+                dogReportRepository.deleteByUserId(userId);
+                Dog dog = dogRepository.findByUserId(userId).get();
+                dog.setUser(null);
+                dogRepository.save(dog);
+
+                telegramBot.execute(new SendMessage(chatId,
+                        "Питомец вернулся обратно в приют.\n" +
+                                "Возврат в предыдущее меню (/back)\n" +
+                                "Выключить бота (/stop)"
+                ));
+                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                        "Приют забрал у вас собаку обратно"));
+            } else if (petType.trim().equalsIgnoreCase("кошка")) {
+                volunteerInfoCatRepository.deleteByUserId(userId);
+                catReportRepository.deleteByUserId(userId);
+                Cat cat = catRepository.findByUserId(userId).get();
+                cat.setUser(null);
+                catRepository.save(cat);
+
+                telegramBot.execute(new SendMessage(chatId,
+                        "Питомец вернулся обратно в приют.\n" +
+                                "Возврат в предыдущее меню (/back)\n" +
+                                "Выключить бота (/stop)"
+                ));
+                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                        "Приют забрал у вас кошку обратно"));
+            } else {
+                telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
+            }
+        } else {
+            telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
+        }
+    }
 }

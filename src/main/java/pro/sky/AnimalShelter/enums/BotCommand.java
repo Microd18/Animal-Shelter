@@ -4,7 +4,6 @@ package pro.sky.AnimalShelter.enums;
  * Перечисление, представляющее команды бота.
  */
 public enum BotCommand {
-    SUCCESSFUL_PROBATIONARY("/successful_probationary"),                //испытательный срок пройден, отдаём животное юзеру
     CAT("/cat"),                                                        //приют для кошек
     DOG("/dog"),                                                        //приют для собак
     HELP("/help"),                                                      //Если бот не может ответить на вопросы клиента, то можно позвать волонтера
@@ -28,6 +27,7 @@ public enum BotCommand {
     DATING_RULES("/dating_rules"),                                      //Бот может выдать правила знакомства с животным до того, как забрать его из приюта
     REFUSAL_REASON("/refusal_reason"),                                  //Бот может выдать список причин, почему могут отказать и не дать забрать собаку из приюта
     REPORT_TEMPLATE("/report_template"),                                //шаблон отчёта
+    PROBATION_FAILED("/probation_failed"),                              //забрать животное у усыновителя
     FIND_USER_BY_PHONE("/find_user_by_phone"),                          //Найти юзеров по номеру телефона
     DOG_TRAINER_ADVICE("/dog_trainer_advice"),                          //Бот может выдать советы кинолога по первичному общению с собакой
     FIND_ANIMAL_BY_NAME("/find_animal_by_name"),                        //Найти животное по кличке
@@ -35,6 +35,7 @@ public enum BotCommand {
     CHECK_ADMIN_PASSWORD("/password"),                                  //проверка пароля админа
     VERIFIED_DOG_HANDLERS("/verified_dog_handlers"),                    //Бот может выдать рекомендации по проверенным кинологам для дальнейшего обращения к ним
     WITHOUT_REPORT_ADOPTERS("/without_report_adopters"),                //Получить список усыновителей, которые не высылали отчет более 2 дней
+    SUCCESSFUL_PROBATIONARY("/successful_probationary"),                //испытательный срок пройден, отдаём животное юзеру
     HOME_SETUP_RECOMMENDATIONS("/home_setup_recommendations"),          //Бот может выдать список рекомендаций по обустройству дома для взрослого животного
     SPECIAL_NEED_RECOMMENDATION("/special_need_recommendation"),        //Бот может выдать список рекомендаций по обустройству дома для животного с ограниченными возможностями (зрение, передвижение)
     COMPLETED_PROBATION_ADOPTERS("/completed_probation_adopters"),      //Получить список усыновителей, у которых испытательный срок подошел к концу

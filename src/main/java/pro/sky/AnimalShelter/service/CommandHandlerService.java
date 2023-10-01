@@ -120,6 +120,10 @@ public class CommandHandlerService {
                 volunteerService.giveAnimalAway(chatId, messageText);
                 return;
             }
+            if (currentState == PROBATION_FAILED) {
+                volunteerService.takeBackAnimal(chatId, messageText);
+                return;
+            }
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;
