@@ -1,15 +1,17 @@
 package pro.sky.AnimalShelter.handlers.volunteerMenuHandlers;
 
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.service.VolunteerService;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.enums.BotCommand.ALL_ADOPTERS;
 
 
 /**
@@ -31,9 +33,9 @@ public class AllAdoptersCommandHandler implements CommandHandler {
 
 
     /**
-     * Экземпляр утилитарного класс для общих методов.
+     * Экземпляр Telegram-бота для отправки сообщений.
      */
-    private final CommonUtils commonUtils;
+    private final TelegramBot telegramBot;
 
     /**
      * Обрабатывает команду "/all_adopters" в зависимости от текущего состояния чата.
@@ -46,10 +48,8 @@ public class AllAdoptersCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADMIN) {
             volunteerService.getAllAdopters(chatId);
-        } else if (currentState == STOP) {
-            commonUtils.offerToStart(chatId);
         } else {
-            commonUtils.sendInvalidCommandResponse(chatId);
+            telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
     }
 

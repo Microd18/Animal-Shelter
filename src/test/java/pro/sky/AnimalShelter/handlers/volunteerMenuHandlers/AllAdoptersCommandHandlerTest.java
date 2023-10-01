@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.service.VolunteerService;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -31,8 +30,6 @@ class AllAdoptersCommandHandlerTest {
     @Mock
     private TelegramBot telegramBot;
 
-    @Mock
-    private CommonUtils commonUtils;
     @Mock
     private VolunteerService volunteerService;
 
@@ -76,22 +73,12 @@ class AllAdoptersCommandHandlerTest {
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle " +
-            "класса AllAdoptersCommandHandler в состоянии \"Стоп\" вызывается метод offerToStart " +
-            "класса CommonUtils с заданным chatId.")
-    public void testHandleWhenCurrentStateIsStop() {
-        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.STOP);
-        allAdoptersCommandHandler.handle(update);
-        verify(commonUtils).offerToStart(123L);
-    }
-
-    @Test
     @DisplayName("Проверяет, что при вызове метода handle класса AllAdoptersCommandHandler \" +\n"
-            + "в состоянии \\\"Назад\\\" вызывается метод sendInvalidCommandResponse класса CommonUtils с заданным chatId.")
+            + "в состоянии \\\"Назад\\\" вызывается метод execute класса TelegramBot.")
     public void testHandleWhenCurrentStateIsBack() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
         allAdoptersCommandHandler.handle(update);
-        verify(commonUtils).sendInvalidCommandResponse(123L);
+        verify(telegramBot).execute(any(SendMessage.class));
     }
 
     @Test

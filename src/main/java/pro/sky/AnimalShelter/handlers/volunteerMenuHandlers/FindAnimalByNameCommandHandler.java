@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.enums.BotCommand.FIND_ANIMAL_BY_NAME;
 import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_ANIMAL_NAME_TEXT;
 
 /**
@@ -31,11 +31,6 @@ public class FindAnimalByNameCommandHandler implements CommandHandler {
     private final ChatStateService chatStateService;
 
     /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
-
-    /**
      * Обрабатывает команду "/find_animal_by_name" в зависимости от текущего состояния чата.
      *
      * @param update Объект, представляющий обновление от пользователя.
@@ -48,10 +43,8 @@ public class FindAnimalByNameCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId, WAITING_ANIMAL_NAME_TEXT);
             telegramBot.execute(message);
             chatStateService.updateChatState(chatId, FIND_ANIMAL_BY_NAME);
-        } else if (currentState == STOP) {
-            commonUtils.offerToStart(chatId);
         } else {
-            commonUtils.sendInvalidCommandResponse(chatId);
+            telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
     }
 
