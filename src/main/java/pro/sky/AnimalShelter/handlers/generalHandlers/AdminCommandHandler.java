@@ -10,7 +10,6 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.service.ChatStateService;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
 import static pro.sky.AnimalShelter.enums.BotCommand.CHECK_ADMIN_PASSWORD;
@@ -24,17 +23,15 @@ public class AdminCommandHandler implements CommandHandler {
      */
     private final ChatStateService chatStateService;
 
+    /**
+     * Репозиторий хранения чатов.
+     */
     private final ChatRepository chatRepository;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
     private final TelegramBot telegramBot;
-
-    /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
 
     /**
      * Обрабатывает команду "/admin" в зависимости от текущего состояния чата.
@@ -47,7 +44,7 @@ public class AdminCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState != ADMIN) {
-            telegramBot.execute(new SendMessage(chatId.toString(), "Введите пароль:"));
+            telegramBot.execute(new SendMessage(chatId, "Введите пароль:"));
             chatRepository.findByChatId(chatId).ifPresentOrElse(chat -> {
                 chat.setBotStarted(true);
                 chatRepository.save(chat);

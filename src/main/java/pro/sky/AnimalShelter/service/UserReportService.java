@@ -179,7 +179,8 @@ public class UserReportService {
                     telegramBot.execute(new SendMessage(chatId, "Непредвиденная ошибка, перезапустите телеграм бот (/stop)"));
                 }
             }
-        }, () -> telegramBot.execute(new SendMessage(chatId, "Пользователь не найден")));
+        }, () -> telegramBot.execute(new SendMessage(chatId, "Пользователь не найден\n" +
+                "Оставьте контактные данные")));
     }
 
     /**
@@ -256,7 +257,8 @@ public class UserReportService {
                     telegramBot.execute(new SendMessage(chatId, "Непредвиденная ошибка, перезапустите телеграм бот (/stop)"));
                 }
             }
-        }, () -> telegramBot.execute(new SendMessage(chatId, "Пользователь не найден")));
+        }, () -> telegramBot.execute(new SendMessage(chatId, "Пользователь не найден\n" +
+                "Оставьте контактные данные")));
     }
 
     /**
