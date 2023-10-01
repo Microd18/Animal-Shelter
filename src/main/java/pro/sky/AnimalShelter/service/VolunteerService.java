@@ -38,6 +38,10 @@ public class VolunteerService {
      */
     private final CatRepository catRepository;
 
+    private final DogReportRepository dogReportRepository;
+
+    private final CatReportRepository catReportRepository;
+
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
      */
@@ -306,7 +310,7 @@ public class VolunteerService {
             int extraDays = Integer.parseInt(strings[2]);
             var user = userRepository.findById(userId).get();
 
-            if (petType.equalsIgnoreCase("собака")) {
+            if (petType.trim().equalsIgnoreCase("собака")) {
                 var info = volunteerInfoDogRepository.findByUserId(userId);
                 info.ifPresentOrElse(volunteerInfoDog -> {
                     volunteerInfoDog.setExtraDays(extraDays);
@@ -322,7 +326,7 @@ public class VolunteerService {
                         "Пользователь не найден\n" +
                                 "Возврат в предыдущее меню (/back)\n" +
                                 "Выключить бота (/stop)")));
-            } else if (petType.equalsIgnoreCase("кошка")) {
+            } else if (petType.trim().equalsIgnoreCase("кошка")) {
                 var info = volunteerInfoCatRepository.findByUserId(userId);
                 info.ifPresentOrElse(volunteerInfoCat -> {
                     volunteerInfoCat.setExtraDays(extraDays);
@@ -344,4 +348,50 @@ public class VolunteerService {
         }
     }
 
+    /**
+     * Отдать юзеру животное.
+     *
+     * @param chatId идентификатор чата пользователя.
+     * @param text   текст с информацией.
+     */
+    public void giveAnimalAway(Long chatId, String text) {
+        String[] strings = text.split(",");
+        if (strings.length == 2) {
+            Long userId = Long.parseLong(strings[0]);
+            String petType = strings[1];
+            var user = userRepository.findById(userId).get();
+
+            if (petType.trim().equalsIgnoreCase("собака")) {
+                volunteerInfoDogRepository.deleteByUserId(userId);
+                dogReportRepository.deleteByUserId(userId);
+                dogRepository.deleteByUserId(userId);
+
+
+                telegramBot.execute(new SendMessage(chatId,
+                        "Питомец успешно отдан.\n" +
+                                "Возврат в предыдущее меню (/back)\n" +
+                                "Выключить бота (/stop)"
+                ));
+                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                        "УРА!!! Испытательный срок успешно пройден"));
+            } else if (petType.trim().equalsIgnoreCase("кошка")) {
+                volunteerInfoCatRepository.deleteByUserId(userId);
+                catReportRepository.deleteByUserId(userId);
+                catRepository.deleteByUserId(userId);
+
+
+                telegramBot.execute(new SendMessage(chatId,
+                        "Питомец успешно отдан.\n" +
+                                "Возврат в предыдущее меню (/back)\n" +
+                                "Выключить бота (/stop)"
+                ));
+                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                        "УРА!!! Испытательный срок успешно пройден"));
+            } else {
+                telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
+            }
+        } else {
+            telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
+        }
+    }
 }

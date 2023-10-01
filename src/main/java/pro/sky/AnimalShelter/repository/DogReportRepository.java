@@ -19,4 +19,6 @@ public interface DogReportRepository extends JpaRepository<DogReport, Long> {
      * @return Optional, содержащий чат, если найден, иначе пустой Optional.
      */
     Optional<DogReport> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }

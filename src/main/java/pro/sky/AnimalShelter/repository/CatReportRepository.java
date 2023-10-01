@@ -19,4 +19,6 @@ public interface CatReportRepository extends JpaRepository<CatReport, Long> {
      * @return Optional, содержащий чат, если найден, иначе пустой Optional.
      */
     Optional<CatReport> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }

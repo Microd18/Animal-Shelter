@@ -9,4 +9,6 @@ public interface VolunteerInfoDogRepository extends JpaRepository<VolunteerInfoD
 
     Optional<VolunteerInfoDog> findByUserId(Long chatId);
 
+    void deleteByUserId(Long userId);
+
 }

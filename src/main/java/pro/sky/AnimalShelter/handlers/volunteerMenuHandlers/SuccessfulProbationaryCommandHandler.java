@@ -9,12 +9,11 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
-import static pro.sky.AnimalShelter.enums.BotCommand.EXTENSION_PROBATION;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
 @Service
 @RequiredArgsConstructor
-public class ExtensionProbationCommandHandler implements CommandHandler {
+public class SuccessfulProbationaryCommandHandler implements CommandHandler {
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -32,8 +31,8 @@ public class ExtensionProbationCommandHandler implements CommandHandler {
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
 
         if (currentState == ADMIN) {
-            telegramBot.execute(new SendMessage(chatId, "Введите ID юзера,кошка(или собака), количество дней"));
-            chatStateService.updateChatState(chatId, EXTENSION_PROBATION);
+            telegramBot.execute(new SendMessage(chatId, "Введите ID юзера,кошка(или собака)"));
+            chatStateService.updateChatState(chatId, SUCCESSFUL_PROBATIONARY);
         } else {
             telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
@@ -41,6 +40,6 @@ public class ExtensionProbationCommandHandler implements CommandHandler {
 
     @Override
     public BotCommand getCommand() {
-        return EXTENSION_PROBATION;
+        return SUCCESSFUL_PROBATIONARY;
     }
 }

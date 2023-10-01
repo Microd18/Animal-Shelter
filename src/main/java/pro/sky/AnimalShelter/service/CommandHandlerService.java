@@ -116,6 +116,10 @@ public class CommandHandlerService {
                 volunteerService.increaseProbationPeriod(chatId, messageText);
                 return;
             }
+            if (currentState == SUCCESSFUL_PROBATIONARY) {
+                volunteerService.giveAnimalAway(chatId, messageText);
+                return;
+            }
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;
