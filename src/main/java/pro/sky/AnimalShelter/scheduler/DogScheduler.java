@@ -53,6 +53,7 @@ public class DogScheduler {
                 .filter(dogReport -> elapsedTime.isAfter(dogReport.getUpdated()))
                 .forEach(dogReport -> telegramBot.execute(new SendMessage(dogReport.getUser().getChat().getChatId(), "Вы уже сутки не отправляли отчет по питомцу!")));
     }
+
     /**
      * Метод для отправки уведомления волонтеру если пользователь не отправлял отчет более 1 дня
      */
@@ -74,6 +75,7 @@ public class DogScheduler {
                                 + "\nне присылал отчет более 2х дней!")));
 
     }
+
     /**
      * Метод для отправки уведомления волонтеру которое сообщает что прошло 30 дней со дня усыновления
      */
@@ -123,6 +125,7 @@ public class DogScheduler {
                                 + u.getPhone()
                                 + "\nсодержит животное уже 60 дней, пора принимать решение!")));
     }
+
     /**
      * Метод, который проставляет количество дней в таблицу с дополнительной информацией для волонтера
      */
@@ -134,17 +137,23 @@ public class DogScheduler {
                 .findAll()
                 .forEach(dogReport -> saveDaysCounter(dogReport.getUser().getId(), differenceInDays(dogReport.getCreated(), LocalDateTime.now())));
     }
+
     /**
      * Метод, который сохраняет измененную сущность
      */
     @Transactional
     public void saveDaysCounter(Long userId, Integer daysCounter) {
 
-        VolunteerInfoDog report = volunteerInfoDogRepository.findByUserId(userId).get();
-        report.setAmountOfDays(daysCounter);
+        try {
+            VolunteerInfoDog report = volunteerInfoDogRepository.findByUserId(userId).get();
+            report.setAmountOfDays(daysCounter);
 
-        volunteerInfoDogRepository.save(report);
+            volunteerInfoDogRepository.save(report);
+        } catch (RuntimeException e) {
+            log.error(e.toString());
+        }
     }
+
     /**
      * Метод, который считает прошедшие дни между созданием первого отчета и текущим временем
      */

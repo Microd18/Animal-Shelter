@@ -42,5 +42,5 @@ public class VolunteerInfoCat extends BaseEntity {
      * Поле для хранения значения отображающего дополнительный (14 дневный) срок для усыновления.
      */
     @Column(name = "extra_days")
-    private int extraDays;
+    private Integer extraDays;
 }

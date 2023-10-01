@@ -147,10 +147,15 @@ public class CatScheduler {
     @Transactional
     public void saveDaysCounter(Long userId, Integer daysCounter) {
 
-        VolunteerInfoCat report = volunteerInfoCatRepository.findByUserId(userId).get();
-        report.setAmountOfDays(daysCounter);
+        try {
+            VolunteerInfoCat report = volunteerInfoCatRepository.findByUserId(userId).get();
+            report.setAmountOfDays(daysCounter);
 
-        volunteerInfoCatRepository.save(report);
+            volunteerInfoCatRepository.save(report);
+        } catch (RuntimeException e) {
+            log.error(e.toString());
+        }
+
     }
 
     /**

@@ -8,29 +8,13 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
-import pro.sky.AnimalShelter.service.VolunteerService;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
-import static pro.sky.AnimalShelter.enums.BotCommand.ALL_ADOPTERS;
+import static pro.sky.AnimalShelter.enums.BotCommand.PROBATION_FAILED;
 
-
-/**
- * Обработчик команды "/all_adopters".
- */
 @Service
 @RequiredArgsConstructor
-public class AllAdoptersCommandHandler implements CommandHandler {
-
-    /**
-     * Сервис для управления очередью состояний чатов.
-     */
-    private final ChatStateService chatStateService;
-
-    /**
-     * Сервис для обработки команд меню волонтера.
-     */
-    private final VolunteerService volunteerService;
-
+public class ProbationFailedCommandHandler implements CommandHandler {
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -38,29 +22,25 @@ public class AllAdoptersCommandHandler implements CommandHandler {
     private final TelegramBot telegramBot;
 
     /**
-     * Обрабатывает команду "/all_adopters" в зависимости от текущего состояния чата.
-     *
-     * @param update Объект, представляющий обновление от пользователя.
+     * Сервис для управления очередью состояний чатов.
      */
+    private final ChatStateService chatStateService;
+
     @Override
     public void handle(Update update) {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+
         if (currentState == ADMIN) {
-            volunteerService.getAllAdopters(chatId);
+            telegramBot.execute(new SendMessage(chatId, "Введите ID юзера,кошка(или собака)"));
+            chatStateService.updateChatState(chatId, PROBATION_FAILED);
         } else {
             telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
     }
 
-    /**
-     * Возвращает команду, связанную с этим обработчиком ("/all_adopters").
-     *
-     * @return Команда, связанная с обработчиком.
-     */
     @Override
     public BotCommand getCommand() {
-        return ALL_ADOPTERS;
+        return PROBATION_FAILED;
     }
 }
-

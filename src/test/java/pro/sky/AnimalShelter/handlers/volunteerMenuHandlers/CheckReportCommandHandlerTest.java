@@ -14,19 +14,24 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.service.ChatStateService;
+import pro.sky.AnimalShelter.service.CheckUserReportService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
-import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_ANIMAL_NAME_TEXT;
+import static pro.sky.AnimalShelter.enums.BotCommand.CHECK_REPORT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.*;
 
 @ExtendWith(MockitoExtension.class)
-class FindAnimalByNameCommandHandlerTest {
+class CheckReportCommandHandlerTest {
     @Mock
     private ChatStateService chatStateService;
 
     @Mock
     private TelegramBot telegramBot;
+
+    @Mock
+    private CheckUserReportService checkUserReportService;
 
     @Mock
     private Update update;
@@ -38,7 +43,7 @@ class FindAnimalByNameCommandHandlerTest {
     private Chat chat;
 
     @InjectMocks
-    private FindAnimalByNameCommandHandler findAnimalByNameCommandHandler;
+    private CheckReportCommandHandler checkReportCommandHandler;
 
     @BeforeEach
     void setUp() {
@@ -48,44 +53,44 @@ class FindAnimalByNameCommandHandlerTest {
     }
 
     @Test
-    @DisplayName("Проверяет, что при выполнении команды /find_animal_by_name, если текущее состояние чата " +
-            "(chatId) равно /ADOPT ,, будет отправлено правильное сообщение в чат с указанным chatId")
+    @DisplayName("Проверяет, что при выполнении команды /check_report, если текущее состояние чата " +
+            "(chatId) равно /admin ,, будет отправлено правильное сообщение в чат с указанным chatId")
     public void testHandleStateSendCorrectMessage() {
         Long chatId = 123L;
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(ADMIN);
-        findAnimalByNameCommandHandler.handle(update);
-        SendMessage message = new SendMessage(chatId, WAITING_ANIMAL_NAME_TEXT);
+        checkReportCommandHandler.handle(update);
+        String responseText = currentState == CHECK_REPORT ? CHECK_REPORT_IN_PROGRESS_TEXT : CHECK_REPORT_START_TEXT;
+        SendMessage message = new SendMessage(chatId.toString(), responseText);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса FindAnimalByNameCommandHandler " +
+    @DisplayName("Проверяет, что при вызове метода handle класса CheckReportCommandHandler " +
             "в состоянии \"Меню Admin\" отправляется сообщение с текстом " +
             "в чат с заданным chatId.")
     public void testFindAnimalByNameCommandHandler() {
         Long chatId = 123L;
-
         SendMessage message = new SendMessage(chatId, WAITING_ANIMAL_NAME_TEXT);
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса FindAnimalByNameCommandHandler \" +\n"
+    @DisplayName("Проверяет, что при вызове метода handle класса CheckReportCommandHandler \" +\n"
             + "в состоянии \\\"Назад\\\" вызывается метод execute класса TelegramBot.")
     public void testHandleWhenCurrentStateIsBack() {
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
-        findAnimalByNameCommandHandler.handle(update);
+        checkReportCommandHandler.handle(update);
         verify(telegramBot).execute(any(SendMessage.class));
     }
 
     @Test
-    @DisplayName("Проверяет, что метод getCommand класса FindAnimalByNameCommandHandler возвращает правильную команду BotCommand.DATING_RULES")
+    @DisplayName("Проверяет, что метод getCommand класса CheckReportCommandHandler возвращает правильную команду /check_report")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.FIND_ANIMAL_BY_NAME;
-        BotCommand actualCommand = findAnimalByNameCommandHandler.getCommand();
-        assertEquals(expectedCommand, actualCommand);
+        BotCommand actualCommand = checkReportCommandHandler.getCommand();
+        assertEquals(CHECK_REPORT, actualCommand);
     }
 
 }

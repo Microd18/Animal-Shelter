@@ -2,7 +2,6 @@ package pro.sky.AnimalShelter.handlers.sendingReportMenuHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,7 @@ public class ReportTemplateCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == PET_REPORT) {
-            SendMessage message = new SendMessage(chatId.toString(), REPORT_TEMPLATE_COMMAND_TEXT).parseMode(ParseMode.Markdown);
+            SendMessage message = new SendMessage(chatId.toString(), REPORT_TEMPLATE_COMMAND_TEXT);
             telegramBot.execute(message);
         } else if (currentState == STOP) {
             commonUtils.offerToStart(chatId);

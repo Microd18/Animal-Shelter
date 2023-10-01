@@ -100,10 +100,11 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", state);
 
-        if (state == UserReportStates.BEHAVIOR) {
+        if (state == BEHAVIOR) {
             verify(dogReportRepository, times(1)).save(any());
             verify(dogReportRepository, times(1)).findByUserId(456L);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
+            verify(userReportStateService, times(1)).clearUserReportStates(123L);
             assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == RATION) {
             verify(dogReportRepository, times(1)).save(any());
@@ -117,7 +118,7 @@ class UserReportServiceTest {
             verify(userReportStateService, times(1)).updateUserReportState(123L, BEHAVIOR);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
             assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
-        } else if (state == UserReportStates.PHOTO) {
+        } else if (state == PHOTO) {
             verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                     catReportRepository, dogReportRepository, userReportStateService, telegramBot);
         }
@@ -133,10 +134,11 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", state);
 
-        if (state == UserReportStates.BEHAVIOR) {
+        if (state == BEHAVIOR) {
             verify(catReportRepository, times(1)).save(any());
             verify(catReportRepository, times(1)).findByUserId(456L);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
+            verify(userReportStateService, times(1)).clearUserReportStates(123L);
             assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == RATION) {
             verify(catReportRepository, times(1)).save(any());
@@ -150,7 +152,7 @@ class UserReportServiceTest {
             verify(userReportStateService, times(1)).updateUserReportState(123L, BEHAVIOR);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
             assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
-        } else if (state == UserReportStates.PHOTO) {
+        } else if (state == PHOTO) {
             verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                     catReportRepository, dogReportRepository, userReportStateService, telegramBot);
         }

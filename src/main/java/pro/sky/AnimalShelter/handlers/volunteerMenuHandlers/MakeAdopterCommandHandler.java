@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.enums.BotCommand.MAKE_ADOPTER;
 import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_USER_PET_DATA_TEXT;
 
 /**
@@ -31,11 +31,6 @@ public class MakeAdopterCommandHandler implements CommandHandler {
     private final ChatStateService chatStateService;
 
     /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
-
-    /**
      * Обрабатывает команду "/make_adopter" в зависимости от текущего состояния чата.
      *
      * @param update Объект, представляющий обновление от пользователя.
@@ -48,10 +43,8 @@ public class MakeAdopterCommandHandler implements CommandHandler {
             SendMessage message = new SendMessage(chatId, WAITING_USER_PET_DATA_TEXT);
             telegramBot.execute(message);
             chatStateService.updateChatState(chatId, MAKE_ADOPTER);
-        } else if (currentState == STOP) {
-            commonUtils.offerToStart(chatId);
         } else {
-            commonUtils.sendInvalidCommandResponse(chatId);
+            telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
     }
 

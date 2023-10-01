@@ -244,7 +244,10 @@ public class MessagesBot {
             "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/without_report_adopters)\n" +
-            "8. Выключить бота \n(/stop)";
+            "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
+            "9. Отдать животное пользователю\n(/successful_probationary)\n" +
+            "10. Забрать животное у пользователя\n(/probation_failed)\n" +
+            "11. Выключить бота \n(/stop)";
 
     public static final String ADMIN_COMMAND_RETURN_TEXT = "Вы вернулись в меню волонтера\uD83D\uDE3C\n\n" +
             "1. Найти юзера по номеру телефона \n(/find_user_by_phone)\n" +
@@ -254,7 +257,10 @@ public class MessagesBot {
             "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
-            "8. Выключить бота \n(/stop)";
+            "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
+            "9. Отдать животное пользователю\n(/successful_probationary)\n" +
+            "10. Забрать животное у пользователя\n(/probation_failed)\n" +
+            "11. Выключить бота \n(/stop)";
 
 
     public static final String HELP_COMMAND_TEXT = "Для связи с волонтером пройдите по ссылке: \n" +
@@ -364,7 +370,8 @@ public class MessagesBot {
     public static final String ANIMAL_FOUND_BY_NAME_TEXT = "Вот что я нашел по введенной кличке: \n";
     public static final String USER_NOT_FOUND_BY_PHONE_TEXT = "К сожалению, я никого не нашел по введенному номеру. Попробуйте снова.";
     public static final String USER_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел юзера по введенному id. Попробуйте снова.";
-
+    public static final String CAT_REPORT_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел кошачий отчет по введенному id ";
+    public static final String DOG_REPORT_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел собачий отчет по введенному id ";
     public static final String CAT_NOT_FOUND_BY_NAME_TEXT = "К сожалению, я не нашел кошек с кличкой ";
     public static final String CAT_NOT_FOUND_BY_ID_TEXT = "К сожалению, я не нашел кошку по введенному id. Попробуйте снова.";
     public static final String DOG_NOT_FOUND_TEXT = "К сожалению, я не нашел собак с кличкой ";
@@ -411,7 +418,7 @@ public class MessagesBot {
             "3. Назад (/back)\n" +
             "4. Выключить бота (/stop)";
 
-    public static final String REPORT_TEMPLATE_COMMAND_TEXT = "Для формирования ежедневного отчета о вашем питомце, пожалуйста, пришлите следующую информацию:\n" +
+    public static final String REPORT_TEMPLATE_COMMAND_TEXT = "Для формирования ежедневного отчета о вашем питомце, пожалуйста, пришлите следующую информацию ПО ОЧЕРЕДИ ДРУГ ЗА ДРУГОМ, ОТ НАЧАЛА ДО КОНЦА, ИНАЧЕ ОТЧЁТ НЕ СОХРАНИТСЯ:\n" +
             "1. Фото животного: в этой части отчета вы можете отправить фотографию вашего питомца. Фото помогут нам видеть, как изменяется ваш пушистый друг со временем.\n" +
             "2. Рацион животного: укажите, что ваш питомец ел сегодня. Это важно для контроля его питания и здоровья. Например, вы можете описать, сколько порций и какой еды ваш питомец съел сегодня.\n" +
             "3. Общее самочувствие и привыкание к новому месту: поделитесь, как себя чувствует ваш пушистый друг. Важно знать, как он приспосабливается к новой обстановке и окружению. Напишите о его настроении, активности или любых изменениях в поведении.\n" +
@@ -432,13 +439,13 @@ public class MessagesBot {
 
     public static final String SHELTER_INFO_COMMAND_TEXT =
             "1. Описание приюта (/description)\n" +
-            "2. Расписание работы и контакты (/schedule)\n" +
-            "3. Контактные данные охраны для пропуска (/pass)\n" +
-            "4. Техника безопасности на территории приюта (/safety)\n" +
-            "5. Оставить контактные данные (/contact)\n" +
-            "6. Позвать волонтера (/help)\n" +
-            "7. Назад (/back)\n" +
-            "8. Выключить бота (/stop)";
+                    "2. Расписание работы и контакты (/schedule)\n" +
+                    "3. Контактные данные охраны для пропуска (/pass)\n" +
+                    "4. Техника безопасности на территории приюта (/safety)\n" +
+                    "5. Оставить контактные данные (/contact)\n" +
+                    "6. Позвать волонтера (/help)\n" +
+                    "7. Назад (/back)\n" +
+                    "8. Выключить бота (/stop)";
 
     public static final String OFFER_TO_START_TEXT = "Для использования бота введите команду /start";
 
@@ -449,7 +456,7 @@ public class MessagesBot {
     public static final String BACK_COMMAND_SEND_REPORT = "Вы вернулись назад. Это меню для отправки отчёта, выберите действие:\n" +
             "1. Отправить отчёт: выберите этот пункт меню, чтобы отправить ежедневный отчёт о вашем питомце (/send_report)\n" +
             "2. Посмотреть шаблон для отчёта: если вам нужно ознакомиться с шаблоном для ежедневного отчёта перед его отправкой, выберите этот пункт меню (/report_template)\n" +
-            "3. Назад* (/back)\n" +
+            "3. Назад (/back)\n" +
             "4. Выключить бота (/stop)";
 
     public static final String BACK_COMMAND_GENERAL_MENU_TEXT = "Вы вернулись в главное меню." +
@@ -460,8 +467,6 @@ public class MessagesBot {
             "От маленьких щенков до зрелых спутников жизни - выбор за вами. Для выбора введи команду /dog\n" +
             "\n" +
             "Остановить бота (/stop)";
-
-
 
 
     public static final String CAT_ALREADY_HAS_ADOPTER_TEXT = "У выбранной кошки уже есть усыновитель!\n";
@@ -485,11 +490,11 @@ public class MessagesBot {
             "• Для просмотра определенного отчета необходимо кликнуть на его идентификатор.\n" +
             "• После ознакомления с отчетом необходимо отправить его оценку по пятибальной шкале.";
 
-    public static final String CAT_REPORT_LIST_TEXT = "Cписок идентификаторов отчетов по кошкам:\n";
+    public static final String CAT_REPORT_LIST_TEXT = "Cписок идентификаторов непроверенных отчетов по кошкам:\n";
 
     public static final String CAT_REPORT_EMPTY_LIST_TEXT = "По кошкам отчетов на проверку сейчас нет\n";
 
-    public static final String DOG_REPORT_LIST_TEXT = "Cписок идентификаторов отчетов по собакам:\n";
+    public static final String DOG_REPORT_LIST_TEXT = "Cписок идентификаторов непроверенных отчетов по собакам:\n";
 
     public static final String DOG_REPORT_EMPTY_LIST_TEXT = "По cобакам отчетов на проверку сейчас нет\n";
 
@@ -507,6 +512,10 @@ public class MessagesBot {
     public static final String CAT_REPORT_EVALUATION_TEXT = "После ознакомления с отчетом необходимо " +
             "отправить его оценку по пятибальной шкале в формате \"\\оценка_cat_идентификатор\"" + ", где:\n";
 
+    public static final String BAD_COMPLETION_CAT_REPORT_TEXT = "Вы отправили неполный или некорректный отчет по кошке, " +
+            "напоминаю что все ваши отчеты оцениваются и от итоговой оценки зависит результат усыновления животного!";
+    public static final String BAD_COMPLETION_DOG_REPORT_TEXT = "Вы отправили неполный или некорректный отчет по собаке, " +
+            "напоминаю что все ваши отчеты оцениваются и от итоговой оценки зависит результат усыновления животного!";
 
 }
 

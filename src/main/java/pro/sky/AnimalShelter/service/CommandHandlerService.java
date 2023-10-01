@@ -112,6 +112,18 @@ public class CommandHandlerService {
                 }
                 return;
             }
+            if (currentState == EXTENSION_PROBATION) {
+                volunteerService.increaseProbationPeriod(chatId, messageText);
+                return;
+            }
+            if (currentState == SUCCESSFUL_PROBATIONARY) {
+                volunteerService.giveAnimalAway(chatId, messageText);
+                return;
+            }
+            if (currentState == PROBATION_FAILED) {
+                volunteerService.takeBackAnimal(chatId, messageText);
+                return;
+            }
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;

@@ -9,9 +9,9 @@ import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.service.CheckUserReportService;
-import pro.sky.AnimalShelter.utils.CommonUtils;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
+import static pro.sky.AnimalShelter.enums.BotCommand.CHECK_REPORT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.CHECK_REPORT_IN_PROGRESS_TEXT;
 import static pro.sky.AnimalShelter.utils.MessagesBot.CHECK_REPORT_START_TEXT;
 
@@ -31,11 +31,6 @@ public class CheckReportCommandHandler implements CommandHandler {
      * Сервис для обработки состояний просмотра и проверки отчета.
      */
     private final CheckUserReportService checkUserReportService;
-
-    /**
-     * Экземпляр утилитарного класс для общих методов.
-     */
-    private final CommonUtils commonUtils;
 
     /**
      * Экземпляр Telegram-бота для отправки сообщений.
@@ -58,10 +53,8 @@ public class CheckReportCommandHandler implements CommandHandler {
                 chatStateService.updateChatState(chatId, CHECK_REPORT);
             }
             checkUserReportService.init(chatId);
-        } else if (currentState == STOP) {
-            commonUtils.offerToStart(chatId);
         } else {
-            commonUtils.sendInvalidCommandResponse(chatId);
+            telegramBot.execute(new SendMessage(chatId, "Сперва зайдите в меню волонтёра"));
         }
     }
 

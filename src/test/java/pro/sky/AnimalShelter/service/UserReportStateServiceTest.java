@@ -330,6 +330,7 @@ public class UserReportStateServiceTest {
         userReportStateService.updateUserReportState(123L, WELL_BEING);
 
         assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
+        assertEquals(stateQueue.size(), 4);
         assertEquals(stateQueue.getLast(), BEHAVIOR);
         assertEquals(stateQueue.getFirst(), WELL_BEING);
 

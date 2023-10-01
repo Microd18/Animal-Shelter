@@ -17,6 +17,7 @@ import pro.sky.AnimalShelter.repository.DogReportRepository;
 import pro.sky.AnimalShelter.repository.VolunteerInfoCatRepository;
 import pro.sky.AnimalShelter.repository.VolunteerInfoDogRepository;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static pro.sky.AnimalShelter.enums.CheckUserReportStates.*;
@@ -141,28 +142,32 @@ public class CheckUserReportService {
      * @param catReportId     Идентификатор отчета по кошке.
      */
     protected void viewCatReport(Long volunteerChatId, Long catReportId) {
-        CatReport catReport = catReportRepository.findById(catReportId).get();
-        telegramBot.execute(new SendMessage(volunteerChatId,
-                "Отчет с идентификатором " + catReportId + " обновлен " + catReport.getUpdated()));
-        telegramBot.execute(new SendPhoto(volunteerChatId, catReport.getCatPhoto().getData()));
-        telegramBot.execute(new SendMessage(volunteerChatId,
-                "РАЦИОН: \n" +
-                        catReport.getRation() +
-                        "\n" +
-                        "\n" +
-                        "ОБЩЕЕ САМОЧУВСТВИЕ:\n" +
-                        catReport.getWellBeing() +
-                        "\n" +
-                        "\n" +
-                        "ИЗМЕНЕНИЯ В ПОВЕДЕНИИ:\n" +
-                        catReport.getBehavior()));
-        telegramBot.execute(new SendMessage(volunteerChatId,
-                CAT_REPORT_EVALUATION_TEXT +
-                        "/5_cat_" + catReportId + RATING_EQUALS_FIVE_TEXT +
-                        "/4_cat_" + catReportId + RATING_EQUALS_FOUR_TEXT +
-                        "/3_cat_" + catReportId + RATING_EQUALS_THREE_TEXT +
-                        "/2_cat_" + catReportId + " и /1_cat_" + catReportId + RATING_EQUALS_TWO_OR_ONE_TEXT
-        ));
+        if(catReportRepository.findById(catReportId).isPresent()) {
+            CatReport catReport = catReportRepository.findById(catReportId).get();
+            telegramBot.execute(new SendMessage(volunteerChatId,
+                    "Отчет с идентификатором " + catReportId + " обновлен " + catReport.getUpdated()));
+            telegramBot.execute(new SendPhoto(volunteerChatId, catReport.getCatPhoto().getData()));
+            telegramBot.execute(new SendMessage(volunteerChatId,
+                    "РАЦИОН: \n" +
+                            catReport.getRation() +
+                            "\n" +
+                            "\n" +
+                            "ОБЩЕЕ САМОЧУВСТВИЕ:\n" +
+                            catReport.getWellBeing() +
+                            "\n" +
+                            "\n" +
+                            "ИЗМЕНЕНИЯ В ПОВЕДЕНИИ:\n" +
+                            catReport.getBehavior()));
+            telegramBot.execute(new SendMessage(volunteerChatId,
+                    CAT_REPORT_EVALUATION_TEXT +
+                            "/5_cat_" + catReportId + RATING_EQUALS_FIVE_TEXT +
+                            "/4_cat_" + catReportId + RATING_EQUALS_FOUR_TEXT +
+                            "/3_cat_" + catReportId + RATING_EQUALS_THREE_TEXT +
+                            "/2_cat_" + catReportId + " и /1_cat_" + catReportId + RATING_EQUALS_TWO_OR_ONE_TEXT
+            ));
+        } else telegramBot.execute(new SendMessage(volunteerChatId, CAT_REPORT_NOT_FOUND_BY_ID_TEXT
+                + catReportId + WAY_BACK_TEXT));
+
     }
 
     /**
@@ -172,28 +177,32 @@ public class CheckUserReportService {
      * @param dogReportId     Идентификатор отчета по собаке.
      */
     protected void viewDogReport(Long volunteerChatId, Long dogReportId) {
-        DogReport dogReport = dogReportRepository.findById(dogReportId).get();
-        telegramBot.execute(new SendMessage(volunteerChatId,
-                "Отчет с идентификатором " + dogReportId + " обновлен " + dogReport.getUpdated()));
-        telegramBot.execute(new SendPhoto(volunteerChatId, dogReport.getDogPhoto().getData()));
-        telegramBot.execute(new SendMessage(volunteerChatId,
-                "РАЦИОН:\n" +
-                        dogReport.getRation() +
-                        "\n" +
-                        "\n" +
-                        "ОБЩЕЕ САМОЧУВСТВИЕ:\n" +
-                        dogReport.getWellBeing() +
-                        "\n" +
-                        "\n" +
-                        "ИЗМЕНЕНИЯ В ПОВЕДЕНИИ:\n" +
-                        dogReport.getBehavior()));
-        telegramBot.execute(new SendMessage(volunteerChatId,
-                DOG_REPORT_EVALUATION_TEXT +
-                        "/5_dog_" + dogReportId + RATING_EQUALS_FIVE_TEXT +
-                        "/4_dog_" + dogReportId + RATING_EQUALS_FOUR_TEXT +
-                        "/3_dog_" + dogReportId + RATING_EQUALS_THREE_TEXT +
-                        "/2_dog_" + dogReportId + " и /1_dog_" + dogReportId + RATING_EQUALS_TWO_OR_ONE_TEXT
-        ));
+        if(dogReportRepository.findById(dogReportId).isPresent()) {
+            DogReport dogReport = dogReportRepository.findById(dogReportId).get();
+            telegramBot.execute(new SendMessage(volunteerChatId,
+                    "Отчет с идентификатором " + dogReportId + " обновлен " + dogReport.getUpdated()));
+            telegramBot.execute(new SendPhoto(volunteerChatId, dogReport.getDogPhoto().getData()));
+            telegramBot.execute(new SendMessage(volunteerChatId,
+                    "РАЦИОН:\n" +
+                            dogReport.getRation() +
+                            "\n" +
+                            "\n" +
+                            "ОБЩЕЕ САМОЧУВСТВИЕ:\n" +
+                            dogReport.getWellBeing() +
+                            "\n" +
+                            "\n" +
+                            "ИЗМЕНЕНИЯ В ПОВЕДЕНИИ:\n" +
+                            dogReport.getBehavior()));
+            telegramBot.execute(new SendMessage(volunteerChatId,
+                    DOG_REPORT_EVALUATION_TEXT +
+                            "/5_dog_" + dogReportId + RATING_EQUALS_FIVE_TEXT +
+                            "/4_dog_" + dogReportId + RATING_EQUALS_FOUR_TEXT +
+                            "/3_dog_" + dogReportId + RATING_EQUALS_THREE_TEXT +
+                            "/2_dog_" + dogReportId + " и /1_dog_" + dogReportId + RATING_EQUALS_TWO_OR_ONE_TEXT
+            ));
+        } else telegramBot.execute(new SendMessage(volunteerChatId, DOG_REPORT_NOT_FOUND_BY_ID_TEXT
+                + dogReportId + WAY_BACK_TEXT));
+
     }
 
     /**
@@ -234,7 +243,6 @@ public class CheckUserReportService {
      */
     private Boolean checkValidRangeOfRating(Long volunteerChatId, Integer petReportRating) {
         if (petReportRating > 0 && petReportRating < 6) {
-            //todo ещё нужно отправить ПРЕДУПРЕЖДЕНИЕ усыновителю, если оценка 1 или 2
             return true;
         } else {
             telegramBot.execute(new SendMessage(volunteerChatId,
@@ -244,6 +252,34 @@ public class CheckUserReportService {
     }
 
     /**
+     * Метод для уведомления усыновителя кошки от том, что оценка отчета неудовлетворительная
+     *
+     * @param petReportId     Идентификатор чата отчетов о питомцах.
+     * @param petReportRating Оценка волонтера.
+     */
+    private void sendCatReportWarningMessage(Long petReportId, Integer petReportRating) {
+        if (petReportRating == 1 || petReportRating == 2) {
+            Long chatId = catReportRepository.findById(petReportId).orElseThrow().getUser().getChat().getChatId();
+            telegramBot.execute(new SendMessage(chatId, BAD_COMPLETION_CAT_REPORT_TEXT));
+
+        }
+    }
+
+    /**
+     * Метод для уведомления усыновителя собаки от том, что оценка отчета неудовлетворительная
+     *
+     * @param petReportId     Идентификатор чата отчетов о питомцах.
+     * @param petReportRating Оценка волонтера.
+     */
+    private void sendDogReportWarningMessage(Long petReportId, Integer petReportRating) {
+        if (petReportRating == 1 || petReportRating == 2) {
+            Long chatId = dogReportRepository.findById(petReportId).orElseThrow().getUser().getChat().getChatId();
+            telegramBot.execute(new SendMessage(chatId, BAD_COMPLETION_DOG_REPORT_TEXT));
+        }
+    }
+
+
+    /**
      * Метод для выставления оценки заполнения отчета по кошке и записи среднего рейтинга оценки в репозиторий
      *
      * @param volunteerChatId Идентификатор чата волонтера.
@@ -251,22 +287,38 @@ public class CheckUserReportService {
      * @param catReportRating Оценка волонтера по качеству заполнения отчета.
      */
     protected void evaluateCatReport(Long volunteerChatId, Long catReportId, Integer catReportRating) {
-        Long userId = catReportRepository.findById(catReportId).get().getUser().getId();
-        VolunteerInfoCat volunteerInfoCat = volunteerInfoCatRepository.findByUserId(userId).get();
-        Double currentAverageRating = volunteerInfoCat.getRating();
-        Integer currentAmountOfDays = volunteerInfoCat.getAmountOfDays();
-        //todo здесь нужна проверка, что на сегодняшний день оценка уже произошла, поэтому добавлять не будем
-        //todo думаю, хорошо добавить столбец в volunteer_info_cat с boolean переменной, оценен отчет на сегодня или нет
-        Double newAverageRating = ((currentAverageRating * (currentAmountOfDays + 1)) + catReportRating) / (currentAmountOfDays + 1);
-        volunteerInfoCat.setRating(newAverageRating);
-        volunteerInfoCatRepository.save(volunteerInfoCat);
-        telegramBot.execute(new SendMessage(volunteerChatId, "Кошачий отчет с идентификатором "
-                + catReportId + " успешно оценен." +
-                " Зафиксирована оценка равная "
-                + catReportRating + "\n" +
-                "На " + currentAmountOfDays + " день усыновления текущая средняя оценка по качеству заполнению отчетов равна "
-                + newAverageRating + "\n" +
-                WAY_BACK_TEXT));
+        if (catReportRepository.findById(catReportId).isPresent()) {
+            CatReport catReport = catReportRepository.findById(catReportId).get();
+            if (catReport.getReportVerified()) {
+                telegramBot.execute(new SendMessage(volunteerChatId, "Этот отчет уже был оценен." + WAY_BACK_TEXT));
+                return;
+            }
+            sendCatReportWarningMessage(catReportId, catReportRating);
+            Long userId = catReport.getUser().getId();
+            if (volunteerInfoCatRepository.findByUserId(userId).isEmpty()) {
+                telegramBot.execute(new SendMessage(volunteerChatId, "Не найдена информация в volunteerInfoCat. " +
+                        "Невозможно проставить оценку."
+                        + WAY_BACK_TEXT));
+                return;
+            }
+            VolunteerInfoCat volunteerInfoCat = volunteerInfoCatRepository.findByUserId(userId).get();
+            Double currentAverageRating = volunteerInfoCat.getRating();
+            Integer currentAmountOfDays = volunteerInfoCat.getAmountOfDays();
+            Double newAverageRating = ((currentAverageRating * (currentAmountOfDays + 1)) + catReportRating) / (currentAmountOfDays + 1);
+            volunteerInfoCat.setRating(newAverageRating);
+            volunteerInfoCatRepository.save(volunteerInfoCat);
+            catReport.setReportVerified(true);
+            catReportRepository.save(catReport);
+            telegramBot.execute(new SendMessage(volunteerChatId, "Кошачий отчет с идентификатором "
+                    + catReportId + " успешно оценен." +
+                    " Зафиксирована оценка равная "
+                    + catReportRating + "\n" +
+                    "На " + currentAmountOfDays + " день усыновления текущая средняя оценка по качеству заполнению отчетов равна "
+                    + newAverageRating + "\n" +
+                    WAY_BACK_TEXT));
+        } else telegramBot.execute(new SendMessage(volunteerChatId, CAT_REPORT_NOT_FOUND_BY_ID_TEXT
+                + catReportId + WAY_BACK_TEXT));
+
     }
 
     /**
@@ -277,22 +329,38 @@ public class CheckUserReportService {
      * @param dogReportRating Оценка волонтера по качеству заполнения отчета.
      */
     protected void evaluateDogReport(Long volunteerChatId, Long dogReportId, Integer dogReportRating) {
-        Long userId = dogReportRepository.findById(dogReportId).get().getUser().getId();
-        VolunteerInfoDog volunteerInfoDog = volunteerInfoDogRepository.findByUserId(userId).get();
-        Double currentAverageRating = volunteerInfoDog.getRating();
-        Integer currentAmountOfDays = volunteerInfoDog.getAmountOfDays();
-        //todo здесь нужна проверка, что на сегодняшний день оценка уже произошла, поэтому добавлять не будем
-        //todo думаю, хорошо добавить столбец в volunteer_info_dog с boolean переменной, оценен отчет на сегодня или нет
-        Double newAverageRating = ((currentAverageRating * (currentAmountOfDays + 1)) + dogReportRating) / (currentAmountOfDays + 1);
-        volunteerInfoDog.setRating(newAverageRating);
-        volunteerInfoDogRepository.save(volunteerInfoDog);
-        telegramBot.execute(new SendMessage(volunteerChatId, "Собачий отчет с идентификатором "
-                + dogReportId + " успешно оценен." +
-                " Зафиксирована оценка равная "
-                + dogReportRating + "\n" +
-                "На " + currentAmountOfDays + " день усыновления текущая средняя оценка по качеству заполнению отчетов равна "
-                + newAverageRating + "\n" +
-                WAY_BACK_TEXT));
+        if (dogReportRepository.findById(dogReportId).isPresent()) {
+            DogReport dogReport = dogReportRepository.findById(dogReportId).get();
+            if (dogReport.getReportVerified()) {
+                telegramBot.execute(new SendMessage(volunteerChatId, "Этот отчет уже был оценен." + WAY_BACK_TEXT));
+                return;
+            }
+            sendDogReportWarningMessage(dogReportId, dogReportRating);
+            Long userId = dogReport.getUser().getId();
+            if (volunteerInfoDogRepository.findByUserId(userId).isEmpty()) {
+                telegramBot.execute(new SendMessage(volunteerChatId, "Не найдена информация в volunteerInfoDog. " +
+                        "Невозможно проставить оценку."
+                        + WAY_BACK_TEXT));
+                return;
+            }
+            VolunteerInfoDog volunteerInfoDog = volunteerInfoDogRepository.findByUserId(userId).get();
+            Double currentAverageRating = volunteerInfoDog.getRating();
+            Integer currentAmountOfDays = volunteerInfoDog.getAmountOfDays();
+            Double newAverageRating = ((currentAverageRating * (currentAmountOfDays + 1)) + dogReportRating) / (currentAmountOfDays + 1);
+            volunteerInfoDog.setRating(newAverageRating);
+            volunteerInfoDogRepository.save(volunteerInfoDog);
+            dogReport.setReportVerified(true);
+            dogReportRepository.save(dogReport);
+            telegramBot.execute(new SendMessage(volunteerChatId, "Собачий отчет с идентификатором "
+                    + dogReportId + " успешно оценен." +
+                    " Зафиксирована оценка равная "
+                    + dogReportRating + "\n" +
+                    "На " + currentAmountOfDays + " день усыновления текущая средняя оценка по качеству заполнению отчетов равна "
+                    + newAverageRating + "\n" +
+                    WAY_BACK_TEXT));
+        } else telegramBot.execute(new SendMessage(volunteerChatId, "Собачий отчет с идентификатором "
+                + dogReportId + " отстутствует." + WAY_BACK_TEXT));
+
     }
 
     /**
@@ -302,10 +370,15 @@ public class CheckUserReportService {
      */
     protected void getAllCatReports(Long volunteerChatId) {
         if (!catReportRepository.findAll().isEmpty()) {
-            String responseText = catReportRepository.findAll().stream()
+            List<String> reportIdList = catReportRepository.findAll().stream()
+                    .filter(catReport -> !catReport.getReportVerified())
                     .map(catReport -> "/cat_" + catReport.getId())
-                    .collect(Collectors.toList()).toString();
-            telegramBot.execute(new SendMessage(volunteerChatId, CAT_REPORT_LIST_TEXT + responseText + "\n"));
+                    .collect(Collectors.toList());
+            if (reportIdList.isEmpty()) {
+                telegramBot.execute(new SendMessage(volunteerChatId, CAT_REPORT_EMPTY_LIST_TEXT));
+                return;
+            }
+            telegramBot.execute(new SendMessage(volunteerChatId, CAT_REPORT_LIST_TEXT + reportIdList + "\n"));
         } else telegramBot.execute(new SendMessage(volunteerChatId, CAT_REPORT_EMPTY_LIST_TEXT));
 
     }
@@ -317,11 +390,16 @@ public class CheckUserReportService {
      */
     protected void getAllDogReports(Long volunteerChatId) {
         if (!dogReportRepository.findAll().isEmpty()) {
-            String responseText = dogReportRepository.findAll().stream()
+            List<String> reportIdList = dogReportRepository.findAll().stream()
+                    .filter(dogReport -> !dogReport.getReportVerified())
                     .map(dogReport -> "/dog_" + dogReport.getId())
-                    .collect(Collectors.toList()).toString();
-            telegramBot.execute(new SendMessage(volunteerChatId, DOG_REPORT_LIST_TEXT + responseText + "\n"));
-        } else telegramBot.execute(new SendMessage(volunteerChatId, DOG_REPORT_EMPTY_LIST_TEXT));
+                    .collect(Collectors.toList());
+            if (reportIdList.isEmpty()) {
+                telegramBot.execute(new SendMessage(volunteerChatId, DOG_REPORT_EMPTY_LIST_TEXT + WAY_BACK_TEXT));
+                return;
+            }
+            telegramBot.execute(new SendMessage(volunteerChatId, DOG_REPORT_LIST_TEXT + reportIdList + "\n"));
+        } else telegramBot.execute(new SendMessage(volunteerChatId, DOG_REPORT_EMPTY_LIST_TEXT + WAY_BACK_TEXT));
 
 
     }

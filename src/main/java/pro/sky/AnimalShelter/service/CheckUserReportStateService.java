@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.sky.AnimalShelter.entity.Chat;
 import pro.sky.AnimalShelter.entity.CheckUserReportState;
 import pro.sky.AnimalShelter.enums.CheckUserReportStates;
-import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.repository.CheckUserReportStateRepository;
 import pro.sky.AnimalShelter.utils.CommonUtils;
@@ -23,6 +22,7 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class CheckUserReportStateService {
+
     /**
      * Класс-конвертер для преобразования между JSON и объектами типа Map<Long, Deque<>>.
      */
@@ -55,7 +55,7 @@ public class CheckUserReportStateService {
      * @return Текущее состояние отчёта или {@code STOP}, если чат не существует или бот не запущен.
      */
     public CheckUserReportStates getCurrentStateByChatId(Long chatId) {
-        log.info("getCurrentCheckReportStateByChatId method was invoked");
+        log.info("getCurrentStateByChatId method was invoked");
         return chatRepository.findByChatId(chatId)
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> checkUserReportStateRepository.findByChatId(chat.getId()))
@@ -73,7 +73,7 @@ public class CheckUserReportStateService {
      * @param state  Состояние для добавления в историю.
      */
     public void updateCheckUserReportState(Long chatId, CheckUserReportStates state) {
-        log.info("updateUserReportState method was invoked");
+        log.info("updateCheckUserReportState method was invoked");
         Chat chat = chatRepository.findByChatId(chatId)
                 .orElseGet(() -> {
                     commonUtils.offerToStart(chatId);
@@ -108,21 +108,5 @@ public class CheckUserReportStateService {
                         .build()
                 )
         );
-    }
-
-    /**
-     * Очищает историю состояний отчёта пользователя в указанном чате.
-     *
-     * @param chatId Идентификатор чата.
-     */
-    public void clearUserReportStates(Long chatId) {
-        log.info("clearUserReportStates method was invoked");
-        chatRepository.findByChatId(chatId).flatMap(foundChat ->
-                checkUserReportStateRepository.findByChatId(foundChat.getId())).ifPresent(foundUserReportState -> {
-            Map<Long, Deque<UserReportStates>> userReportStatesHistory = new HashMap<>();
-            userReportStatesHistory.put(chatId, new LinkedList<>());
-            foundUserReportState.setStateData(jsonMapConverter.toUserReportStatesJson(userReportStatesHistory));
-            checkUserReportStateRepository.save(foundUserReportState);
-        });
     }
 }

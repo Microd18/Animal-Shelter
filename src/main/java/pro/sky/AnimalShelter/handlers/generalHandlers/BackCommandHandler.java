@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.service.UserReportStateService;
@@ -53,8 +54,30 @@ public class BackCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         BotCommand lastState = chatStateService.getLastStateCatOrDogByChatId(chatId);
+        UserReportStates currentReportState = userReportStateService.getCurrentStateByChatId(chatId);
         if (currentState == SEND_REPORT) {
-            telegramBot.execute(new SendMessage(chatId.toString(), BACK_COMMAND_SEND_REPORT));
+            String warning = "";
+            if (currentReportState != null) {
+                switch (currentReportState) {
+                    case PHOTO:
+                        warning = "Предупреждение: ОТЧЁТ НЕ СОХРАНИЛСЯ. Не отправлено фото, рацион, общее самочувствие, изменения в поведении. ";
+                        break;
+                    case RATION:
+                        warning = "Предупреждение: ОТЧЁТ НЕ СОХРАНИЛСЯ. Не отправлен рацион, общее самочувствие, изменения в поведении. ";
+                        break;
+                    case WELL_BEING:
+                        warning = "Предупреждение: ОТЧЁТ НЕ СОХРАНИЛСЯ. Не отправлено общее самочувствие, изменения в поведении. ";
+                        break;
+                    case BEHAVIOR:
+                        warning = "Предупреждение: ОТЧЁТ НЕ СОХРАНИЛСЯ. Не отправлены изменения в поведении. ";
+                        break;
+                    default:
+                        warning = "";
+                        break;
+                }
+            }
+
+            telegramBot.execute(new SendMessage(chatId, warning + BACK_COMMAND_SEND_REPORT));
             userReportStateService.clearUserReportStates(chatId);
             chatStateService.goToPreviousState(chatId);
         }
@@ -68,7 +91,8 @@ public class BackCommandHandler implements CommandHandler {
         }
 
         if (currentState == FIND_USER_BY_PHONE || currentState == FIND_ANIMAL_BY_NAME
-                || currentState == MAKE_ADOPTER || currentState == CHECK_REPORT) {
+                || currentState == MAKE_ADOPTER || currentState == CHECK_REPORT || currentState == EXTENSION_PROBATION
+                || currentState == SUCCESSFUL_PROBATIONARY || currentState == PROBATION_FAILED) {
             SendMessage message = new SendMessage(chatId.toString(), ADMIN_COMMAND_RETURN_TEXT);
             telegramBot.execute(message);
             chatStateService.goToPreviousState(chatId);

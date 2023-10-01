@@ -20,6 +20,12 @@ import java.time.LocalDateTime;
 public class CatReport extends BaseEntity {
 
     /**
+     * Поле для хранения информации оценен отчет волонтером или нет.
+     */
+    @Column(name = "report_verified", columnDefinition = "BOOLEAN DEFAULT false")
+    private Boolean reportVerified;
+
+    /**
      * Поле для обратной связи с фотографией кота, связанной с отчетом.
      * Каждый отчет о коте может содержать одну фотографию кота.
      */

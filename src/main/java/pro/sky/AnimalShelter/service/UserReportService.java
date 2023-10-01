@@ -20,8 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.CAT;
-import static pro.sky.AnimalShelter.enums.BotCommand.DOG;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 import static pro.sky.AnimalShelter.enums.UserReportStates.*;
 
 /**
@@ -134,6 +133,7 @@ public class UserReportService {
                     if (state == BEHAVIOR) {
                         dogReport.setBehavior(text);
                         dogReport.setUpdated(LocalDateTime.now());
+                        userReportStateService.clearUserReportStates(chatId);
                         telegramBot.execute(new SendMessage(chatId,
                                 "Изменения в поведении собаки успешно сохранены в отчёт\n" +
                                         "Возврат в предыдущее меню (/back)\n" +
@@ -147,6 +147,7 @@ public class UserReportService {
                         telegramBot.execute(new SendMessage(chatId, "Общее самочувствие собаки успешно сохранено в отчёт, введите изменения в поведении:"));
                         userReportStateService.updateUserReportState(chatId, BEHAVIOR);
                     }
+                    dogReport.setReportVerified(false);
                     dogReportRepository.save(dogReport);
                 } else {
                     CatReport catReport = (CatReport) report;
@@ -155,6 +156,7 @@ public class UserReportService {
                     if (state == BEHAVIOR) {
                         catReport.setBehavior(text);
                         catReport.setUpdated(LocalDateTime.now());
+                        userReportStateService.clearUserReportStates(chatId);
                         telegramBot.execute(new SendMessage(chatId,
                                 "Изменения в поведении кошки успешно сохранены в отчёт\n" +
                                         "Возврат в предыдущее меню (/back)\n" +
@@ -168,6 +170,7 @@ public class UserReportService {
                         telegramBot.execute(new SendMessage(chatId, "Общее самочувствие кошки успешно сохранено в отчёт, введите изменения в поведении:"));
                         userReportStateService.updateUserReportState(chatId, BEHAVIOR);
                     }
+                    catReport.setReportVerified(false);
                     catReportRepository.save(catReport);
                 }
             } else {

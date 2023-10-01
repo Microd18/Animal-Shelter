@@ -17,11 +17,10 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static pro.sky.AnimalShelter.enums.BotCommand.ADMIN;
-import static pro.sky.AnimalShelter.utils.MessagesBot.WAITING_ANIMAL_NAME_TEXT;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
 @ExtendWith(MockitoExtension.class)
-class FindAnimalByNameCommandHandlerTest {
+class SuccessfulProbationaryCommandHandlerTest {
     @Mock
     private ChatStateService chatStateService;
 
@@ -38,7 +37,7 @@ class FindAnimalByNameCommandHandlerTest {
     private Chat chat;
 
     @InjectMocks
-    private FindAnimalByNameCommandHandler findAnimalByNameCommandHandler;
+    private SuccessfulProbationaryCommandHandler successfulProbationaryCommandHandler;
 
     @BeforeEach
     void setUp() {
@@ -53,39 +52,29 @@ class FindAnimalByNameCommandHandlerTest {
     public void testHandleStateSendCorrectMessage() {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(ADMIN);
-        findAnimalByNameCommandHandler.handle(update);
-        SendMessage message = new SendMessage(chatId, WAITING_ANIMAL_NAME_TEXT);
+        successfulProbationaryCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, "Введите ID юзера,кошка(или собака)");
         telegramBot.execute(message);
         verify(telegramBot, times(1)).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса FindAnimalByNameCommandHandler " +
-            "в состоянии \"Меню Admin\" отправляется сообщение с текстом " +
-            "в чат с заданным chatId.")
-    public void testFindAnimalByNameCommandHandler() {
+    @DisplayName("Тест на проверку отправки сообщения \"Сперва зайдите в меню волонтёра\", если текущее состояние чата не является ADMIN.")
+    public void testHandleNotAdmin() {
         Long chatId = 123L;
-
-        SendMessage message = new SendMessage(chatId, WAITING_ANIMAL_NAME_TEXT);
+        when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(START);
+        successfulProbationaryCommandHandler.handle(update);
+        SendMessage message = new SendMessage(chatId, "Сперва зайдите в меню волонтёра");
         telegramBot.execute(message);
-        verify(telegramBot, times(1)).execute(message);
+        verify(telegramBot).execute(message);
     }
 
     @Test
-    @DisplayName("Проверяет, что при вызове метода handle класса FindAnimalByNameCommandHandler \" +\n"
-            + "в состоянии \\\"Назад\\\" вызывается метод execute класса TelegramBot.")
-    public void testHandleWhenCurrentStateIsBack() {
-        when(chatStateService.getCurrentStateByChatId(123L)).thenReturn(BotCommand.BACK);
-        findAnimalByNameCommandHandler.handle(update);
-        verify(telegramBot).execute(any(SendMessage.class));
-    }
-
-    @Test
-    @DisplayName("Проверяет, что метод getCommand класса FindAnimalByNameCommandHandler возвращает правильную команду BotCommand.DATING_RULES")
+    @DisplayName("Проверяет, что метод getCommand класса FindAnimalByNameCommandHandler возвращает правильную команду /probation_failed")
     public void testGetCommand() {
-        BotCommand expectedCommand = BotCommand.FIND_ANIMAL_BY_NAME;
-        BotCommand actualCommand = findAnimalByNameCommandHandler.getCommand();
-        assertEquals(expectedCommand, actualCommand);
+        BotCommand actualCommand = successfulProbationaryCommandHandler.getCommand();
+        assertEquals(SUCCESSFUL_PROBATIONARY, actualCommand);
     }
+
 
 }
