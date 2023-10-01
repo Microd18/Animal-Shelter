@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.entity.User;
-import pro.sky.AnimalShelter.entity.VolunteerInfoCat;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.repository.UserRepository;
 import pro.sky.AnimalShelter.service.ChatStateService;
@@ -61,6 +60,7 @@ class CompletedProbationAdoptersCommandHandlerTest {
         lenient().when(message.chat()).thenReturn(chat);
         lenient().when(chat.id()).thenReturn(123L);
     }
+
     @Test
     @DisplayName("Тест на проверку отправки сообщения \"Сперва зайдите в меню волонтёра\", если текущее состояние чата не является ADMIN.")
     public void testHandleNotAdmin() {
