@@ -216,8 +216,10 @@ public class CheckUserReportService {
                 return;
             }
             if (petReportEvaluation[1].equals("cat")) {
+                sendWarningMessage(petReportId, petReportRating, petReportEvaluation[1]);
                 evaluateCatReport(volunteerChatId, petReportId, petReportRating);
             } else if (petReportEvaluation[1].equals("dog")) {
+                sendWarningMessage(petReportId, petReportRating, petReportEvaluation[1]);
                 evaluateDogReport(volunteerChatId, petReportId, petReportRating);
             } else telegramBot.execute(new SendMessage(volunteerChatId,
                     "Такого животного я пока не знаю.\n" + WAY_BACK_TEXT));
@@ -240,6 +242,25 @@ public class CheckUserReportService {
             telegramBot.execute(new SendMessage(volunteerChatId,
                     "Ваша оценка выходит за рамки пятибальной шкалы" + WAY_BACK_TEXT));
             return false;
+        }
+    }
+
+    /**
+     * Метод для уведомления пользователя от том, что оценка отчета неудовлетворительная
+     *
+     * @param petReportId     Идентификатор чата отчетов о питомцах.
+     * @param petReportRating Оценка волонтера.
+     * @param dogOrCat        Проверка для выбора нужного репозитория (кошка/собака)
+     */
+    private void sendWarningMessage(Long petReportId, Integer petReportRating, String dogOrCat) {
+        if (petReportRating == 1 || petReportRating == 2) {
+            Long chatId;
+            if (dogOrCat.equals("cat")) {
+                chatId = catReportRepository.findById(petReportId).orElseThrow().getUser().getChat().getChatId();
+            } else {
+                chatId = dogReportRepository.findById(petReportId).orElseThrow().getUser().getChat().getChatId();
+            }
+            telegramBot.execute(new SendMessage(chatId, "Вы отправили неполный или некорректный отчет, напоминаю что все ваши отчеты оцениваются и от итоговой оценки зависит результат усыновления животного!"));
         }
     }
 
