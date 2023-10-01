@@ -292,4 +292,56 @@ public class VolunteerService {
         volunteerInfoDogRepository.save(new VolunteerInfoDog(0, 0D, userRepository.findById(userId).get(), 0));
     }
 
+    /**
+     * Метод продления испытательного срока для юзера.
+     *
+     * @param chatId идентификатор чата пользователя.
+     * @param text   текст с информацией.
+     */
+    public void increaseProbationPeriod(Long chatId, String text) {
+        String[] strings = text.split(",");
+        if (strings.length == 3) {
+            Long userId = Long.parseLong(strings[0]);
+            String petType = strings[1];
+            int extraDays = Integer.parseInt(strings[2]);
+            var user = userRepository.findById(userId).get();
+
+            if (petType.equalsIgnoreCase("собака")) {
+                var info = volunteerInfoDogRepository.findByUserId(userId);
+                info.ifPresentOrElse(volunteerInfoDog -> {
+                    volunteerInfoDog.setExtraDays(extraDays);
+                    volunteerInfoDogRepository.save(volunteerInfoDog);
+                    telegramBot.execute(new SendMessage(chatId,
+                            "Испытательный срок успешно продлён.\n" +
+                                    "Возврат в предыдущее меню (/back)\n" +
+                                    "Выключить бота (/stop)"
+                    ));
+                    telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                            "Испытательный срок успешно продлён на " + extraDays + " дней"));
+                }, () -> telegramBot.execute(new SendMessage(chatId,
+                        "Пользователь не найден\n" +
+                                "Возврат в предыдущее меню (/back)\n" +
+                                "Выключить бота (/stop)")));
+            } else if (petType.equalsIgnoreCase("кошка")) {
+                var info = volunteerInfoCatRepository.findByUserId(userId);
+                info.ifPresentOrElse(volunteerInfoCat -> {
+                    volunteerInfoCat.setExtraDays(extraDays);
+                    volunteerInfoCatRepository.save(volunteerInfoCat);
+                    telegramBot.execute(new SendMessage(chatId,
+                            "Испытательный срок успешно продлён.\n" +
+                                    "Возврат в предыдущее меню (/back)\n" +
+                                    "Выключить бота (/stop)"
+                    ));
+                    telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                            "Испытательный срок успешно продлён на " + extraDays + " дней"));
+                }, () -> telegramBot.execute(new SendMessage(chatId,
+                        "Пользователь не найден\n" +
+                                "Возврат в предыдущее меню (/back)\n" +
+                                "Выключить бота (/stop)")));
+            }
+        } else {
+            telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака), количество дней 14 или 30"));
+        }
+    }
+
 }

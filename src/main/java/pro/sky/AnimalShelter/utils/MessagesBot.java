@@ -244,7 +244,8 @@ public class MessagesBot {
             "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/without_report_adopters)\n" +
-            "8. Выключить бота \n(/stop)";
+            "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
+            "9. Выключить бота \n(/stop)";
 
     public static final String ADMIN_COMMAND_RETURN_TEXT = "Вы вернулись в меню волонтера\uD83D\uDE3C\n\n" +
             "1. Найти юзера по номеру телефона \n(/find_user_by_phone)\n" +
@@ -254,7 +255,8 @@ public class MessagesBot {
             "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
             "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
-            "8. Выключить бота \n(/stop)";
+            "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
+            "9. Выключить бота \n(/stop)";
 
 
     public static final String HELP_COMMAND_TEXT = "Для связи с волонтером пройдите по ссылке: \n" +

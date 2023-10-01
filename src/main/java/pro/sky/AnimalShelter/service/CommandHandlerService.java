@@ -112,6 +112,10 @@ public class CommandHandlerService {
                 }
                 return;
             }
+            if (currentState == EXTENSION_PROBATION) {
+                volunteerService.increaseProbationPeriod(chatId, messageText);
+                return;
+            }
             if (currentState == CONTACT) {
                 userService.updateContact(chatId, messageText);
                 return;
