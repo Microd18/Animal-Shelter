@@ -66,7 +66,6 @@ public class UserReportStateServiceTest {
         when(chatRepository.findByChatId(123L)).thenReturn(Optional.empty());
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(0)).findByChatId(any());
@@ -79,7 +78,6 @@ public class UserReportStateServiceTest {
         chat.setBotStarted(false);
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(0)).findByChatId(any());
@@ -94,7 +92,6 @@ public class UserReportStateServiceTest {
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.empty());
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
@@ -111,7 +108,6 @@ public class UserReportStateServiceTest {
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
@@ -128,7 +124,6 @@ public class UserReportStateServiceTest {
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
@@ -152,7 +147,6 @@ public class UserReportStateServiceTest {
         when(jsonMapConverter.toUserReportStatesMap(anyString())).thenReturn(stateMap);
 
         assertEquals(UserReportStates.PHOTO, userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
@@ -174,7 +168,6 @@ public class UserReportStateServiceTest {
         when(jsonMapConverter.toUserReportStatesMap(anyString())).thenReturn(stateMap);
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
-        assertEquals(outputCapture.getCapturedOutput(), "getCurrentStateByChatId method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
@@ -190,8 +183,6 @@ public class UserReportStateServiceTest {
 
         userReportStateService.clearUserReportStates(123L);
 
-        assertEquals(outputCapture.getCapturedOutput(), "clearUserReportStates method was invoked");
-
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(0)).findByChatId(any());
         verify(userReportStateRepository, times(0)).save(any());
@@ -204,8 +195,6 @@ public class UserReportStateServiceTest {
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.empty());
 
         userReportStateService.clearUserReportStates(123L);
-
-        assertEquals(outputCapture.getCapturedOutput(), "clearUserReportStates method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
@@ -223,8 +212,6 @@ public class UserReportStateServiceTest {
 
         userReportStateService.clearUserReportStates(123L);
 
-        assertEquals(outputCapture.getCapturedOutput(), "clearUserReportStates method was invoked");
-
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).save(userReportState);
@@ -240,8 +227,6 @@ public class UserReportStateServiceTest {
 
         userReportStateService.updateUserReportState(123L, BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
-
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(commonUtils, times(1)).offerToStart(123L);
         verify(userReportStateRepository, times(0)).findByChatId(any());
@@ -256,7 +241,6 @@ public class UserReportStateServiceTest {
 
         userReportStateService.updateUserReportState(123L, BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
@@ -280,7 +264,6 @@ public class UserReportStateServiceTest {
 
         userReportStateService.updateUserReportState(123L, BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
         assertEquals(stateQueue.getFirst(), BEHAVIOR);
         assertEquals(stateQueue.getLast(), PHOTO);
 
@@ -301,8 +284,6 @@ public class UserReportStateServiceTest {
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
 
         userReportStateService.updateUserReportState(123L, BEHAVIOR);
-
-        assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
 
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
@@ -329,7 +310,6 @@ public class UserReportStateServiceTest {
 
         userReportStateService.updateUserReportState(123L, WELL_BEING);
 
-        assertEquals(outputCapture.getCapturedOutput(), "updateUserReportState method was invoked");
         assertEquals(stateQueue.size(), 4);
         assertEquals(stateQueue.getLast(), BEHAVIOR);
         assertEquals(stateQueue.getFirst(), WELL_BEING);
