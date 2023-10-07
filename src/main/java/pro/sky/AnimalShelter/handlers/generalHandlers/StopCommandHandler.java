@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
 import pro.sky.AnimalShelter.service.ChatStateService;
+import pro.sky.AnimalShelter.utils.MessagesBot;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.STOP;
+import static pro.sky.AnimalShelter.utils.MessagesBot.STOP_TEXT;
 
 /**
  * Обработчик команды /stop.
@@ -39,7 +41,7 @@ public class StopCommandHandler implements CommandHandler {
     public void handle(Update update) {
         log.info("Bot received /stop command. Shutting down...");
         Long chatId = update.message().chat().id();
-        telegramBot.execute(new SendMessage(chatId.toString(), "Бот выключен. Для включения бота отправьте команду /start."));
+        telegramBot.execute(new SendMessage(chatId.toString(), STOP_TEXT));
         chatStateService.stopBot(chatId);
     }
 

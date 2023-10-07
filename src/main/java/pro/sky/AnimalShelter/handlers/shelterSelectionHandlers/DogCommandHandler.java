@@ -23,7 +23,7 @@ public class DogCommandHandler extends ShelterCommandHandler {
      * @param telegramBot      Telegram бот.
      */
     public DogCommandHandler(ChatStateService chatStateService, CommonUtils commonUtils, TelegramBot telegramBot) {
-        super(chatStateService, commonUtils, telegramBot, DOG, "приют для собак");
+        super(chatStateService, commonUtils, telegramBot, DOG, "приют для собак. ");
     }
 
     /**

@@ -3,22 +3,39 @@ package pro.sky.AnimalShelter.service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.enums.CheckUserReportStates;
+import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.handlers.CommandHandler;
+import pro.sky.AnimalShelter.utils.ValidationUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pro.sky.AnimalShelter.enums.BotCommand.CONTACT;
+import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.enums.UserReportStates.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADMIN_COMMAND_TEXT;
 
 /**
  * Сервис для обработки команд.
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CommandHandlerService {
 
+    /**
+     * Сервис для обработки команд меню волонтера.
+     */
+    private final VolunteerService volunteerService;
+
+    /**
+     * Сервис для обновления контактных данных пользователей.
+     */
     private final UserService userService;
 
     /**
@@ -32,6 +49,31 @@ public class CommandHandlerService {
     private final ChatStateService chatStateService;
 
     /**
+     * Сервис для управления состоянием отчетов о пользователях.
+     */
+    private final UserReportStateService userReportStateService;
+
+    /**
+     * Сервис для управления состоянием просмотра и проверки отчета.
+     */
+    private final CheckUserReportStateService checkUserReportStateService;
+
+    /**
+     * Сервис для обработки состояний просмотра и проверки отчета.
+     */
+    private final CheckUserReportService checkUserReportService;
+
+    /**
+     * Сервис для работы с отчетами о пользователях.
+     */
+    private final UserReportService userReportService;
+
+    /**
+     * Бин для прохождения валидации.
+     */
+    private final ValidationUtils validationUtils;
+
+    /**
      * Список обработчиков команд.
      */
     private final List<CommandHandler> commandHandlers;
@@ -43,26 +85,75 @@ public class CommandHandlerService {
      */
     public void process(Update update) {
         Message message = update.message();
-        if (message != null) {
-            if (message.text() != null) {
-                String messageText = message.text();
+        if (message == null)
+            return;
 
-                List<CommandHandler> matchedHandlers = commandHandlers.stream()
-                        .filter(commandHandler -> commandHandler.getCommand().getCommandText().equals(messageText))
-                        .collect(Collectors.toList());
+        Long chatId = message.chat().id();
+        CheckUserReportStates checkUserReportCurrentState = checkUserReportStateService.getCurrentStateByChatId(chatId);
+        UserReportStates reportCurrentState = userReportStateService.getCurrentStateByChatId(chatId);
+        BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
+        String messageText = message.text();
 
-                if (!matchedHandlers.isEmpty()) {
-                    matchedHandlers.get(0).handle(update);
-                    return;
-                }
+        if (messageText != null) {
+            List<CommandHandler> matchedHandlers = commandHandlers.stream()
+                    .filter(commandHandler -> commandHandler.getCommand().getCommandText().equals(messageText))
+                    .collect(Collectors.toList());
+
+            if (!matchedHandlers.isEmpty()) {
+                matchedHandlers.get(0).handle(update);
+                return;
             }
-            if (message.chat() != null) {
-                Long chatId = message.chat().id();
-                if (chatStateService.getCurrentStateByChatId(chatId) == CONTACT) {
-                    userService.updateContact(chatId, message.text());
-                    return;
+            if (currentState == CHECK_ADMIN_PASSWORD) {
+                if (validationUtils.isValidAdminPassword(messageText)) {
+                    telegramBot.execute(new SendMessage(chatId, ADMIN_COMMAND_TEXT));
+                    chatStateService.updateChatState(chatId, ADMIN);
+                } else {
+                    telegramBot.execute(new SendMessage(chatId, "Введён неправильный пароль"));
                 }
+                return;
             }
+            if (currentState == EXTENSION_PROBATION) {
+                volunteerService.increaseProbationPeriod(chatId, messageText);
+                return;
+            }
+            if (currentState == SUCCESSFUL_PROBATIONARY) {
+                volunteerService.giveAnimalAway(chatId, messageText);
+                return;
+            }
+            if (currentState == PROBATION_FAILED) {
+                volunteerService.takeBackAnimal(chatId, messageText);
+                return;
+            }
+            if (currentState == CONTACT) {
+                userService.updateContact(chatId, messageText);
+                return;
+            }
+            if (currentState == FIND_USER_BY_PHONE) {
+                volunteerService.findUsersByPhone(chatId, messageText);
+                return;
+            }
+            if (currentState == FIND_ANIMAL_BY_NAME) {
+                volunteerService.findAnimalByName(chatId, messageText);
+                return;
+            }
+            if (currentState == MAKE_ADOPTER) {
+                volunteerService.allowUserBecomeAdopter(chatId, messageText);
+                return;
+            }
+            if (currentState == SEND_REPORT && (reportCurrentState == RATION || reportCurrentState == WELL_BEING || reportCurrentState == BEHAVIOR)) {
+                userReportService.saveReportData(chatId, messageText, reportCurrentState);
+                return;
+            }
+
+            if (currentState == CHECK_REPORT) {
+                checkUserReportService.determinateAndSetCheckReportState(chatId, messageText, checkUserReportCurrentState);
+                return;
+            }
+
+        }
+        if (currentState == SEND_REPORT && reportCurrentState == PHOTO && message.photo() != null) {
+            userReportService.savePhotoForReport(chatId, message.photo());
+            return;
         }
         handleUnknownCommand(update);
     }
@@ -74,6 +165,6 @@ public class CommandHandlerService {
      */
     private void handleUnknownCommand(Update update) {
         Message message = update.message();
-//        telegramBot.execute(new SendMessage(message.chat().id(), "Неизвестная команда"));
+        telegramBot.execute(new SendMessage(message.chat().id(), "Неизвестная команда"));
     }
 }

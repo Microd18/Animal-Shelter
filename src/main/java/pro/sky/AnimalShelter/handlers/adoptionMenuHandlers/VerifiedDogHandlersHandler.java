@@ -11,6 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.VERIFIED_DOG_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,29 +41,10 @@ public class VerifiedDogHandlersHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADOPT) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
             if (previousState == DOG) {
-                String responseText = "Кинологи Алматы\n" +
-                        "1. Анастасия Евгеньевна Коровникова\n" +
-                        "Полная информация по ссылке на Профи:" +
-                        "https://alm.profi.kz/veterinar/kinologia/?seamless=1&tabName=PROFILES&profileTabName=reviews&profileId=AnastasiyaKY3" +
-                        "             \n" +
-                        "2. Коркин Андрей\n" +
-                        "Полная информация по ссылке на Профи:" +
-                        "https://alm.profi.kz/veterinar/kinologia/?seamless=1&tabName=PROFILES&profileTabName=reviews&profileId=KorkinAV5&fromSection=page_listing" +
-                        "             \n" +
-                        "3. Светлана Сергеевна Чернобаева\n" +
-                        "Полная информация по ссылке на Профи:" +
-                        "https://alm.profi.kz/veterinar/kinologia/?seamless=1&tabName=PROFILES&profileId=ChernobayevaSS&profileTabName=reviews&fromSection=page_listing" +
-                        "             \n" +
-                        "4. Эльвира Агзамовна Альмухамедова\n" +
-                        "Полная информация по ссылке на Профи:" +
-                        "https://alm.profi.kz/veterinar/kinologia/?seamless=1&tabName=PROFILES&profileId=AlmukhamedovaEA&profileTabName=reviews&fromSection=page_listing" +
-                        "             \n" +
-                        "Возврат в предыдущее меню (/back)\n" +
-                        "Выключить бота (/stop)";
-                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                SendMessage message = new SendMessage(chatId.toString(), VERIFIED_DOG_TEXT);
                 telegramBot.execute(message);
             }
         } else if (currentState == STOP) {

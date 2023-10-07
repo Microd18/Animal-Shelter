@@ -11,6 +11,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.REFUSAL_REASON_TEXT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +41,7 @@ public class RefusalReasonHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == ADOPT) {
-            String responseText = "    5 причин отказа забрать питомца из приюта:\n" +
-                    "1.Большое количество животных дома.\n" +
-                    "2.Нестабильные отношения в семье\n" +
-                    "3.Наличие маленьких детей\n" +
-                    "4.Съемное жилье\n" +
-                    "5.Животное в подарок или для работы\n" +
-                    "             \n" +
-                    "Возврат в предыдущее меню (/back)\n" +
-                    "Выключить бота (/stop)";
-            SendMessage message = new SendMessage(chatId.toString(), responseText);
+            SendMessage message = new SendMessage(chatId.toString(), REFUSAL_REASON_TEXT);
             telegramBot.execute(message);
 
         } else if (currentState == STOP) {

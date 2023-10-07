@@ -12,6 +12,8 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.PASS_COMMAND_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.PASS_COMMAND_DOG_TEXT;
 
 /**
  * Обработчик команды "/pass".
@@ -46,30 +48,14 @@ public class PassCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == SHELTER_INFO) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
 
             if (previousState == DOG) {
-                String responseText = "Пункт охраны приюта для собак находится по адресу:\n" +
-                        "ул. Аккорган, 5/1, микрорайон Коктал, Астана\n" +
-                        "телефон для связи: +7(999)4567890\n\n" +
-                        "Для получения пропуска при себе иметь: \n" +
-                        "-Удостоверение личности \n" +
-                        "-Документы на автомобиль \n\n" +
-                        "Возврат в предыдущее меню (/back)\n" +
-                        "Выключить бота (/stop)";
-                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                SendMessage message = new SendMessage(chatId.toString(), PASS_COMMAND_DOG_TEXT);
                 telegramBot.execute(message);
             }
             if (previousState == CAT) {
-                String responseText = "Пункт охраны приюта для кошек находится по адресу:\n" +
-                        "ул. Кенесары, 52, Астана\n" +
-                        "телефон для связи: +7(888)0987654\n\n" +
-                        "Для получения пропуска при себе иметь: \n" +
-                        "-Удостоверение личности \n" +
-                        "-Документы на автомобиль \n\n" +
-                        "Возврат в предыдущее меню (/back)\n" +
-                        "Выключить бота (/stop)";
-                SendMessage message = new SendMessage(chatId.toString(), responseText);
+                SendMessage message = new SendMessage(chatId.toString(), PASS_COMMAND_CAT_TEXT);
                 telegramBot.execute(message);
             }
 

@@ -12,6 +12,7 @@ import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.SHELTER_INFO_COMMAND_TEXT;
 
 /**
  * Обработчик команды "/shelter_info".
@@ -46,19 +47,12 @@ public class ShelterInfoCommandHandler implements CommandHandler {
         Long chatId = update.message().chat().id();
         BotCommand currentState = chatStateService.getCurrentStateByChatId(chatId);
         if (currentState == DOG || currentState == CAT || currentState == SHELTER_INFO) {
-            BotCommand previousState = chatStateService.getPreviousStateByChatId(chatId);
+            BotCommand previousState = chatStateService.getLastStateCatOrDogByChatId(chatId);
             String s = currentState == SHELTER_INFO ? "Вы уже в этом меню." : "";
             String shelterType = currentState == DOG ? "приюте для собак" : currentState == SHELTER_INFO
                     ? previousState == DOG ? "приюте для собак" : "приюте для кошек" : "приюте для кошек";
             String responseText = s + "Какую информацию вы бы хотели получить о " + shelterType + ":\n" +
-                    "1. Описание приюта (/description)\n" +
-                    "2. Расписание работы и контакты (/schedule)\n" +
-                    "3. Контактные данные охраны для пропуска (/pass)\n" +
-                    "4. Техника безопасности на территории приюта (/safety)\n" +
-                    "5. Оставить контактные данные (/contact)\n" +
-                    "6. Позвать волонтера (/help)\n" +
-                    "7. Назад (/back)\n" +
-                    "8. Выключить бота (/stop)";
+                    SHELTER_INFO_COMMAND_TEXT;
             SendMessage message = new SendMessage(chatId.toString(), responseText);
             telegramBot.execute(message);
 
