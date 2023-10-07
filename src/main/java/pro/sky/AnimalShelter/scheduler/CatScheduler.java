@@ -39,7 +39,7 @@ public class CatScheduler {
     /**
      * Метод для отправки уведомления пользователю если он не отправлял отчет более 1 дня
      */
-    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 2)
+    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedDelay = 1)
     @Transactional
     public void oneDayCounter() {
         log.info("oneDayCounter started");
@@ -56,7 +56,7 @@ public class CatScheduler {
     /**
      * Метод для отправки уведомления волонтеру если пользователь не отправлял отчет более 1 дня
      */
-    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 12)
+    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedDelay = 1)
     @Transactional
     public void twoDayCounter() {
         log.info("twoDayCounter started");
@@ -69,7 +69,7 @@ public class CatScheduler {
                 .filter(dogReport -> elapsedTime.isAfter(dogReport.getUpdated()))
                 //.filter(dogReport -> dogReport.getUpdated().isAfter(elapsedTime)) // для теста
                 .map(CatReport::getUser)
-                .forEach(u -> telegramBot.execute(new SendMessage(441625131,
+                .forEach(u -> telegramBot.execute(new SendMessage(315863400,
                         "Усыновитель:\n"
                                 + u.getUsername()
                                 + " "
@@ -81,7 +81,7 @@ public class CatScheduler {
     /**
      * Метод для отправки уведомления волонтеру которое сообщает что прошло 30 дней со дня усыновления
      */
-    @Scheduled(timeUnit = TimeUnit.DAYS, fixedDelay = 1)
+    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedDelay = 1)
     @Transactional
     public void thirtyDaysCounter() {
 
@@ -94,7 +94,7 @@ public class CatScheduler {
                 .stream()
                 .filter(dogReport -> elapsedTime1.isAfter(dogReport.getCreated()))
                 .map(CatReport::getUser)
-                .forEach(u -> telegramBot.execute(new SendMessage(441625131,
+                .forEach(u -> telegramBot.execute(new SendMessage(315863400,
                         "Усыновитель:\n"
                                 + u.getUsername()
                                 + " "
@@ -107,7 +107,7 @@ public class CatScheduler {
                 .stream()
                 .filter(dogReport -> elapsedTime2.isAfter(dogReport.getCreated()))
                 .map(CatReport::getUser)
-                .forEach(u -> telegramBot.execute(new SendMessage(441625131,
+                .forEach(u -> telegramBot.execute(new SendMessage(315863400,
                         "Усыновитель:\n"
                                 + u.getUsername()
                                 + " "
@@ -120,7 +120,7 @@ public class CatScheduler {
                 .stream()
                 .filter(dogReport -> elapsedTime3.isAfter(dogReport.getCreated()))
                 .map(CatReport::getUser)
-                .forEach(u -> telegramBot.execute(new SendMessage(441625131,
+                .forEach(u -> telegramBot.execute(new SendMessage(315863400,
                         "Усыновитель:\n"
                                 + u.getUsername()
                                 + " "
@@ -131,7 +131,7 @@ public class CatScheduler {
     /**
      * Метод, который проставляет количество дней в таблицу с дополнительной информацией для волонтера
      */
-    @Scheduled(timeUnit = TimeUnit.HOURS, fixedDelay = 2)
+    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedDelay = 1)
     @Transactional
     public void setDayInTable() {
         log.info("task X started");

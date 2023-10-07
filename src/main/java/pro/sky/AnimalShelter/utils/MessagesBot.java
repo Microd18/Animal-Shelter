@@ -256,7 +256,7 @@ public class MessagesBot {
             "4. Получить список усыновителей \n(/all_adopters)\n" +
             "5. Проверить отчеты от усыновителей \n(/check_report)\n" +
             "6. Получить список усыновителей, у которых испытательный срок подошел к концу\n(/completed_probation_adopters)\n" +
-            "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/completed_probation_adopters)\n" +
+            "7. Получить список усыновителей, которые не высылали отчет более 2 дней\n(/without_report_adopters)\n" +
             "8. Продлить испытательный срок для юзера\n(/extension_probation)\n" +
             "9. Отдать животное пользователю\n(/successful_probationary)\n" +
             "10. Забрать животное у пользователя\n(/probation_failed)\n" +
