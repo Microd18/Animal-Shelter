@@ -142,7 +142,7 @@ public class CheckUserReportService {
      * @param catReportId     Идентификатор отчета по кошке.
      */
     protected void viewCatReport(Long volunteerChatId, Long catReportId) {
-        if(catReportRepository.findById(catReportId).isPresent()) {
+        if (catReportRepository.findById(catReportId).isPresent()) {
             CatReport catReport = catReportRepository.findById(catReportId).get();
             telegramBot.execute(new SendMessage(volunteerChatId,
                     "Отчет с идентификатором " + catReportId + " обновлен " + catReport.getUpdated()));
@@ -177,7 +177,7 @@ public class CheckUserReportService {
      * @param dogReportId     Идентификатор отчета по собаке.
      */
     protected void viewDogReport(Long volunteerChatId, Long dogReportId) {
-        if(dogReportRepository.findById(dogReportId).isPresent()) {
+        if (dogReportRepository.findById(dogReportId).isPresent()) {
             DogReport dogReport = dogReportRepository.findById(dogReportId).get();
             telegramBot.execute(new SendMessage(volunteerChatId,
                     "Отчет с идентификатором " + dogReportId + " обновлен " + dogReport.getUpdated()));
@@ -359,7 +359,7 @@ public class CheckUserReportService {
                     + newAverageRating + "\n" +
                     WAY_BACK_TEXT));
         } else telegramBot.execute(new SendMessage(volunteerChatId, "Собачий отчет с идентификатором "
-                + dogReportId + " отстутствует." + WAY_BACK_TEXT));
+                + dogReportId + " отсутствует." + WAY_BACK_TEXT));
 
     }
 

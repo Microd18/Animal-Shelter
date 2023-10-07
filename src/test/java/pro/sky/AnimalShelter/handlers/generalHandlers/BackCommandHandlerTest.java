@@ -9,10 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.AnimalShelter.enums.BotCommand;
+import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.service.ChatService;
 import pro.sky.AnimalShelter.service.ChatStateService;
 import pro.sky.AnimalShelter.service.UserReportStateService;
@@ -59,21 +62,20 @@ class BackCommandHandlerTest {
         lenient().when(chat.id()).thenReturn(123L);
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(value = UserReportStates.class)
     @DisplayName("Тестирование обработки команды /back в состоянии SEND_REPORT:")
-    public void testHandleBackCommandSendReportStateReturnToPreviousMenu() {
+    public void testHandleBackCommandSendReportStateReturnToPreviousMenu(UserReportStates currentReportState) {
         Long chatId = 123L;
         when(chatStateService.getCurrentStateByChatId(chatId)).thenReturn(SEND_REPORT);
         when(chatStateService.getLastStateCatOrDogByChatId(chatId)).thenReturn(DOG);
+        when(userReportStateService.getCurrentStateByChatId(chatId)).thenReturn(currentReportState);
+
         backCommandHandler.handle(update);
-        String responseText = "Вы вернулись назад. Это меню для отправки отчёта, выберите действие:\n" +
-                "1. Отправить отчёт: выберите этот пункт меню, чтобы отправить ежедневный отчёт о вашем питомце (/send_report)\n" +
-                "2. Посмотреть шаблон для отчёта: если вам нужно ознакомиться с шаблоном для ежедневного отчёта перед его отправкой, выберите этот пункт меню (/report_template)\n" +
-                "3. Назад* (/back)\n" +
-                "4. Выключить бота (/stop)";
-        telegramBot.execute(new SendMessage(chatId, responseText));
-        verify(userReportStateService).clearUserReportStates(chatId);
-        verify(chatStateService).goToPreviousState(chatId);
+
+        verify(telegramBot, times(1)).execute(any(SendMessage.class));
+        verify(userReportStateService, times(1)).clearUserReportStates(chatId);
+        verify(chatStateService, times(1)).goToPreviousState(chatId);
     }
 
     @Test
