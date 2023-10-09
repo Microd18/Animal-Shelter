@@ -1,6 +1,5 @@
 package pro.sky.AnimalShelter.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import pro.sky.AnimalShelter.enums.CheckUserReportStates;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.repository.CheckUserReportStateRepository;
 import pro.sky.AnimalShelter.utils.CommonUtils;
-import pro.sky.AnimalShelter.utils.ConsoleOutputCapture;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -42,8 +40,6 @@ class CheckUserReportStateServiceTest {
     @InjectMocks
     private CheckUserReportStateService checkUserReportStateService;
 
-    private ConsoleOutputCapture outputCapture;
-
     private CheckUserReportState checkUserReportState;
 
     private Deque<CheckUserReportStates> stateQueue;
@@ -54,15 +50,9 @@ class CheckUserReportStateServiceTest {
     public void setUp() {
         stateQueue = new LinkedList<>();
         checkUserReportState = new CheckUserReportState();
-        outputCapture = new ConsoleOutputCapture();
         chat = new Chat();
         chat.setId(123L);
         lenient().when(chatRepository.findByChatId(123L)).thenReturn(Optional.of(chat));
-    }
-
-    @AfterEach
-    public void cleanup() {
-        outputCapture.stopCapture();
     }
 
     @Test

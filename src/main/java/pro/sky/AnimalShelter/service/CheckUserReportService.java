@@ -236,17 +236,17 @@ public class CheckUserReportService {
     }
 
     /**
-     * Метод для проверки, что оценка волонтера не выходит за рамки пятибальной шкалы
+     * Метод для проверки, что оценка волонтера не выходит за рамки пятибалльной шкалы
      *
      * @param volunteerChatId Идентификатор чата волонтера.
      * @param petReportRating оценка волонтера.
      */
-    private Boolean checkValidRangeOfRating(Long volunteerChatId, Integer petReportRating) {
+    protected Boolean checkValidRangeOfRating(Long volunteerChatId, Integer petReportRating) {
         if (petReportRating > 0 && petReportRating < 6) {
             return true;
         } else {
             telegramBot.execute(new SendMessage(volunteerChatId,
-                    "Ваша оценка выходит за рамки пятибальной шкалы" + WAY_BACK_TEXT));
+                    "Ваша оценка выходит за рамки пятибалльной шкалы" + WAY_BACK_TEXT));
             return false;
         }
     }
@@ -257,7 +257,7 @@ public class CheckUserReportService {
      * @param petReportId     Идентификатор чата отчетов о питомцах.
      * @param petReportRating Оценка волонтера.
      */
-    private void sendCatReportWarningMessage(Long petReportId, Integer petReportRating) {
+    protected void sendCatReportWarningMessage(Long petReportId, Integer petReportRating) {
         if (petReportRating == 1 || petReportRating == 2) {
             Long chatId = catReportRepository.findById(petReportId).orElseThrow().getUser().getChat().getChatId();
             telegramBot.execute(new SendMessage(chatId, BAD_COMPLETION_CAT_REPORT_TEXT));
@@ -271,7 +271,7 @@ public class CheckUserReportService {
      * @param petReportId     Идентификатор чата отчетов о питомцах.
      * @param petReportRating Оценка волонтера.
      */
-    private void sendDogReportWarningMessage(Long petReportId, Integer petReportRating) {
+    protected void sendDogReportWarningMessage(Long petReportId, Integer petReportRating) {
         if (petReportRating == 1 || petReportRating == 2) {
             Long chatId = dogReportRepository.findById(petReportId).orElseThrow().getUser().getChat().getChatId();
             telegramBot.execute(new SendMessage(chatId, BAD_COMPLETION_DOG_REPORT_TEXT));

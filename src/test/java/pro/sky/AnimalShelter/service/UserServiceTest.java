@@ -68,7 +68,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на валидные данные контакта")
     public void testUpdateContactValidInput() {
-
         when(userRepository.findByChatId(any())).thenReturn(Optional.empty());
         when(validationUtils.isValidName(validName)).thenReturn(true);
 
@@ -81,7 +80,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на невалидные данные контакта")
     public void testUpdateContactInvalidInput() {
-
         userService.updateContact(chatId, invalidMessageText);
 
         verify(telegramBot).execute(any(SendMessage.class));
@@ -90,7 +88,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на невалидное имя контакта")
     public void testUpdateContactInvalidName() {
-
         String messageText = "12345,89997776655,name@example.com";
 
         lenient().when(userRepository.findByChatId(any())).thenReturn(Optional.empty());
@@ -104,7 +101,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на ошибку в базе данных при обновлении контакта")
     public void testUpdateContactDatabaseError() {
-
         when(chatRepository.findByChatId(chatId)).thenReturn(Optional.of(new Chat()));
         when(userRepository.findByChatId(any())).thenReturn(Optional.empty());
         when(validationUtils.isValidName(validName)).thenReturn(true);
@@ -118,7 +114,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на существующего пользователя")
     public void testUpdateContactUserExists() {
-
         when(userRepository.findByChatId(any())).thenReturn(Optional.of(new User()));
         when(validationUtils.isValidName(validName)).thenReturn(true);
 
@@ -131,7 +126,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка отправки сообщения с ошибками валидации")
     public void testSendValidationErrors() {
-
         userService.sendValidationErrors(chatId, invalidFields);
 
         verify(telegramBot, times(1)).execute(any(SendMessage.class));
@@ -140,7 +134,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка обновления данных пользователя (пользователь существует)")
     public void testUpdateUserDataUserExists() {
-
         when(userRepository.findByChatId(any())).thenReturn(Optional.of(new User()));
 
         userService.updateUserData(chatId, validName, validPhoneNumber, validEmail);
@@ -152,7 +145,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка обновления данных пользователя (пользователь не существует)")
     public void testUpdateUserDataUserDoesNotExist() {
-
         when(userRepository.findByChatId(any())).thenReturn(Optional.empty());
 
         userService.updateUserData(chatId, validName, validPhoneNumber, validEmail);
@@ -164,7 +156,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка отправки сообщения об ошибке ввода")
     public void testSendInvalidInputMessage() {
-
         userService.sendInvalidInputMessage(chatId);
 
         verify(telegramBot).execute(any(SendMessage.class));
@@ -195,9 +186,19 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Проверка валидности данных, при неправильных данных и индексе")
+    public void testIsValidContactDataInvalidData() {
+        int invalidIndex = 3;
+
+        boolean result = userService.isValidContactData("someData", invalidIndex);
+
+        verifyNoInteractions(validationUtils);
+        assertFalse(result);
+    }
+
+    @Test
     @DisplayName("Проверка на невалидный номер телефона в данных контакта")
     public void testUpdateContactInvalidPhoneNumber() {
-
         String messageText = "name,invalidPhone,name@example.com";
 
         when(validationUtils.isValidName(validName)).thenReturn(true);
@@ -212,7 +213,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на невалидный email в данных контакта")
     public void testUpdateContactInvalidEmail() {
-
         String messageText = "name,89997776655,invalidEmail";
 
         when(validationUtils.isValidName(validName)).thenReturn(true);
@@ -227,7 +227,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на существующего пользователя с невалидным вводом")
     public void testUpdateContactUserExistsInvalidInput() {
-
         userService.updateContact(chatId, invalidMessageText);
 
         verify(telegramBot).execute(any(SendMessage.class));
@@ -236,7 +235,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Проверка на существующего пользователя с валидным вводом")
     public void testUpdateContactUserExistsValidInput() {
-
         when(userRepository.findByChatId(any())).thenReturn(Optional.of(new User()));
         when(validationUtils.isValidName(validName)).thenReturn(true);
 
