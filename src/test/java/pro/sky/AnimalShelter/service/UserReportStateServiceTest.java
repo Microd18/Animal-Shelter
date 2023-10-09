@@ -15,13 +15,15 @@ import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.repository.UserReportStateRepository;
 import pro.sky.AnimalShelter.utils.CommonUtils;
 import pro.sky.AnimalShelter.utils.ConsoleOutputCapture;
-import pro.sky.AnimalShelter.utils.JsonMapConverter;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.UserReportStates.*;
 
@@ -35,13 +37,14 @@ public class UserReportStateServiceTest {
     private UserReportStateRepository userReportStateRepository;
 
     @Mock
-    private JsonMapConverter jsonMapConverter;
-
-    @Mock
     private CommonUtils commonUtils;
 
     @InjectMocks
     private UserReportStateService userReportStateService;
+
+    private Deque<UserReportStates> stateQueue;
+
+    private UserReportState userReportState;
 
     private ConsoleOutputCapture outputCapture;
 
@@ -49,6 +52,8 @@ public class UserReportStateServiceTest {
 
     @BeforeEach
     public void setUp() {
+        stateQueue = new LinkedList<>();
+        userReportState = new UserReportState();
         outputCapture = new ConsoleOutputCapture();
         chat = new Chat();
         chat.setId(123L);
@@ -69,7 +74,6 @@ public class UserReportStateServiceTest {
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(0)).findByChatId(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesMap(any());
     }
 
     @Test
@@ -81,7 +85,6 @@ public class UserReportStateServiceTest {
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(0)).findByChatId(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesMap(any());
     }
 
     @Test
@@ -95,14 +98,12 @@ public class UserReportStateServiceTest {
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesMap(any());
     }
 
     @Test
     @DisplayName("Проверка на получение текущего состояния отчёта когда у объекта UserReportState данные состояний равны null")
     public void testGetCurrentStateByChatIdWhenStateDataIsNull() {
         chat.setBotStarted(true);
-        UserReportState userReportState = new UserReportState();
         userReportState.setStateData(null);
 
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
@@ -111,67 +112,37 @@ public class UserReportStateServiceTest {
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesMap(any());
-    }
-
-    @Test
-    @DisplayName("Проверка на получение текущего состояния отчёта с невалидными данными состояний")
-    public void testGetCurrentStateByChatIdWhenInvalidStateData() {
-        chat.setBotStarted(true);
-        UserReportState userReportState = new UserReportState();
-        userReportState.setStateData("invalid_json_data");
-
-        when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
-
-        assertNull(userReportStateService.getCurrentStateByChatId(123L));
-
-        verify(chatRepository, times(1)).findByChatId(any());
-        verify(userReportStateRepository, times(1)).findByChatId(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesMap("invalid_json_data");
     }
 
     @Test
     @DisplayName("Проверка на получение текущего состояния отчёта с валидной очередью состояний")
     public void testGetCurrentStateByChatIdWithValidStateQueue() {
         chat.setBotStarted(true);
-        UserReportState userReportState = new UserReportState();
-        userReportState.setStateData("{\"123\": [\"PHOTO\", \"RATION\"]}");
-
-        Map<Long, Deque<UserReportStates>> stateMap = new HashMap<>();
-        Deque<UserReportStates> stateQueue = new LinkedList<>();
         stateQueue.add(UserReportStates.PHOTO);
         stateQueue.add(UserReportStates.RATION);
-        stateMap.put(123L, stateQueue);
+        userReportState.setStateData(stateQueue);
+
 
         when(userReportStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(userReportState));
-        when(jsonMapConverter.toUserReportStatesMap(anyString())).thenReturn(stateMap);
 
         assertEquals(UserReportStates.PHOTO, userReportStateService.getCurrentStateByChatId(123L));
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesMap(any());
     }
 
     @Test
     @DisplayName("Проверка на получение текущего состояния отчёта с пустой очередью состояний")
     public void testGetCurrentStateByChatIdWithEmptyStateQueue() {
         chat.setBotStarted(true);
-        UserReportState userReportState = new UserReportState();
-        userReportState.setStateData("{\"123\": []}");
-
-        Map<Long, Deque<UserReportStates>> stateMap = new HashMap<>();
-        Deque<UserReportStates> stateQueue = new LinkedList<>();
-        stateMap.put(123L, stateQueue);
+        userReportState.setStateData(stateQueue);
 
         when(userReportStateRepository.findByChatId(anyLong())).thenReturn(Optional.of(userReportState));
-        when(jsonMapConverter.toUserReportStatesMap(anyString())).thenReturn(stateMap);
 
         assertNull(userReportStateService.getCurrentStateByChatId(123L));
 
         verify(chatRepository, times(1)).findByChatId(any());
         verify(userReportStateRepository, times(1)).findByChatId(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesMap(any());
     }
 
     //###############################################################################################################
@@ -186,7 +157,6 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(0)).findByChatId(any());
         verify(userReportStateRepository, times(0)).save(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesJson(any());
     }
 
     @Test
@@ -199,14 +169,14 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(0)).save(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesJson(any());
     }
 
     @Test
     @DisplayName("Проверка на успешную очистку состояний отчёта")
     public void testClearUserReportStatesSuccess() {
-        UserReportState userReportState = new UserReportState();
-        userReportState.setStateData("{\"123\": [\"PHOTO\", \"RATION\"]}");
+        stateQueue.add(UserReportStates.PHOTO);
+        stateQueue.add(UserReportStates.RATION);
+        userReportState.setStateData(stateQueue);
 
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
 
@@ -215,7 +185,6 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).save(userReportState);
-        verify(jsonMapConverter, times(1)).toUserReportStatesJson(any());
     }
 
     //###############################################################################################################
@@ -231,7 +200,6 @@ public class UserReportStateServiceTest {
         verify(commonUtils, times(1)).offerToStart(123L);
         verify(userReportStateRepository, times(0)).findByChatId(any());
         verify(userReportStateRepository, times(0)).save(any());
-        verify(jsonMapConverter, times(0)).toUserReportStatesJson(any());
     }
 
     @Test
@@ -245,22 +213,17 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).save(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesJson(any());
     }
 
     @Test
     @DisplayName("Проверка добавления нового состояния в историю отчёта с историей")
     public void testUpdateUserReportStateWithHistory() {
-        UserReportState userReportState = new UserReportState();
-        userReportState.setStateData("{\"123\": [\"PHOTO\", \"RATION\"]}");
-        Map<Long, Deque<UserReportStates>> stateMap = new HashMap<>();
-        Deque<UserReportStates> stateQueue = new LinkedList<>();
         stateQueue.add(RATION);
         stateQueue.add(PHOTO);
-        stateMap.put(123L, stateQueue);
+        userReportState.setStateData(stateQueue);
+
 
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
-        when(jsonMapConverter.toUserReportStatesMap("{\"123\": [\"PHOTO\", \"RATION\"]}")).thenReturn(stateMap);
 
         userReportStateService.updateUserReportState(123L, BEHAVIOR);
 
@@ -270,14 +233,11 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).save(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesJson(stateMap);
-        verify(jsonMapConverter, times(1)).toUserReportStatesMap("{\"123\": [\"PHOTO\", \"RATION\"]}");
     }
 
     @Test
     @DisplayName("Проверка добавления нового состояния в историю отчёта с историей, когда data равна null")
     public void testUpdateUserReportStateWithHistoryDataIsNull() {
-        UserReportState userReportState = new UserReportState();
         userReportState.setStateData(null);
         userReportState.setChat(chat);
 
@@ -288,25 +248,19 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).save(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesJson(anyMap());
-        verify(jsonMapConverter, times(1)).toUserReportStatesMap(null);
     }
 
     @Test
     @DisplayName("Проверка добавления нового состояния в историю отчёта с максимальным размером")
     public void testUpdateUserReportStateWithMaxHistorySize() {
-        UserReportState userReportState = new UserReportState();
-        userReportState.setStateData("{\"123\": [\"WELL_BEING\", \"BEHAVIOR\", \"PHOTO\", \"RATION\"]}");
-        Map<Long, Deque<UserReportStates>> stateMap = new HashMap<>();
-        Deque<UserReportStates> stateQueue = new LinkedList<>();
         stateQueue.add(RATION);
         stateQueue.add(PHOTO);
         stateQueue.add(BEHAVIOR);
         stateQueue.add(WELL_BEING);
-        stateMap.put(123L, stateQueue);
+        userReportState.setStateData(stateQueue);
+
 
         when(userReportStateRepository.findByChatId(123L)).thenReturn(Optional.of(userReportState));
-        when(jsonMapConverter.toUserReportStatesMap("{\"123\": [\"WELL_BEING\", \"BEHAVIOR\", \"PHOTO\", \"RATION\"]}")).thenReturn(stateMap);
 
         userReportStateService.updateUserReportState(123L, WELL_BEING);
 
@@ -317,7 +271,5 @@ public class UserReportStateServiceTest {
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).findByChatId(123L);
         verify(userReportStateRepository, times(1)).save(any());
-        verify(jsonMapConverter, times(1)).toUserReportStatesJson(stateMap);
-        verify(jsonMapConverter, times(1)).toUserReportStatesMap("{\"123\": [\"WELL_BEING\", \"BEHAVIOR\", \"PHOTO\", \"RATION\"]}");
     }
 }
