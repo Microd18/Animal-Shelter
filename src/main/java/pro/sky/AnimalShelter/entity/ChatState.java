@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import pro.sky.AnimalShelter.enums.BotCommand;
 
 import javax.persistence.*;
+import java.util.Deque;
 
 /**
  * Сущность, представляющая состояние чата.
@@ -27,7 +29,7 @@ public class ChatState extends BaseEntity {
      */
     @Type(type = "json")
     @Column(name = "state_data", columnDefinition = "jsonb")
-    private String stateData;
+    private Deque<BotCommand> stateData;
 
     /**
      * Чат, связанный с этим состоянием.

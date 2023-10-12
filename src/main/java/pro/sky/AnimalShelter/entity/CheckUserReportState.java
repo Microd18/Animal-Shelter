@@ -4,8 +4,10 @@ import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import pro.sky.AnimalShelter.enums.CheckUserReportStates;
 
 import javax.persistence.*;
+import java.util.Deque;
 
 /**
  * Сущность, представляющая состояние проверки и оценки отчета усыновителя.
@@ -25,7 +27,7 @@ public class CheckUserReportState extends BaseEntity {
      */
     @Type(type = "json")
     @Column(name = "state_data", columnDefinition = "jsonb")
-    private String stateData;
+    private Deque<CheckUserReportStates> stateData;
 
     /**
      * Чат, связанный с этим состоянием.

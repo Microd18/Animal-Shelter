@@ -64,6 +64,7 @@ public class UserService {
             sendInvalidInputMessage(chatId);
             return;
         }
+        String[] fieldDescriptions = {"Имя", "Телефон", "Email"};
 
         var invalidFields = IntStream.range(0, contactData.length)
                 .mapToObj(index -> {
@@ -73,18 +74,7 @@ public class UserService {
                             .join();
                 })
                 .filter(Objects::nonNull)
-                .map(fieldIndex -> {
-                    switch (fieldIndex) {
-                        case 0:
-                            return "Имя";
-                        case 1:
-                            return "Телефон";
-                        case 2:
-                            return "Email";
-                        default:
-                            return "Поле " + fieldIndex;
-                    }
-                })
+                .map(fieldIndex -> fieldDescriptions[fieldIndex])
                 .collect(Collectors.toList());
 
         if (invalidFields.isEmpty()) {

@@ -9,9 +9,10 @@ import pro.sky.AnimalShelter.entity.ChatState;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.repository.ChatStateRepository;
-import pro.sky.AnimalShelter.utils.JsonMapConverter;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Optional;
 
 import static pro.sky.AnimalShelter.enums.BotCommand.*;
 
@@ -23,11 +24,6 @@ import static pro.sky.AnimalShelter.enums.BotCommand.*;
 @Transactional
 @RequiredArgsConstructor
 public class ChatStateService {
-
-    /**
-     * Класс-конвертер для преобразования между JSON и объектами типа Map<Long, Deque<BotCommand>>.
-     */
-    private final JsonMapConverter jsonMapConverter;
 
     /**
      * Репозиторий для доступа к данным о состояниях чатов.
@@ -61,8 +57,6 @@ public class ChatStateService {
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
                 .map(ChatState::getStateData)
-                .map(jsonMapConverter::toCommandStatesMap)
-                .map(map -> map.get(chatId))
                 .flatMap(stateQueue -> stateQueue.isEmpty() ? Optional.of(STOP) : Optional.of(stateQueue.peek()))
                 .orElse(STOP);
     }
@@ -84,8 +78,8 @@ public class ChatStateService {
                 });
         chatStateRepository.findByChatId(chat.getId()).ifPresentOrElse(
                 chatStateEntity -> {
-                    Map<Long, Deque<BotCommand>> chatStateHistory = jsonMapConverter.toCommandStatesMap(chatStateEntity.getStateData());
-                    Deque<BotCommand> stateStack = chatStateHistory.computeIfAbsent(chatId, k -> new LinkedList<>());
+                    var stateStack = Optional.ofNullable(chatStateEntity.getStateData())
+                            .orElseGet(LinkedList::new);
                     if (stateStack.size() >= MAX_HISTORY_CHAT_STATE_SIZE) {
                         stateStack.pollLast();
                     }
@@ -94,18 +88,14 @@ public class ChatStateService {
                         chatRepository.save(chat);
                     }
                     stateStack.push(state);
-                    String stateDataJson = jsonMapConverter.toCommandStatesJson(chatStateHistory);
-                    chatStateEntity.setStateData(stateDataJson);
+                    chatStateEntity.setStateData(stateStack);
                     chatStateRepository.save(chatStateEntity);
                 }, () -> {
-                    Map<Long, Deque<BotCommand>> chatStateHistory = new HashMap<>();
                     Deque<BotCommand> stateStack = new LinkedList<>();
                     stateStack.push(state);
-                    chatStateHistory.put(chatId, stateStack);
 
-                    String stateDataJson = jsonMapConverter.toCommandStatesJson(chatStateHistory);
                     ChatState newChatState = new ChatState();
-                    newChatState.setStateData(stateDataJson);
+                    newChatState.setStateData(stateStack);
                     newChatState.setChat(chat);
                     chatStateRepository.save(newChatState);
                 }
@@ -122,9 +112,7 @@ public class ChatStateService {
         chatRepository.findByChatId(chatId).ifPresent(foundChat ->
                 chatStateRepository.findByChatId(foundChat.getId()).ifPresentOrElse(foundChatState -> {
                     foundChat.setBotStarted(false);
-                    Map<Long, Deque<BotCommand>> chatStateHistory = new HashMap<>();
-                    chatStateHistory.put(chatId, new LinkedList<>());
-                    foundChatState.setStateData(jsonMapConverter.toCommandStatesJson(chatStateHistory));
+                    foundChatState.setStateData(new LinkedList<>());
                     chatRepository.save(foundChat);
                     chatStateRepository.save(foundChatState);
                     userReportStateService.clearUserReportStates(chatId);
@@ -143,8 +131,6 @@ public class ChatStateService {
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
                 .map(ChatState::getStateData)
-                .map(jsonMapConverter::toCommandStatesMap)
-                .map(map -> map.get(chatId))
                 .map(stateQueue -> {
                     for (BotCommand command : stateQueue) {
                         if (CAT.equals(command) || DOG.equals(command)) {
@@ -168,15 +154,11 @@ public class ChatStateService {
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> chatStateRepository.findByChatId(chat.getId()))
                 .ifPresent(chatStateEntity -> {
-                    String stateData = chatStateEntity.getStateData();
+                    var stateData = chatStateEntity.getStateData();
                     if (stateData != null) {
-                        Map<Long, Deque<BotCommand>> stateMap = new HashMap<>(jsonMapConverter.toCommandStatesMap(stateData));
-                        Deque<BotCommand> stateQueue = stateMap.get(chatId);
-                        if (!stateQueue.isEmpty()) {
-                            stateQueue.pollFirst();
-                            stateMap.put(chatId, stateQueue);
-                            String updatedStateData = jsonMapConverter.toCommandStatesJson(stateMap);
-                            chatStateEntity.setStateData(updatedStateData);
+                        if (!stateData.isEmpty()) {
+                            stateData.pollFirst();
+                            chatStateEntity.setStateData(stateData);
                             chatStateRepository.save(chatStateEntity);
                         } else {
                             log.error("State queue is empty");

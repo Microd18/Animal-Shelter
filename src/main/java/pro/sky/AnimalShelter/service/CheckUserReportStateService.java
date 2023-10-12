@@ -10,9 +10,10 @@ import pro.sky.AnimalShelter.enums.CheckUserReportStates;
 import pro.sky.AnimalShelter.repository.ChatRepository;
 import pro.sky.AnimalShelter.repository.CheckUserReportStateRepository;
 import pro.sky.AnimalShelter.utils.CommonUtils;
-import pro.sky.AnimalShelter.utils.JsonMapConverter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Optional;
 
 /**
  * Сервис для управления очередью состояний проверки отчетов от усыновителей.
@@ -22,11 +23,6 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class CheckUserReportStateService {
-
-    /**
-     * Класс-конвертер для преобразования между JSON и объектами типа Map<Long, Deque<>>.
-     */
-    private final JsonMapConverter jsonMapConverter;
 
     /**
      * Репозиторий для доступа к данным о состоянии в меню проверки отчетов.
@@ -60,8 +56,6 @@ public class CheckUserReportStateService {
                 .filter(Chat::isBotStarted)
                 .flatMap(chat -> checkUserReportStateRepository.findByChatId(chat.getId()))
                 .map(CheckUserReportState::getStateData)
-                .map(jsonMapConverter::toCheckUserReportStatesMap)
-                .map(map -> map.get(chatId))
                 .flatMap(stateQueue -> stateQueue.isEmpty() ? Optional.empty() : Optional.of(stateQueue.peek()))
                 .orElse(null);
     }
@@ -86,24 +80,19 @@ public class CheckUserReportStateService {
 
         checkUserReportStateRepository.findByChatId(chat.getId()).ifPresentOrElse(
                 checkUserReportState -> {
-                    Map<Long, Deque<CheckUserReportStates>> checkUserReportStateHistory =
-                            jsonMapConverter.toCheckUserReportStatesMap(checkUserReportState.getStateData());
-                    Deque<CheckUserReportStates> stateStack =
-                            checkUserReportStateHistory.computeIfAbsent(chatId, k -> new LinkedList<>());
+                    var stateStack = Optional.ofNullable(checkUserReportState.getStateData())
+                            .orElseGet(LinkedList::new);
 
                     if (stateStack.size() >= MAX_HISTORY_CHECK_USER_REPORT_STATE_SIZE) {
                         stateStack.pollLast();
                     }
 
                     stateStack.push(state);
-                    String stateDataJson = jsonMapConverter.toCheckUserReportStatesJson(checkUserReportStateHistory);
-                    checkUserReportState.setStateData(stateDataJson);
+                    checkUserReportState.setStateData(stateStack);
                     checkUserReportStateRepository.save(checkUserReportState);
                 },
                 () -> checkUserReportStateRepository.save(CheckUserReportState.builder()
-                        .stateData(jsonMapConverter.toCheckUserReportStatesJson(
-                                Collections.singletonMap(chatId, new LinkedList<>(Collections.singleton(state))))
-                        )
+                        .stateData(new LinkedList<>(Collections.singleton(state)))
                         .chat(chat)
                         .build()
                 )

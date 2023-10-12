@@ -1,22 +1,35 @@
 package pro.sky.AnimalShelter.utils;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+
+@SpringBootTest
+@TestPropertySource(locations = "classpath:application.yml")
 @ExtendWith(MockitoExtension.class)
 public class ValidationUtilsTest {
 
-    private final ValidationUtils validationUtils = new ValidationUtils();
+    @Autowired
+    private ValidationUtils validationUtils;
 
     @Test
     @DisplayName("Проверка на валидное имя")
     void shouldReturnTrueForValidName() {
         String validName = "Dima Volkov";
         boolean result = validationUtils.isValidName(validName);
-        Assertions.assertTrue(result);
+        assertTrue(result);
     }
 
     @Test
@@ -40,7 +53,17 @@ public class ValidationUtilsTest {
     void shouldReturnTrueForValidPhoneNumber() {
         String validPhoneNumber = "+79000000000";
         boolean result = validationUtils.isValidPhoneNumber(validPhoneNumber);
-        Assertions.assertTrue(result);
+        assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("Проверка на выброс исключения NumberParseException при проверке номера")
+    void shouldReturnFalseWhenCheckPhoneNumber() throws NumberParseException {
+        PhoneNumberUtil phoneNumberUtil = mock(PhoneNumberUtil.class);
+        lenient().when(phoneNumberUtil.parse("invalidPhoneNumber", "")).thenThrow(new NumberParseException(NumberParseException.ErrorType.INVALID_COUNTRY_CODE, "Invalid country code"));
+        boolean result = validationUtils.isValidPhoneNumber("invalidPhoneNumber");
+
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -56,7 +79,7 @@ public class ValidationUtilsTest {
     void shouldReturnTrueForValidEmail() {
         String validEmail = "test@example.com";
         boolean result = validationUtils.isValidEmail(validEmail);
-        Assertions.assertTrue(result);
+        assertTrue(result);
 
     }
 
@@ -84,10 +107,32 @@ public class ValidationUtilsTest {
     }
 
     @Test
+    @DisplayName("Проверка на выброс исключения NumberParseException при форматировании номера")
+    void shouldReturnNotFormatPhoneNumberWhenFormatPhoneNumber() throws NumberParseException {
+        PhoneNumberUtil phoneNumberUtil = mock(PhoneNumberUtil.class);
+        lenient().when(phoneNumberUtil.parse("invalidPhoneNumber", "")).thenThrow(new NumberParseException(NumberParseException.ErrorType.INVALID_COUNTRY_CODE, "Invalid country code"));
+        var result = validationUtils.phoneNumberFormat("invalidPhoneNumber");
+
+        Assertions.assertEquals(result, "invalidPhoneNumber");
+    }
+
+    @Test
     @DisplayName("Проверка на правильное имя")
     void shouldReturnValidNameForNameWithHyphen() {
         String nameWithHyphen = "Dima Volkov";
         boolean result = validationUtils.isValidName(nameWithHyphen);
-        Assertions.assertTrue(result);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testIsValidAdminPasswordValid() {
+        boolean result = validationUtils.isValidAdminPassword("1");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testIsValidAdminPasswordInvalid() {
+        boolean result = validationUtils.isValidAdminPassword("2");
+        assertFalse(result);
     }
 }

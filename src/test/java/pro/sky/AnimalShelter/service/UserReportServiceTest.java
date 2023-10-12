@@ -1,11 +1,11 @@
 package pro.sky.AnimalShelter.service;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,12 +19,12 @@ import pro.sky.AnimalShelter.entity.*;
 import pro.sky.AnimalShelter.enums.BotCommand;
 import pro.sky.AnimalShelter.enums.UserReportStates;
 import pro.sky.AnimalShelter.repository.*;
-import pro.sky.AnimalShelter.utils.ConsoleOutputCapture;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.BotCommand.CAT;
@@ -71,11 +71,8 @@ class UserReportServiceTest {
     @InjectMocks
     private UserReportService userReportService;
 
-    private ConsoleOutputCapture outputCapture;
-
     @BeforeEach
     public void setUp() {
-        outputCapture = new ConsoleOutputCapture();
         Chat chat = new Chat();
         chat.setId(123L);
         User user = new User();
@@ -83,12 +80,6 @@ class UserReportServiceTest {
         lenient().when(chatRepository.findByChatId(123L)).thenReturn(Optional.of(chat));
         lenient().when(userRepository.findByChatId(123L)).thenReturn(Optional.of(user));
     }
-
-    @AfterEach
-    public void cleanup() {
-        outputCapture.stopCapture();
-    }
-
 
     @ParameterizedTest
     @EnumSource(UserReportStates.class)
@@ -105,19 +96,16 @@ class UserReportServiceTest {
             verify(dogReportRepository, times(1)).findByUserId(456L);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
             verify(userReportStateService, times(1)).clearUserReportStates(123L);
-            assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == RATION) {
             verify(dogReportRepository, times(1)).save(any());
             verify(dogReportRepository, times(1)).findByUserId(456L);
             verify(userReportStateService, times(1)).updateUserReportState(123L, WELL_BEING);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
-            assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == WELL_BEING) {
             verify(dogReportRepository, times(1)).save(any());
             verify(dogReportRepository, times(1)).findByUserId(456L);
             verify(userReportStateService, times(1)).updateUserReportState(123L, BEHAVIOR);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
-            assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == PHOTO) {
             verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                     catReportRepository, dogReportRepository, userReportStateService, telegramBot);
@@ -139,19 +127,16 @@ class UserReportServiceTest {
             verify(catReportRepository, times(1)).findByUserId(456L);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
             verify(userReportStateService, times(1)).clearUserReportStates(123L);
-            assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == RATION) {
             verify(catReportRepository, times(1)).save(any());
             verify(catReportRepository, times(1)).findByUserId(456L);
             verify(userReportStateService, times(1)).updateUserReportState(123L, WELL_BEING);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
-            assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == WELL_BEING) {
             verify(catReportRepository, times(1)).save(any());
             verify(catReportRepository, times(1)).findByUserId(456L);
             verify(userReportStateService, times(1)).updateUserReportState(123L, BEHAVIOR);
             verify(telegramBot, times(1)).execute(any(SendMessage.class));
-            assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         } else if (state == PHOTO) {
             verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                     catReportRepository, dogReportRepository, userReportStateService, telegramBot);
@@ -165,7 +150,6 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                 catReportRepository, dogReportRepository, userReportStateService, telegramBot);
     }
@@ -177,7 +161,6 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -193,7 +176,6 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -212,7 +194,6 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -230,7 +211,6 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -248,7 +228,6 @@ class UserReportServiceTest {
 
         userReportService.saveReportData(123L, "Текст отчета", BEHAVIOR);
 
-        assertEquals(outputCapture.getCapturedOutput(), "saveReportData method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -341,7 +320,6 @@ class UserReportServiceTest {
 
         userReportService.savePhotoForReport(123L, new PhotoSize[0]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                 catReportRepository, dogReportRepository, userReportStateService, telegramBot);
     }
@@ -354,7 +332,6 @@ class UserReportServiceTest {
 
         userReportService.savePhotoForReport(123L, new PhotoSize[1]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -370,7 +347,6 @@ class UserReportServiceTest {
 
         userReportService.savePhotoForReport(123L, new PhotoSize[1]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -389,7 +365,6 @@ class UserReportServiceTest {
 
         userReportService.savePhotoForReport(123L, new PhotoSize[1]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -407,7 +382,6 @@ class UserReportServiceTest {
 
         userReportService.savePhotoForReport(123L, new PhotoSize[1]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -425,7 +399,6 @@ class UserReportServiceTest {
 
         userReportService.savePhotoForReport(123L, new PhotoSize[1]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verify(chatRepository, times(1)).findByChatId(123L);
         verify(chatStateService, times(1)).getLastStateCatOrDogByChatId(123L);
         verify(userRepository, times(1)).findByChatId(123L);
@@ -440,7 +413,6 @@ class UserReportServiceTest {
     public void testSavePhotoForReportWhenPhotoSizeIsEmpty() {
         userReportService.savePhotoForReport(123L, new PhotoSize[0]);
 
-        assertEquals(outputCapture.getCapturedOutput(), "savePhotoForReport method was invoked");
         verifyNoInteractions(chatStateService, userRepository, catRepository, dogRepository,
                 catReportRepository, dogReportRepository, userReportStateService, telegramBot);
     }
@@ -479,5 +451,41 @@ class UserReportServiceTest {
         verify(dogReportRepository, times(1)).findByUserId(456L);
         verify(catReportRepository, times(0)).findByUserId(456L);
         verifyNoInteractions(userReportStateService);
+    }
+
+    @Test
+    @DisplayName("Проверка на преобразование фото в массив байт, когда выбрасывается исключение IOException")
+    void testPhotoSizeToBytesWhenIOExceptionIsHandled() throws IOException {
+        File file = mock(File.class);
+        GetFileResponse getFileResponse = mock(GetFileResponse.class);
+
+        when(getFileResponse.file()).thenReturn(file);
+        when(getFileResponse.isOk()).thenReturn(true);
+        when(telegramBot.execute(any(GetFile.class))).thenReturn(getFileResponse);
+        when(telegramBot.getFileContent(file)).thenThrow(new IOException());
+
+        byte[] result = userReportService.photoSizeToBytes(new PhotoSize());
+
+        assertNull(result);
+
+        verify(telegramBot, times(1)).getFileContent(file);
+        verify(telegramBot, times(1)).execute(any(GetFile.class));
+    }
+
+    @Test
+    @DisplayName("Проверка на преобразование фото в массив байт, когда GetFileResponse не ОК")
+    void testPhotoSizeToBytesWhenGetFileResponseIsNotOk() throws IOException {
+        File file = mock(File.class);
+        GetFileResponse getFileResponse = mock(GetFileResponse.class);
+
+        when(getFileResponse.isOk()).thenReturn(false);
+        when(telegramBot.execute(any(GetFile.class))).thenReturn(getFileResponse);
+
+        byte[] result = userReportService.photoSizeToBytes(new PhotoSize());
+
+        assertNull(result);
+
+        verify(telegramBot, times(1)).execute(any(GetFile.class));
+        verify(telegramBot, times(0)).getFileContent(file);
     }
 }

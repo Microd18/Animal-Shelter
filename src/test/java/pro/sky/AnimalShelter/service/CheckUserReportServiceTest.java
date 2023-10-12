@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static pro.sky.AnimalShelter.enums.CheckUserReportStates.*;
 import static pro.sky.AnimalShelter.utils.MessagesBot.*;
@@ -56,9 +55,17 @@ class CheckUserReportServiceTest {
     @InjectMocks
     private CheckUserReportService checkUserReportService;
 
+    private ArgumentCaptor<SendMessage> captor;
+
+    private List<DogReport> dogReports;
+
+    private List<CatReport> catReports;
+
     @BeforeEach
     public void setUp() {
-
+        catReports = new ArrayList<>();
+        dogReports = new ArrayList<>();
+        captor = ArgumentCaptor.forClass(SendMessage.class);
     }
 
     private static Stream<Arguments> provideTestData() {
@@ -88,7 +95,6 @@ class CheckUserReportServiceTest {
     @DisplayName("Проверка вывода сообщения при наличии неоцененных отчетов о собаках")
     public void testGetAllDogReportsWithUnverifiedReports() {
         Long volunteerChatId = 123L;
-        List<DogReport> dogReports = new ArrayList<>();
         DogReport unverifiedReport1 = new DogReport();
         DogReport unverifiedReport2 = new DogReport();
         unverifiedReport1.setReportVerified(false);
@@ -102,7 +108,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.getAllDogReports(volunteerChatId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DOG_REPORT_LIST_TEXT + "[/dog_1, /dog_2]" + "\n", sendMessage.getParameters().get("text"));
@@ -117,13 +122,11 @@ class CheckUserReportServiceTest {
     @DisplayName("Проверка вывода сообщения при отсутствии неоцененных отчетов о собаках")
     public void testGetAllDogReportsWithNoUnverifiedReports() {
         Long volunteerChatId = 123L;
-        List<DogReport> dogReports = new ArrayList<>();
 
         when(dogReportRepository.findAll()).thenReturn(dogReports);
 
         checkUserReportService.getAllDogReports(volunteerChatId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DOG_REPORT_EMPTY_LIST_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -137,7 +140,6 @@ class CheckUserReportServiceTest {
     @DisplayName("Проверка вывода сообщения при отсутствии неоцененных отчетов о собаках")
     public void testGetAllDogReportsWithAllReportsVerified() {
         Long volunteerChatId = 123L;
-        List<DogReport> dogReports = new ArrayList<>();
         DogReport verifiedReport1 = new DogReport();
         DogReport verifiedReport2 = new DogReport();
         verifiedReport1.setReportVerified(true);
@@ -149,7 +151,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.getAllDogReports(volunteerChatId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DOG_REPORT_EMPTY_LIST_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -165,7 +166,6 @@ class CheckUserReportServiceTest {
     @DisplayName("Проверка вывода сообщения при наличии неоцененных отчетов о кошках")
     public void testGetAllCatReportsWithUnverifiedReports() {
         Long volunteerChatId = 123L;
-        List<CatReport> catReports = new ArrayList<>();
         CatReport unverifiedReport1 = new CatReport();
         CatReport unverifiedReport2 = new CatReport();
         unverifiedReport1.setReportVerified(false);
@@ -179,7 +179,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.getAllCatReports(volunteerChatId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(CAT_REPORT_LIST_TEXT + "[/cat_1, /cat_2]" + "\n", sendMessage.getParameters().get("text"));
@@ -194,13 +193,11 @@ class CheckUserReportServiceTest {
     @DisplayName("Проверка вывода сообщения при отсутствии неоцененных отчетов о кошках")
     public void testGetAllCatReportsWithNoUnverifiedReports() {
         Long volunteerChatId = 123L;
-        List<CatReport> catReports = new ArrayList<>();
 
         when(catReportRepository.findAll()).thenReturn(catReports);
 
         checkUserReportService.getAllCatReports(volunteerChatId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(CAT_REPORT_EMPTY_LIST_TEXT, sendMessage.getParameters().get("text"));
@@ -214,7 +211,6 @@ class CheckUserReportServiceTest {
     @DisplayName("Проверка вывода сообщения при отсутствии неоцененных отчетов о кошках")
     public void testGetAllCatReportsWithAllReportsVerified() {
         Long volunteerChatId = 123L;
-        List<CatReport> catReports = new ArrayList<>();
         CatReport verifiedReport1 = new CatReport();
         CatReport verifiedReport2 = new CatReport();
         verifiedReport1.setReportVerified(true);
@@ -226,7 +222,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.getAllCatReports(volunteerChatId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(CAT_REPORT_EMPTY_LIST_TEXT, sendMessage.getParameters().get("text"));
@@ -283,7 +278,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateDogReport(volunteerChatId, dogReportId, dogReportRating);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Собачий отчет с идентификатором "
@@ -304,7 +298,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateDogReport(volunteerChatId, dogReportId, dogReportRating);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Этот отчет уже был оценен." + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -329,7 +322,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateDogReport(volunteerChatId, dogReportId, dogReportRating);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Не найдена информация в volunteerInfoDog. " +
@@ -385,7 +377,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateCatReport(volunteerChatId, catReportId, catReportRating);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(CAT_REPORT_NOT_FOUND_BY_ID_TEXT
@@ -406,7 +397,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateCatReport(volunteerChatId, catReportId, catReportRating);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Этот отчет уже был оценен." + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -431,7 +421,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateCatReport(volunteerChatId, catReportId, catReportRating);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Не найдена информация в volunteerInfoCat. " +
@@ -450,7 +439,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -465,7 +453,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Такого животного я пока не знаю.\n" + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -502,7 +489,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.evaluateReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -530,11 +516,10 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewDogReport(volunteerChatId, dogReportId);
 
-        ArgumentCaptor<SendMessage> sendMessageCaptor = ArgumentCaptor.forClass(SendMessage.class);
-        verify(telegramBot, times(4)).execute(sendMessageCaptor.capture());
+        verify(telegramBot, times(4)).execute(captor.capture());
 
-        SendMessage sendMessage = sendMessageCaptor.getValue();
-        assertEquals("После ознакомления с отчетом необходимо отправить его оценку по пятибальной шкале в формате \"\\оценка_dog_идентификатор\", где:\n" +
+        SendMessage sendMessage = captor.getValue();
+        assertEquals("После ознакомления с отчетом необходимо отправить его оценку по пятибалльной шкале в формате \"\\оценка_dog_идентификатор\", где:\n" +
                 "/5_dog_1 - отлично, можно составить подробное представление о жизни питомца на новом месте;\n" +
                 "/4_dog_1 - хорошо, можно составить достаточное представление о жизни питомца на новом месте;\n" +
                 "/3_dog_1 - удовлетворительно, лаконичная информация, по которой можно составить общее представление о жизни питомца на новом месте;\n" +
@@ -553,7 +538,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewDogReport(volunteerChatId, dogReportId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DOG_REPORT_NOT_FOUND_BY_ID_TEXT
@@ -582,11 +566,10 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewCatReport(volunteerChatId, catReportId);
 
-        ArgumentCaptor<SendMessage> sendMessageCaptor = ArgumentCaptor.forClass(SendMessage.class);
-        verify(telegramBot, times(4)).execute(sendMessageCaptor.capture());
+        verify(telegramBot, times(4)).execute(captor.capture());
 
-        SendMessage sendMessage = sendMessageCaptor.getValue();
-        assertEquals("После ознакомления с отчетом необходимо отправить его оценку по пятибальной шкале в формате \"\\оценка_cat_идентификатор\", где:\n" +
+        SendMessage sendMessage = captor.getValue();
+        assertEquals("После ознакомления с отчетом необходимо отправить его оценку по пятибалльной шкале в формате \"\\оценка_cat_идентификатор\", где:\n" +
                 "/5_cat_1 - отлично, можно составить подробное представление о жизни питомца на новом месте;\n" +
                 "/4_cat_1 - хорошо, можно составить достаточное представление о жизни питомца на новом месте;\n" +
                 "/3_cat_1 - удовлетворительно, лаконичная информация, по которой можно составить общее представление о жизни питомца на новом месте;\n" +
@@ -604,7 +587,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewCatReport(volunteerChatId, catReportId);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(CAT_REPORT_NOT_FOUND_BY_ID_TEXT
@@ -622,7 +604,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DOG_REPORT_NOT_FOUND_BY_ID_TEXT
@@ -638,7 +619,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(CAT_REPORT_NOT_FOUND_BY_ID_TEXT
@@ -654,7 +634,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -669,7 +648,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -684,7 +662,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals(DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -699,7 +676,6 @@ class CheckUserReportServiceTest {
 
         checkUserReportService.viewReport(volunteerChatId, messageText);
 
-        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot).execute(captor.capture());
         SendMessage sendMessage = captor.getValue();
         assertEquals("Такого животного я пока не знаю.\n" + DATA_IS_NOT_CORRECT_TEXT + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
@@ -717,5 +693,80 @@ class CheckUserReportServiceTest {
 
         verify(telegramBot, times(2)).execute(any(SendMessage.class));
         verify(checkUserReportStateService, times(1)).updateCheckUserReportState(chatId, ALL_REPORTS);
+    }
+
+    //##################################################################################################################
+
+    @Test
+    @DisplayName("Проверка на валидность рейтинга при невалидном рейтинге")
+    void testCheckValidRangeOfRatingWhenInvalidRating() {
+        Long chatId = 123L;
+
+
+        assertFalse(checkUserReportService.checkValidRangeOfRating(chatId, -1));
+        assertFalse(checkUserReportService.checkValidRangeOfRating(chatId, 0));
+        assertFalse(checkUserReportService.checkValidRangeOfRating(chatId, 6));
+
+        verify(telegramBot, times(3)).execute(captor.capture());
+        SendMessage sendMessage = captor.getValue();
+        assertEquals("Ваша оценка выходит за рамки пятибалльной шкалы" + WAY_BACK_TEXT, sendMessage.getParameters().get("text"));
+        assertEquals(chatId, sendMessage.getParameters().get("chat_id"));
+    }
+
+
+    @Test
+    @DisplayName("Проверка на отправку сообщения о плохом рейтинге по кошке")
+    void testSendCatReportWarningMessageWhenBadReportRating() {
+        Long chatId = 123L;
+        Long petReportId = 456L;
+        Integer petReportRating = 1;
+        CatReport catReport =mock(CatReport.class);
+        User user = mock(User.class);
+        Chat chat = mock(Chat.class);
+        chat.setChatId(chatId);
+        user.setChat(chat);
+        catReport.setUser(user);
+
+        when(catReportRepository.findById(petReportId)).thenReturn(Optional.of(catReport));
+        when(catReport.getUser()).thenReturn(user);
+        when(user.getChat()).thenReturn(chat);
+        when(chat.getChatId()).thenReturn(chatId);
+
+        checkUserReportService.sendCatReportWarningMessage(petReportId, petReportRating);
+
+        verify(telegramBot, times(1)).execute(captor.capture());
+        SendMessage sendMessage = captor.getValue();
+        assertEquals(BAD_COMPLETION_CAT_REPORT_TEXT, sendMessage.getParameters().get("text"));
+        assertEquals(chatId, sendMessage.getParameters().get("chat_id"));
+
+        verify(catReportRepository, times(1)).findById(petReportId);
+    }
+
+    @Test
+    @DisplayName("Проверка на отправку сообщения о плохом рейтинге по собаке")
+    void testSendDogReportWarningMessageWhenBadReportRating() {
+        Long chatId = 123L;
+        Long petReportId = 456L;
+        Integer petReportRating = 1;
+        DogReport dogReport =mock(DogReport.class);
+        User user = mock(User.class);
+        Chat chat = mock(Chat.class);
+        chat.setChatId(chatId);
+        user.setChat(chat);
+        dogReport.setUser(user);
+
+        when(dogReportRepository.findById(petReportId)).thenReturn(Optional.of(dogReport));
+        when(dogReport.getUser()).thenReturn(user);
+        when(user.getChat()).thenReturn(chat);
+        when(chat.getChatId()).thenReturn(chatId);
+
+        checkUserReportService.sendDogReportWarningMessage(petReportId, petReportRating);
+
+        verify(telegramBot, times(1)).execute(captor.capture());
+        SendMessage sendMessage = captor.getValue();
+        assertEquals(BAD_COMPLETION_DOG_REPORT_TEXT, sendMessage.getParameters().get("text"));
+        assertEquals(chatId, sendMessage.getParameters().get("chat_id"));
+
+        verify(dogReportRepository, times(1)).findById(petReportId);
     }
 }
