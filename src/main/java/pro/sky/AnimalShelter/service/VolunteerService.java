@@ -6,14 +6,43 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pro.sky.AnimalShelter.entity.*;
-import pro.sky.AnimalShelter.repository.*;
+import pro.sky.AnimalShelter.entity.Cat;
+import pro.sky.AnimalShelter.entity.Dog;
+import pro.sky.AnimalShelter.entity.User;
+import pro.sky.AnimalShelter.entity.VolunteerInfoCat;
+import pro.sky.AnimalShelter.entity.VolunteerInfoDog;
+import pro.sky.AnimalShelter.repository.CatReportRepository;
+import pro.sky.AnimalShelter.repository.CatRepository;
+import pro.sky.AnimalShelter.repository.DogReportRepository;
+import pro.sky.AnimalShelter.repository.DogRepository;
+import pro.sky.AnimalShelter.repository.UserRepository;
+import pro.sky.AnimalShelter.repository.VolunteerInfoCatRepository;
+import pro.sky.AnimalShelter.repository.VolunteerInfoDogRepository;
 import pro.sky.AnimalShelter.utils.ValidationUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pro.sky.AnimalShelter.utils.MessagesBot.*;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPTERS_NOT_FOUND_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPTER_ALREADY_TOOK_CAT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPTER_ALREADY_TOOK_DOG_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ADOPTION_SUCCESS_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.ANIMAL_FOUND_BY_NAME_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_ADOPTERS_FOUND_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_ADOPTERS_NOT_FOUND_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_ALREADY_HAS_ADOPTER_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_NOT_FOUND_BY_ID_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.CAT_NOT_FOUND_BY_NAME_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DATA_IS_NOT_CORRECT_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_ADOPTERS_FOUND_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_ADOPTERS_NOT_FOUND_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_ALREADY_HAS_ADOPTER_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_NOT_FOUND_BY_ID_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.DOG_NOT_FOUND_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.USER_FOUND_BY_PHONE_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.USER_NOT_FOUND_BY_ID_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.USER_NOT_FOUND_BY_PHONE_TEXT;
+import static pro.sky.AnimalShelter.utils.MessagesBot.WAY_BACK_TEXT;
 
 /**
  * Сервис для обработки команд меню волонтера.
@@ -288,6 +317,7 @@ public class VolunteerService {
                 .collect(Collectors.toList());
     }
 
+    //TODO Обработать get() при сохранении (что будет, если пользователь не найдётся), исправить тесты при необходимости
     protected void saveUserOnCatReport(Long userId) {
         volunteerInfoCatRepository.save(new VolunteerInfoCat(0, 0D, userRepository.findById(userId).get(), 0));
     }
@@ -305,44 +335,46 @@ public class VolunteerService {
     public void increaseProbationPeriod(Long chatId, String text) {
         String[] strings = text.split(",");
         if (strings.length == 3) {
-            Long userId = Long.parseLong(strings[0]);
+            Long userId = Long.parseLong(strings[0].trim());
             String petType = strings[1];
-            int extraDays = Integer.parseInt(strings[2]);
-            var user = userRepository.findById(userId).get();
-
-            if (petType.trim().equalsIgnoreCase("собака")) {
-                var info = volunteerInfoDogRepository.findByUserId(userId);
-                info.ifPresentOrElse(volunteerInfoDog -> {
-                    volunteerInfoDog.setExtraDays(extraDays);
-                    volunteerInfoDogRepository.save(volunteerInfoDog);
-                    telegramBot.execute(new SendMessage(chatId,
-                            "Испытательный срок успешно продлён.\n" +
+            int extraDays = Integer.parseInt(strings[2].trim());
+            userRepository.findById(userId).ifPresentOrElse(user -> {
+                if (petType.trim().equalsIgnoreCase("собака")) {
+                    var info = volunteerInfoDogRepository.findByUserId(userId);
+                    info.ifPresentOrElse(volunteerInfoDog -> {
+                        volunteerInfoDog.setExtraDays(extraDays);
+                        volunteerInfoDogRepository.save(volunteerInfoDog);
+                        telegramBot.execute(new SendMessage(chatId,
+                                "Испытательный срок успешно продлён.\n" +
+                                        "Возврат в предыдущее меню (/back)\n" +
+                                        "Выключить бота (/stop)"
+                        ));
+                        telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                                "Испытательный срок успешно продлён на " + extraDays + " дней"));
+                    }, () -> telegramBot.execute(new SendMessage(chatId,
+                            "Не найдена информация по отчёту для собаки, для данного юзера\n" +
                                     "Возврат в предыдущее меню (/back)\n" +
-                                    "Выключить бота (/stop)"
-                    ));
-                    telegramBot.execute(new SendMessage(user.getChat().getChatId(),
-                            "Испытательный срок успешно продлён на " + extraDays + " дней"));
-                }, () -> telegramBot.execute(new SendMessage(chatId,
-                        "Пользователь не найден\n" +
-                                "Возврат в предыдущее меню (/back)\n" +
-                                "Выключить бота (/stop)")));
-            } else if (petType.trim().equalsIgnoreCase("кошка")) {
-                var info = volunteerInfoCatRepository.findByUserId(userId);
-                info.ifPresentOrElse(volunteerInfoCat -> {
-                    volunteerInfoCat.setExtraDays(extraDays);
-                    volunteerInfoCatRepository.save(volunteerInfoCat);
-                    telegramBot.execute(new SendMessage(chatId,
-                            "Испытательный срок успешно продлён.\n" +
+                                    "Выключить бота (/stop)")));
+                } else if (petType.trim().equalsIgnoreCase("кошка")) {
+                    var info = volunteerInfoCatRepository.findByUserId(userId);
+                    info.ifPresentOrElse(volunteerInfoCat -> {
+                        volunteerInfoCat.setExtraDays(extraDays);
+                        volunteerInfoCatRepository.save(volunteerInfoCat);
+                        telegramBot.execute(new SendMessage(chatId,
+                                "Испытательный срок успешно продлён.\n" +
+                                        "Возврат в предыдущее меню (/back)\n" +
+                                        "Выключить бота (/stop)"
+                        ));
+                        telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                                "Испытательный срок успешно продлён на " + extraDays + " дней"));
+                    }, () -> telegramBot.execute(new SendMessage(chatId,
+                            "Не найдена информация по отчёту для кошки, для данного юзера\n" +
                                     "Возврат в предыдущее меню (/back)\n" +
-                                    "Выключить бота (/stop)"
-                    ));
-                    telegramBot.execute(new SendMessage(user.getChat().getChatId(),
-                            "Испытательный срок успешно продлён на " + extraDays + " дней"));
-                }, () -> telegramBot.execute(new SendMessage(chatId,
-                        "Пользователь не найден\n" +
-                                "Возврат в предыдущее меню (/back)\n" +
-                                "Выключить бота (/stop)")));
-            }
+                                    "Выключить бота (/stop)")));
+                } else {
+                    telegramBot.execute(new SendMessage(chatId, "Неправильный тип животного. Введите данные в формате: ID пользователя, кошка(или собака), количество дней 14 или 30"));
+                }
+            }, () -> telegramBot.execute(new SendMessage(chatId, "Не найден пользователь с данным userId")));
         } else {
             telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака), количество дней 14 или 30"));
         }
@@ -359,37 +391,38 @@ public class VolunteerService {
         if (strings.length == 2) {
             Long userId = Long.parseLong(strings[0]);
             String petType = strings[1];
-            var user = userRepository.findById(userId).get();
+            userRepository.findById(userId).ifPresentOrElse(user -> {
 
-            if (petType.trim().equalsIgnoreCase("собака")) {
-                volunteerInfoDogRepository.deleteByUserId(userId);
-                dogReportRepository.deleteByUserId(userId);
-                dogRepository.deleteByUserId(userId);
-
-
-                telegramBot.execute(new SendMessage(chatId,
-                        "Питомец успешно отдан.\n" +
-                                "Возврат в предыдущее меню (/back)\n" +
-                                "Выключить бота (/stop)"
-                ));
-                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
-                        "УРА!!! Испытательный срок успешно пройден"));
-            } else if (petType.trim().equalsIgnoreCase("кошка")) {
-                volunteerInfoCatRepository.deleteByUserId(userId);
-                catReportRepository.deleteByUserId(userId);
-                catRepository.deleteByUserId(userId);
+                if (petType.trim().equalsIgnoreCase("собака")) {
+                    volunteerInfoDogRepository.deleteByUserId(userId);
+                    dogReportRepository.deleteByUserId(userId);
+                    dogRepository.deleteByUserId(userId);
 
 
-                telegramBot.execute(new SendMessage(chatId,
-                        "Питомец успешно отдан.\n" +
-                                "Возврат в предыдущее меню (/back)\n" +
-                                "Выключить бота (/stop)"
-                ));
-                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
-                        "УРА!!! Испытательный срок успешно пройден"));
-            } else {
-                telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
-            }
+                    telegramBot.execute(new SendMessage(chatId,
+                            "Питомец успешно отдан.\n" +
+                                    "Возврат в предыдущее меню (/back)\n" +
+                                    "Выключить бота (/stop)"
+                    ));
+                    telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                            "УРА!!! Испытательный срок успешно пройден"));
+                } else if (petType.trim().equalsIgnoreCase("кошка")) {
+                    volunteerInfoCatRepository.deleteByUserId(userId);
+                    catReportRepository.deleteByUserId(userId);
+                    catRepository.deleteByUserId(userId);
+
+
+                    telegramBot.execute(new SendMessage(chatId,
+                            "Питомец успешно отдан.\n" +
+                                    "Возврат в предыдущее меню (/back)\n" +
+                                    "Выключить бота (/stop)"
+                    ));
+                    telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                            "УРА!!! Испытательный срок успешно пройден"));
+                } else {
+                    telegramBot.execute(new SendMessage(chatId, "Неправильный тип животного. Введите данные в формате: ID пользователя, кошка(или собака)"));
+                }
+            }, () -> telegramBot.execute(new SendMessage(chatId, "Не найден пользователь с данным userId")));
         } else {
             telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
         }
@@ -406,39 +439,41 @@ public class VolunteerService {
         if (strings.length == 2) {
             Long userId = Long.parseLong(strings[0]);
             String petType = strings[1];
-            var user = userRepository.findById(userId).get();
+            userRepository.findById(userId).ifPresentOrElse(user -> {
+                if (petType.trim().equalsIgnoreCase("собака")) {
+                    dogRepository.findByUserId(userId).ifPresentOrElse(dog -> {
+                        volunteerInfoDogRepository.deleteByUserId(userId);
+                        dogReportRepository.deleteByUserId(userId);
+                        dog.setUser(null);
+                        dogRepository.save(dog);
 
-            if (petType.trim().equalsIgnoreCase("собака")) {
-                volunteerInfoDogRepository.deleteByUserId(userId);
-                dogReportRepository.deleteByUserId(userId);
-                Dog dog = dogRepository.findByUserId(userId).get();
-                dog.setUser(null);
-                dogRepository.save(dog);
+                        telegramBot.execute(new SendMessage(chatId,
+                                "Питомец вернулся обратно в приют.\n" +
+                                        "Возврат в предыдущее меню (/back)\n" +
+                                        "Выключить бота (/stop)"
+                        ));
+                        telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                                "Приют забрал у вас собаку обратно"));
+                    }, () -> telegramBot.execute(new SendMessage(chatId, "Не найдена собака, у которой есть усыновитель")));
+                } else if (petType.trim().equalsIgnoreCase("кошка")) {
+                    catRepository.findByUserId(userId).ifPresentOrElse(cat -> {
+                        volunteerInfoCatRepository.deleteByUserId(userId);
+                        catReportRepository.deleteByUserId(userId);
+                        cat.setUser(null);
+                        catRepository.save(cat);
 
-                telegramBot.execute(new SendMessage(chatId,
-                        "Питомец вернулся обратно в приют.\n" +
-                                "Возврат в предыдущее меню (/back)\n" +
-                                "Выключить бота (/stop)"
-                ));
-                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
-                        "Приют забрал у вас собаку обратно"));
-            } else if (petType.trim().equalsIgnoreCase("кошка")) {
-                volunteerInfoCatRepository.deleteByUserId(userId);
-                catReportRepository.deleteByUserId(userId);
-                Cat cat = catRepository.findByUserId(userId).get();
-                cat.setUser(null);
-                catRepository.save(cat);
-
-                telegramBot.execute(new SendMessage(chatId,
-                        "Питомец вернулся обратно в приют.\n" +
-                                "Возврат в предыдущее меню (/back)\n" +
-                                "Выключить бота (/stop)"
-                ));
-                telegramBot.execute(new SendMessage(user.getChat().getChatId(),
-                        "Приют забрал у вас кошку обратно"));
-            } else {
-                telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
-            }
+                        telegramBot.execute(new SendMessage(chatId,
+                                "Питомец вернулся обратно в приют.\n" +
+                                        "Возврат в предыдущее меню (/back)\n" +
+                                        "Выключить бота (/stop)"
+                        ));
+                        telegramBot.execute(new SendMessage(user.getChat().getChatId(),
+                                "Приют забрал у вас кошку обратно"));
+                    }, () -> telegramBot.execute(new SendMessage(chatId, "Не найдена кошка, у которой есть усыновитель")));
+                } else {
+                    telegramBot.execute(new SendMessage(chatId, "Неправильный тип животного. Введите данные в формате: ID пользователя, кошка(или собака)"));
+                }
+            }, () -> telegramBot.execute(new SendMessage(chatId, "Не найден пользователь с данным userId")));
         } else {
             telegramBot.execute(new SendMessage(chatId, "Введите данные в формате: ID пользователя, кошка(или собака)"));
         }
